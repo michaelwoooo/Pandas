@@ -264,6 +264,7 @@ struct Script_Config script_config = {
 	"OnPCBaseLvUpEvent", //baselvup_event_name
 	"OnPCJobLvUpEvent", //joblvup_event_name
 	"OnPCAttackMobEvent", //attackmob_event_name
+	"OnPCUseSkillEvent", //useskill_event_name
 	"OnPCStatCalcEvent", //stat_calc_event_name
 
 	/************************************************************************/
@@ -26546,6 +26547,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(navigateto,"s???????"),
 	BUILDIN_DEF(getguildalliance,"ii"),
 	BUILDIN_DEF(adopt,"vv"),
+	BUILDIN_DEF(getskillname, "v"),	//[聽風](原rA论坛Jezznar写的C，整理修复为C++)
 	BUILDIN_DEF(getexp2,"ii?"),
 	BUILDIN_DEF(recalculatestat,""),
 	BUILDIN_DEF(hateffect,"ii"),
