@@ -6067,36 +6067,6 @@ ACMD_FUNC(offline) {
 	return 0;
 }
 
-/* ===========================================================
- * 指令: getskillname
- * 描述: 通过技能ID取技能名称
- * 用法: getskillname (技能ID);
- * 返回: 技能名
- * 作者: 聽風
- * -----------------------------------------------------------*/
-BUILDIN_FUNC(getskillname)
-{
-	int skill_id;
-	char *skill_name;
-	//get input skill_id
-	if (!script_hasdata(st, 2)) {
-		script_pushconststr(st, "null");
-		return SCRIPT_CMD_SUCCESS;
-	}
-	skill_id = script_getnum(st, 2);
-
-	if (!skill_get_index(skill_id)) {
-		ShowError("script:conv_str: Unknown skill_id supplied.\"\n");
-		script_pushconststr(st, "null");
-		return SCRIPT_CMD_SUCCESS;
-	}
-	skill_name = (char *)aMalloc(SKILL_NAME_LENGTH * sizeof(char));
-	memcpy(skill_name, skill_db[skill_get_index(skill_id)]->desc, SKILL_DESC_LENGTH);
-	script_pushstr(st, skill_name);
-
-	return SCRIPT_CMD_SUCCESS;
-}
-
 /*==========================================
  * @changegm by durf (changed by Lupus)
  * Changes Master of your Guild to a specified guild member
