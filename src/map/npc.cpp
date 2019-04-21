@@ -264,14 +264,14 @@ int npc_enable_sub(struct block_list *bl, va_list ap)
 /*==========================================
  * Disable / Enable NPC
  *------------------------------------------*/
-int npc_enable(const char* name, int flag)
+bool npc_enable(const char* name, int flag)
 {
 	struct npc_data* nd = npc_name2id(name);
 
 	if (nd==NULL)
 	{
 		ShowError("npc_enable: Attempted to %s a non-existing NPC '%s' (flag=%d).\n", (flag&3) ? "show" : "hide", name, flag);
-		return 0;
+		return false;
 	}
 
 	if (flag&1) {
@@ -298,7 +298,7 @@ int npc_enable(const char* name, int flag)
 	if( flag&3 && (nd->u.scr.xs >= 0 || nd->u.scr.ys >= 0) )// check if player standing on a OnTouchArea
 		map_foreachinallarea( npc_enable_sub, nd->bl.m, nd->bl.x-nd->u.scr.xs, nd->bl.y-nd->u.scr.ys, nd->bl.x+nd->u.scr.xs, nd->bl.y+nd->u.scr.ys, BL_PC, nd );
 
-	return 0;
+	return true;
 }
 
 /*==========================================
@@ -4602,10 +4602,6 @@ const char *npc_get_script_event_name(int npce_index)
 		return script_config.kill_pc_event_name;
 	case NPCE_KILLNPC:
 		return script_config.kill_mob_event_name;
-	case NPCE_ATTACKMOB:
-		return script_config.attackmob_event_name;
-	case NPCE_SKILLUSE:
-		return script_config.useskill_event_name;
 	case NPCE_STATCALC:
 		return script_config.stat_calc_event_name;
 
@@ -4672,6 +4668,11 @@ const char *npc_get_script_event_name(int npce_index)
 	case NPCF_USE_ITEM:
 		return script_config.use_item_filter_name;	// OnPCUseItemFilter		// 当玩家准备使用非装备类道具时触发过滤器
 #endif // Pandas_NpcFilter_USE_ITEM
+
+#ifdef Pandas_NpcFilter_USE_SKILL
+	case NPCF_USE_SKILL:
+		return script_config.use_skill_filter_name;	// OnPCUseSkillFilter		// 当玩家准备使用技能时触发过滤器
+#endif // Pandas_NpcFilter_USE_SKILL
 	// PYHELP - NPCEVENT - INSERT POINT - <Section 5>
 
 	/************************************************************************/
@@ -4762,6 +4763,11 @@ const char *npc_get_script_event_name(int npce_index)
 	case NPCE_USE_ITEM:
 		return script_config.use_item_event_name;	// OnPCUseItemEvent		// 当玩家成功使用非装备类道具后触发事件
 #endif // Pandas_NpcEvent_USE_ITEM
+
+#ifdef Pandas_NpcEvent_USE_SKILL
+	case NPCE_USE_SKILL:
+		return script_config.use_skill_event_name;	// OnPCUseSkillEvent		// 当玩家成功使用技能后触发事件
+#endif // Pandas_NpcEvent_USE_SKILL
 	// PYHELP - NPCEVENT - INSERT POINT - <Section 6>
 
 	default:

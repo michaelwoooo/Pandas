@@ -1184,8 +1184,6 @@ enum npce_event : uint8 {
 	NPCE_DIE,
 	NPCE_KILLPC,
 	NPCE_KILLNPC,
-	NPCE_ATTACKMOB,
-	NPCE_SKILLUSE,
 	NPCE_STATCALC,
 
 	/************************************************************************/
@@ -1239,6 +1237,10 @@ enum npce_event : uint8 {
 #ifdef Pandas_NpcFilter_USE_ITEM
 	NPCF_USE_ITEM,	// use_item_filter_name	// OnPCUseItemFilter		// 当玩家准备使用非装备类道具时触发过滤器
 #endif // Pandas_NpcFilter_USE_ITEM
+
+#ifdef Pandas_NpcFilter_USE_SKILL
+	NPCF_USE_SKILL,	// use_skill_filter_name	// OnPCUseSkillFilter		// 当玩家准备使用技能时触发过滤器
+#endif // Pandas_NpcFilter_USE_SKILL
 	// PYHELP - NPCEVENT - INSERT POINT - <Section 3>
 
 	/************************************************************************/
@@ -1312,6 +1314,10 @@ enum npce_event : uint8 {
 #ifdef Pandas_NpcEvent_USE_ITEM
 	NPCE_USE_ITEM,	// use_item_event_name	// OnPCUseItemEvent		// 当玩家成功使用非装备类道具后触发事件
 #endif // Pandas_NpcEvent_USE_ITEM
+
+#ifdef Pandas_NpcEvent_USE_SKILL
+	NPCE_USE_SKILL,	// use_skill_event_name	// OnPCUseSkillEvent		// 当玩家成功使用技能后触发事件
+#endif // Pandas_NpcEvent_USE_SKILL
 	// PYHELP - NPCEVENT - INSERT POINT - <Section 4>
 
 	NPCE_MAX
@@ -1345,7 +1351,7 @@ const char *npc_get_script_event_name(int npce_index);
 void npc_setcells(struct npc_data* nd);
 void npc_unsetcells(struct npc_data* nd);
 bool npc_movenpc(struct npc_data* nd, int16 x, int16 y);
-int npc_enable(const char* name, int flag);
+bool npc_enable(const char* name, int flag);
 void npc_setdisplayname(struct npc_data* nd, const char* newname);
 void npc_setclass(struct npc_data* nd, short class_);
 struct npc_data* npc_name2id(const char* name);
