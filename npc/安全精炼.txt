@@ -1,0 +1,157 @@
+morocc,169,100,5	script	精炼宗师	648,{
+	mes "[精炼宗师]";
+	mes "嘿,看我的眼神,你会看到一个坑";
+	mes "我是一名手艺很好的铁匠，请问你要精炼什麽位置的装备呢？";
+	mes "精炼券会自动判断位置使用，不用担心";
+	next;
+	set .@baodiid0,18117;	//防具保底符ID
+	set .@baodiid1,18116;	//武器保底符ID
+	set .@jia7id,6234;	//+7道具ID
+	set .@jia9id,6233;	//+9道具ID
+//-----------------快速精炼安全值(无视安全值前面精炼的成功率)---------------
+	set @anquan,4;	//比如把0改为5，那精炼1-5是快速安全精炼，精炼+6开始按照下面的成功率
+//--------------------------不同类型装备的精炼成功率------------------------
+	setarray @jinglian0[0],100,100,100,100, 90, 70, 60, 20, 5, 5;	//防具精炼1-10的成功率
+	setarray @jinglian1[0],100,100,100,100,100,100,100, 80, 60, 10;	//1级武器精炼1-10的成功率
+	setarray @jinglian2[0],100,100,100,100,100,100, 80, 60, 30, 10;	//2级武器精炼1-10的成功率
+	setarray @jinglian3[0],100,100,100,100,100, 90, 60, 40, 20, 10;	//3级武器精炼1-10的成功率
+	setarray @jinglian4[0],100,100,100,100, 90, 70, 50, 10, 5, 5;	//4级武器精炼1-10的成功率
+//---------------------不同类型装备的每精炼+1所需要的材料-------------------
+	setarray @cailiao[0],985,1010,1011,984,984;
+//----------------------不同类型装备的每精炼+1所需要的钱--------------------
+	setarray @kouzeny[0],10000,1000,2000,3000,10000;
+//-------------------------------选择精炼的位置-----------------------------
+//	set @part,select(" +"+getequiprefinerycnt(1)+" "+getitemname(getequipid(1))," +"+getequiprefinerycnt(2)+" "+getitemname(getequipid(2))," +"+getequiprefinerycnt(3)+" "+getitemname(getequipid(3))," +"+getequiprefinerycnt(4)+" "+getitemname(getequipid(4))," +"+getequiprefinerycnt(5)+" "+getitemname(getequipid(5))," +"+getequiprefinerycnt(6)+" "+getitemname(getequipid(6))," +"+getequiprefinerycnt(7)+" "+getitemname(getequipid(7))," +"+getequiprefinerycnt(8)+" "+getitemname(getequipid(8))," +"+getequiprefinerycnt(9)+" "+getitemname(getequipid(9))," +"+getequiprefinerycnt(10)+" "+getitemname(getequipid(10)));
+	if (getequipisequiped(1) == 0) set .@strRetPart1$,"";
+	else set .@strRetPart1$,"头上-[^FF0000 +"+getequiprefinerycnt(1)+" "+getitemname(getequipid(1))+"^000000]";
+	if (getequipisequiped(2) == 0) set .@strRetPart2$,"";
+	else set .@strRetPart2$,"衣服-[^FF0000 +"+getequiprefinerycnt(2)+" "+getitemname(getequipid(2))+"^000000]";
+	if (getequipisequiped(3) == 0) set .@strRetPart3$,"";
+	else set .@strRetPart3$,"左手-[^FF0000 +"+getequiprefinerycnt(3)+" "+getitemname(getequipid(3))+"^000000]";
+	if (getequipisequiped(4) == 0) set .@strRetPart4$,"";
+	else set .@strRetPart4$,"右手-[^FF0000 +"+getequiprefinerycnt(4)+" "+getitemname(getequipid(4))+"^000000]";
+	if (getequipisequiped(5) == 0) set .@strRetPart5$,"";
+	else set .@strRetPart5$,"披肩-[^FF0000 +"+getequiprefinerycnt(5)+" "+getitemname(getequipid(5))+"^000000]";
+	if (getequipisequiped(6) == 0) set .@strRetPart6$,"";
+	else set .@strRetPart6$,"鞋子-[^FF0000 +"+getequiprefinerycnt(6)+" "+getitemname(getequipid(6))+"^000000]";
+	set .@menu$,.@strRetPart1$+":"+.@strRetPart2$+":"+.@strRetPart3$+":"+.@strRetPart4$+":"+.@strRetPart5$+":"+.@strRetPart6$;
+	set @part,select(.@menu$);
+//------------------------根据装备类型和精炼值计算成功率--------------------
+	setarray @zhuangbei[0],@jinglian0[getequiprefinerycnt(@part)],@jinglian1[getequiprefinerycnt(@part)],@jinglian2[getequiprefinerycnt(@part)],@jinglian3[getequiprefinerycnt(@part)],@jinglian4[getequiprefinerycnt(@part)];
+//-------------------------开始精炼１判定位置上有没有装备---------------------
+	if (getequipisequiped(@part)==0) goto Levent1;
+//-------------------------开始精炼２判定材料和钱够不够---------------------
+	if (countitem(@cailiao[getequipweaponlv(@part)])<1) goto Levent2;
+	if (Zeny<@kouzeny[getequipweaponlv(@part)]) goto Levent3;
+//----------------开始精炼３判定是否超过可以精炼的范围(默认为10)------------
+	if(!getequipisenableref(@part)) {
+		mes "[精炼大师]";
+		mes "你说的这个项目是";
+		mes "无法锻治的项目喔！";
+		close;
+					}
+	if (getequiprefinerycnt(@part)>=10) goto Levent4;
+	switch(select("使用精炼保护券:直接精炼:精炼能力+7券:精炼能力+8券")) {
+	case 2:
+		break;
+	case 1:
+		if ( getequipweaponlv(@part) == 0 ) {
+			if ( countitem(.@baodiid0) < 1 ) {
+			mes "[精炼宗师]";
+			mes "你没有防具精炼保护券";
+			close;
+			}
+			set .@baodi,1;
+			delitem .@baodiid0,1;
+			break;
+		} else {
+			if ( countitem(.@baodiid1) < 1 ) {
+			mes "[精炼宗师]";
+			mes "你没有武器精炼保护券";
+			close;
+			}
+			set .@baodi,1;
+			delitem .@baodiid1,1;
+			break;
+		}
+		
+	case 3:
+		if ( countitem(.@jia7id) < 1 ) {
+			mes "[精炼宗师]";
+			mes "你没有精炼能力+7券";
+			close;
+		}
+		set .@success,7;
+		set .@issucc,.@success-getequiprefinerycnt(@part);
+		if ( .@issucc <= 0 ) {
+			mes "[精炼宗师]";
+			mes "超出标准，请勿乱来";
+			close;
+		
+		}
+		set .@jiadelid,.@jia7id;
+		goto Levent7;
+	case 4:
+		if ( countitem(.@jia9id) < 1 ) {
+			mes "[精炼宗师]";
+			mes "你没有精炼能力+8券";
+			close;
+		}
+		set .@success,8;
+		set .@issucc,.@success-getequiprefinerycnt(@part);
+		if ( .@issucc <= 0 ) {
+			mes "[精炼宗师]";
+			mes "超出标准，请勿乱来？";
+			close;
+		
+		}
+		set .@jiadelid,.@jia9id;
+		goto Levent7;
+	}
+//------------------------开始精炼４扣除所需要的材料和钱--------------------
+	delitem @cailiao[getequipweaponlv(@part)],1;
+	set zeny,zeny-@kouzeny[getequipweaponlv(@part)];
+//--------------------开始精炼５根据成功率判断精炼是否成功------------------
+	if (@zhuangbei[getequipweaponlv(@part)]<rand(1,100)) goto Levent5;
+//------------------开始精炼６判断为成功后精炼指定位置的装备----------------
+Levent6:
+	successrefitem @part;
+	if (getequiprefinerycnt(@part)<@anquan) goto Levent6;
+	if ( getequiprefinerycnt(@part) >= 8 ) announce strcharinfo(0)+" 精炼 (+"+getequiprefinerycnt(@part)+" "+getitemname(getequipid(@part))+") 成功.",0;
+	mes "[精炼宗师]";
+	mes "你的这件装备已经精炼完成了!";
+	close;
+//---------------------------不同情况下发生的对话---------------------------
+Levent1:
+	mes "[精炼宗师]";
+	mes "这个位置没有装备，请确认后再精炼！";
+	close;
+Levent2:
+	mes "[精炼宗师]";
+	mes "这件装备需要1个^ff0000"+getitemname(@cailiao[getequipweaponlv(@part)])+"^000000才可以精炼！";
+	close;
+Levent3:
+	mes "[精炼宗师]";
+	mes "这件装备需要^ff0000"+@kouzeny[getequipweaponlv(@part)]+"^000000RO币才可以精炼！";
+	close;
+Levent4:
+	mes "[精炼宗师]";
+	mes "你的这件装备不能再精炼了！";
+	close;
+Levent5:
+	mes "[精炼宗师]";
+	mes "真遗憾，精炼失败了，我技术还是不够，我还是回家练多几年！";
+	if ( .@baodi == 1 ) {
+		failedrefitem2 @part,1;
+	} else {
+		failedrefitem @part;
+	}
+	close;
+Levent7:
+	successrefitem @part,.@issucc;
+	delitem .@jiadelid,1;
+	if ( getequiprefinerycnt(@part) >= 9 ) announce strcharinfo(0)+" 精炼 (+"+getequiprefinerycnt(@part)+" "+getitemname(getequipid(@part))+") 成功.",0;
+	mes "[精炼宗师]";
+	mes "你的这件装备已经精炼完成了!";
+	close;
+}

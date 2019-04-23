@@ -1,0 +1,157 @@
+quiz_01	mapflag	nomemo	dummy
+quiz_01	mapflag	noteleport	dummy
+quiz_01	mapflag	nosave	prontera,156,118
+quiz_01	mapflag	nopenalty	dummy
+quiz_01	mapflag	noskill	dummy
+quiz_01	mapflag	nobranch	dummy
+
+quiz_00	mapflag	nomemo	dummy
+quiz_00	mapflag	noteleport	dummy   
+quiz_00	mapflag	nosave	prontera,156,118
+quiz_00	mapflag	nopenalty	dummy
+quiz_00	mapflag	noskill	dummy
+quiz_00	mapflag	nobranch	dummy
+
+prontera,164,125,3	script	益智问答工作人员	759,{
+	if(getmapusers("quiz_01")>0)
+	{
+	mes "已经有人在挑战了";
+	mes "请稍候再来";
+	close;
+	}
+	if (getgmlevel()>=0) {
+		mes "[益智问答工作人员]";
+		mes "请问你要传送进入并开启OX么？";
+		next;
+		menu "否",Normal,"是",-;
+		if ( OXXX_Lasttime + 10800 > gettimetick(2) && OXXX_Lasttime < gettimetick(2) ){
+			set .@last,OXXX_Lasttime + 10800 - gettimetick(2);
+			set .@hours,.@last / 60 / 60;
+			set .@minutes,.@last / 60 % 60;
+			set .@seconds,.@last % 60;
+			mes "[益智问答工作人员]";
+			mes "还有 "+.@minutes+"分"+.@seconds+"秒才能进入";
+			close;
+		}
+		warp "quiz_01",140,285;
+		set OXXX_Lasttime,gettimetick(2);
+		sleep 5000;
+		goto OnStart2;	
+	}
+Normal:
+	if (!$@QuizeStart) {
+		mes "[益智问答工作人员]";
+		mes "啊~~";
+		mes "难得有休息时间";
+		mes "如果你是想参加益智问答的人";
+		mes "那你错过时间罗";
+		close;
+	}
+	mes "[益智问答工作人员]";
+	mes "请问你要参加机智问答吗";
+	next;
+	menu "是",-;
+	if ($@QuizeStart==1) warp "quiz_01",140,285;
+	else {
+		mes "[益智问答工作人员]";
+		mes "游戏进行中";
+		mes "等下一次吧！";
+	}
+	close;
+
+OnInit:
+	//机智问答场地座标
+	//起始座标
+	setarray $@QzStOXMp$[1],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_00";
+	setarray $@QzStOXPoX[1],140,64,230,322,42,42,138,335,56,334,204,236,66;
+	setarray $@QzStOXPoY[1],285,183,368,368,369,285,369,89,90,234,92,283,7;
+	//OX
+	setarray $@QuizoxOm$[1],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01";
+	setarray $@QuizoxMm$[1],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01";
+	setarray $@QuizoxXm$[1],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01","quiz_01";
+	setarray $@QuizoxOXs[1],125,45,217,309,23,23,123;
+	setarray $@QuizoxMXs[1],138,62,228,320,40,40,136;
+	setarray $@QuizoxXXs[1],143,67,233,325,45,45,141;
+	setarray $@QuizoxOYs[1],279,175,363,363,361,277,363;
+	setarray $@QuizoxMYs[1],282,181,366,366,367,283,367;
+	setarray $@QuizoxXYs[1],280,175,363,363,361,277,363;
+	setarray $@QuizoxOXe[1],137,61,227,319,39,39,135;
+	setarray $@QuizoxMXe[1],142,66,232,324,44,44,140;
+	setarray $@QuizoxXXe[1],155,83,243,335,61,61,153;
+	setarray $@QuizoxOYe[1],291,191,373,373,378,293,375;
+	setarray $@QuizoxMYe[1],287,185,370,370,371,287,371;
+	setarray $@QuizoxXYe[1],291,191,373,373,377,293,375;
+	//1234
+	setarray $@QzizNmMpm$[8],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01";
+	setarray $@QzizNmMn$[8],"quiz_01","quiz_01","quiz_01","quiz_01","quiz_01";
+	setarray $@QzizNm1xs[8],313,33,313,183,221;
+	setarray $@QzizNm2xs[8],325,45,325,195,240;
+	setarray $@QzizNm3xs[8],337,57,337,207,221;
+	setarray $@QzizNm4xs[8],345,69,349,219,240;
+	setarray $@QzizNmM1xs[8],309,33,313,182,234;
+	setarray $@QzizNmM2xs[8],316,36,316,185,242;
+	setarray $@QzizNmM3xs[8],328,48,328,197,234;
+	setarray $@QzizNmM4xs[8],340,60,340,209,229;
+	setarray $@QzizNmM5xs[8],352,72,352,221,1;
+	setarray $@QzizNm1ys[8],59,59,207,59,280;
+	setarray $@QzizNm2ys[8],59,59,207,59,280;
+	setarray $@QzizNm3ys[8],59,59,207,59,261;
+	setarray $@QzizNm4ys[8],59,59,207,59,261;
+	setarray $@QzizNmM1ys[8],86,86,230,88,282;
+	setarray $@QzizNmM2ys[8],82,82,224,82,274;
+	setarray $@QzizNmM3ys[8],82,82,224,82,269;
+	setarray $@QzizNmM4ys[8],82,82,224,82,274;
+	setarray $@QzizNmM5ys[8],82,82,224,82,1;
+	setarray $@QzizNm1xe[8],321,41,321,191,233;
+	setarray $@QzizNm2xe[8],333,53,333,203,252;
+	setarray $@QzizNm3xe[8],345,65,345,215,233;
+	setarray $@QzizNm4xe[8],357,77,357,227,252;
+	setarray $@QzizNmM1xe[8],361,77,357,228,239;
+	setarray $@QzizNmM2xe[8],318,38,318,188,244;
+	setarray $@QzizNmM3xe[8],330,50,330,200,239;
+	setarray $@QzizNmM4xe[8],342,62,342,212,231;
+	setarray $@QzizNmM5xe[8],354,74,354,224,1;
+	setarray $@QzizNm1ye[8],81,81,223,81,292;
+	setarray $@QzizNm2ye[8],81,81,223,81,292;
+	setarray $@QzizNm3ye[8],81,81,223,81,273;
+	setarray $@QzizNm4ye[8],81,81,223,81,273;
+	setarray $@QzizNmM1ye[8],92,94,236,94,284;
+	setarray $@QzizNmM2ye[8],85,85,229,87,279;
+	setarray $@QzizNmM3ye[8],85,85,229,87,271;
+	setarray $@QzizNmM4ye[8],85,85,229,87,279;
+	setarray $@QzizNmM5ye[8],85,85,229,87,1;
+	end;
+
+OnStart:
+	set $@QuizeStart,1;
+	announce "益智问答主持人：OX机智问答开始倒数5分钟，请於这段时间去报名",15;
+	sleep 240000;
+	announce "益智问答主持人：OX机智问答开始倒数1分钟，请於这段时间去报名",15;
+	sleep 60000;
+OnStart2:
+	if (!getmapusers("quiz_01")) {
+		announce "益智问答主持人：无人参加机智问答，活动取消",15;
+		set $@QuizeStart,0;
+	} else {
+		announce "益智问答主持人：OX机智问答活动参加人数" + getmapusers("quiz_01") + "人，现在开始",15;
+		sleep 1000;
+		announce "益智问答主持人：这段时间之内请不要使用公共频道发言，以避免影响游戏进行。",15;
+		set $@OXActionQuiz,0;
+		set $@QuizeStart,2;
+		donpcevent "quizOX::OnStart";
+	}
+	end;
+
+}
+
+quiz_00,67,31,4	script	益智问答工作人员#2	769,{
+	mes "[益智问答工作人员]";
+	mes "恭喜你成功闯关";
+	mes "你可以从以下东西中选择你要什麽奖品";
+	next;
+	menu "领取奖品",-; 
+//	getitem 19939,1;
+	set PCScore,PCScore+10;
+	warp "prontera",156,118;
+	end;
+}

@@ -1,0 +1,43 @@
+prontera,155,96,4	script	全服BOSS控制	74,{
+
+	monster "prontera",155,100,"传说中的BOSS",1002,1,"全服BOSS控制::OnKilled";
+	announce "BOSS出现了.",0;
+	end;
+OnClock2000:
+	monster "prontera",110,111,"传说中的BOSS",1002,1,"全服BOSS控制::OnKilled";
+	announce "BOSS出现了.",0;
+	end;
+	
+OnClock2200:
+	killmonster "prontera","全服BOSS控制::OnKilled";
+	end;
+	
+OnKilled:
+	announce "BOSS死了.",0;
+	enablenpc "BOSS宝箱#BoxL_1";
+	enablenpc "BOSS宝箱#BoxL_2";
+	enablenpc "BOSS宝箱#BoxL_3";
+	unitwarp $@BOSSBOXLID1,"prontera",159,94;
+	unitwarp $@BOSSBOXLID2,"prontera",159,92;
+	unitwarp $@BOSSBOXLID3,"prontera",159,90;
+	end;
+}
+
+function	script	BOSS_BOXITEMC	{
+	mes getarg(0);
+}
+
+prontera,163,98,4	script	BOSS宝箱#BoxL_1	10005,{
+	callfunc "BOSS_BOXITEMC",1;
+	end;
+OnInit:
+	showscript "哈哈";
+	setd "$@BOSSBOXLID"+charat(strnpcinfo(2),5), getnpcid(0);
+	announce $@BOSSBOXLID1,0;
+	announce $@BOSSBOXLID2,0;
+	announce $@BOSSBOXLID3,0;
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,163,96,4	duplicate(BOSS宝箱#BoxL_1)	BOSS宝箱#BoxL_2	10005
+prontera,163,94,4	duplicate(BOSS宝箱#BoxL_1)	BOSS宝箱#BoxL_3	10005

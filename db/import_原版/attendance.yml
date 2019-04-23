@@ -1,0 +1,68 @@
+Header:
+  Type: ATTENDANCE_DB
+  Version: 1
+  
+Body:
+  - Start: 20190414
+    End: 20190515
+    Rewards:
+      - Day: 1
+        ItemId: 41101
+        Amount: 10
+      - Day: 2
+        ItemId: 41103
+        Amount: 1
+      - Day: 3
+        ItemId: 30002
+        Amount: 2
+      - Day: 4
+        ItemId: 7620
+        Amount: 2
+      - Day: 5
+        ItemId: 7619
+        Amount: 2
+      - Day: 6
+        ItemId: 41106
+        Amount: 1
+      - Day: 7
+        ItemId: 41107
+        Amount: 1
+      - Day: 8
+        ItemId: 41101
+        Amount: 15
+      - Day: 9
+        ItemId: 41103
+        Amount: 2
+      - Day: 10
+        ItemId: 30002
+        Amount: 3
+      - Day: 11
+        ItemId: 7620
+        Amount: 2
+      - Day: 12
+        ItemId: 7619
+        Amount: 2
+      - Day: 13
+        ItemId: 41106
+        Amount: 3
+      - Day: 14
+        ItemId: 30005
+        Amount: 1
+      - Day: 15
+        ItemId: 41101
+        Amount: 20
+      - Day: 16
+        ItemId: 41103
+        Amount: 3
+      - Day: 17
+        ItemId: 30002
+        Amount: 3
+      - Day: 18
+        ItemId: 7620
+        Amount: 3
+      - Day: 19
+        ItemId: 7619
+        Amount: 3
+      - Day: 20
+        ItemId: 41108
+        Amount: 1

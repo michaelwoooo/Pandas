@@ -1,0 +1,763 @@
+-	script	quiz1of4	-1,{
+OnStart:
+	sleep 1000;
+	MapAnnounce "quiz_01","能进行到这里，真是不简单！",17;
+	sleep 1000;
+	MapAnnounce "quiz_01","接下来的题目都是选择题，大家要加油喔！",17;
+	sleep 1000;
+	set $@OXActionQuiz,$@OXActionQuiz + 1;
+	MapAnnounce "quiz_01","20秒後将进行第 " + $@OXActionQuiz + " 题，准备好了吗？",17;
+	sleep 10000;
+	MapAnnounce "quiz_01","还有10秒，请做好准备。",17;
+	sleep 10000;
+	callsub OnData;
+	MapAnnounce "quiz_01","益智问答主持人：第"+$@OXActionQuiz+"题："+$@GameQz$,15;
+	sleep 1000;
+	for(set .@i,1; .@i<=4; set .@i,.@i+1)
+	{
+		MapAnnounce "quiz_01","选项"+.@i+"：" + $@NumAns$[.@i],15;
+		sleep 1000;
+	}
+	MapAnnounce "quiz_01","思考时间25秒，请仔细的思考你的答案。",17;
+	sleep 5000;
+	MapAnnounce "quiz_01","还有20秒，尽快做决定。",17;
+	sleep 10000;
+	MapAnnounce "quiz_01","10秒後公布答案。",17;
+	sleep 10000;
+	MapAnnounce "quiz_01","益智问答主持人：现在公布答案。",15;
+	sleep 1000;
+	MapAnnounce "quiz_01","益智问答主持人：答案是......。",15;
+	sleep 500;
+	MapAnnounce "quiz_01","选项" + $@GameAns + "：" + $@NumAns$[$@GameAns] + "",15;
+	sleep 500;
+	set $@OXM,$@OXActionQuiz + 1;
+	areawarp $@QzizNmMpm$[$@OXActionQuiz],$@QzizNmM1xs[$@OXActionQuiz],$@QzizNmM1ys[$@OXActionQuiz],$@QzizNmM1xe[$@OXActionQuiz],$@QzizNmM1ye[$@OXActionQuiz],"prontera",156,118;
+	areawarp $@QzizNmMpm$[$@OXActionQuiz],$@QzizNmM2xs[$@OXActionQuiz],$@QzizNmM2ys[$@OXActionQuiz],$@QzizNmM2xe[$@OXActionQuiz],$@QzizNmM2ye[$@OXActionQuiz],"prontera",156,118;
+	areawarp $@QzizNmMpm$[$@OXActionQuiz],$@QzizNmM3xs[$@OXActionQuiz],$@QzizNmM3ys[$@OXActionQuiz],$@QzizNmM3xe[$@OXActionQuiz],$@QzizNmM3ye[$@OXActionQuiz],"prontera",156,118;
+	areawarp $@QzizNmMpm$[$@OXActionQuiz],$@QzizNmM4xs[$@OXActionQuiz],$@QzizNmM4ys[$@OXActionQuiz],$@QzizNmM4xe[$@OXActionQuiz],$@QzizNmM4ye[$@OXActionQuiz],"prontera",156,118;
+	areawarp $@QzizNmMpm$[$@OXActionQuiz],$@QzizNmM5xs[$@OXActionQuiz],$@QzizNmM5ys[$@OXActionQuiz],$@QzizNmM5xe[$@OXActionQuiz],$@QzizNmM5ye[$@OXActionQuiz],"prontera",156,118;
+	switch ($@GameAns) {
+	case 1:
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm1xs[$@OXActionQuiz],$@QzizNm1ys[$@OXActionQuiz],$@QzizNm1xe[$@OXActionQuiz],$@QzizNm1ye[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm2xs[$@OXActionQuiz],$@QzizNm2ys[$@OXActionQuiz],$@QzizNm2xe[$@OXActionQuiz],$@QzizNm2ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm3xs[$@OXActionQuiz],$@QzizNm3ys[$@OXActionQuiz],$@QzizNm3xe[$@OXActionQuiz],$@QzizNm3ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm4xs[$@OXActionQuiz],$@QzizNm4ys[$@OXActionQuiz],$@QzizNm4xe[$@OXActionQuiz],$@QzizNm4ye[$@OXActionQuiz],"prontera",156,118;
+		break;
+	case 2:
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm1xs[$@OXActionQuiz],$@QzizNm1ys[$@OXActionQuiz],$@QzizNm1xe[$@OXActionQuiz],$@QzizNm1ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm2xs[$@OXActionQuiz],$@QzizNm2ys[$@OXActionQuiz],$@QzizNm2xe[$@OXActionQuiz],$@QzizNm2ye[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm3xs[$@OXActionQuiz],$@QzizNm3ys[$@OXActionQuiz],$@QzizNm3xe[$@OXActionQuiz],$@QzizNm3ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm4xs[$@OXActionQuiz],$@QzizNm4ys[$@OXActionQuiz],$@QzizNm4xe[$@OXActionQuiz],$@QzizNm4ye[$@OXActionQuiz],"prontera",156,118;
+		break;
+	case 3:
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm1xs[$@OXActionQuiz],$@QzizNm1ys[$@OXActionQuiz],$@QzizNm1xe[$@OXActionQuiz],$@QzizNm1ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm2xs[$@OXActionQuiz],$@QzizNm2ys[$@OXActionQuiz],$@QzizNm2xe[$@OXActionQuiz],$@QzizNm2ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm3xs[$@OXActionQuiz],$@QzizNm3ys[$@OXActionQuiz],$@QzizNm3xe[$@OXActionQuiz],$@QzizNm3ye[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm4xs[$@OXActionQuiz],$@QzizNm4ys[$@OXActionQuiz],$@QzizNm4xe[$@OXActionQuiz],$@QzizNm4ye[$@OXActionQuiz],"prontera",156,118;
+		break;
+	case 4:
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm1xs[$@OXActionQuiz],$@QzizNm1ys[$@OXActionQuiz],$@QzizNm1xe[$@OXActionQuiz],$@QzizNm1ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm2xs[$@OXActionQuiz],$@QzizNm2ys[$@OXActionQuiz],$@QzizNm2xe[$@OXActionQuiz],$@QzizNm2ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm3xs[$@OXActionQuiz],$@QzizNm3ys[$@OXActionQuiz],$@QzizNm3xe[$@OXActionQuiz],$@QzizNm3ye[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QzizNmMn$[$@OXActionQuiz],$@QzizNm4xs[$@OXActionQuiz],$@QzizNm4ys[$@OXActionQuiz],$@QzizNm4xe[$@OXActionQuiz],$@QzizNm4ye[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+	}
+	sleep 3000;
+	if (!getmapusers("quiz_01") && $@OXActionQuiz < 12) {
+		deletearray $@NumAns$[0],4;
+		set $@GameQz$,"";
+		set $@GameAns,0;
+		set $@QuizeStart,0;
+		announce "益智问答主持人：这次的益智问答最後的参加者在第 " + $@OXActionQuiz + " 题出局，无人获胜。",15;
+		end;
+	} else if ($@OXActionQuiz == 12) {
+		if (getmapusers("quiz_01")) announce "ERROR!!，玩家仍留在场内",15;
+		announce "益智问答主持人：这次的益智问答已进结束，成功闯关人数有" + getmapusers("quiz_00") + "人",15;
+		set $@QuizeStart,0;
+		end;
+	} else
+		MapAnnounce "quiz_01","益智问答主持人：益智问答进行至第" + $@OXActionQuiz + "题，目前场内剩下" + getmapusers("quiz_01") + "人",15;
+	sleep 5000;
+	goto OnStart;
+
+OnData:
+	set .@QZnum,rand(1,4);
+	switch(rand(97))
+{
+case 0:
+	set $@GameQz$,"请选出下列魔物中，种族与其他不同者？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"鸟人哈比","血腥骑士","冰暴骑士","兽牙怪";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"巴风特","邪恶使者","七彩梦魇?","赤焰小恶魔";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"火灵龟","岩石龟","风灵龟","水灵龟";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"叁叶虫","卷甲虫","黄金虫","贤者虫";
+	break;
+case 1:
+	set $@GameQz$,"请选出下列魔物中，种族与其他不同者？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"人鱼士兵","海神","卡那多斯","人鱼";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"刺锤哥布灵","玩具士兵","哥布灵首领","甜饼人";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"狂暴鬼火","纸妖","鹗枭首领","南瓜先生";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"深渊骑士","马尔杜克","魔灵娃娃","傀儡娃娃";
+	break;
+case 2:
+	set $@GameQz$,"下列何者是鬼女的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"3S双刃短剑","1S护士帽","头发","鬼女长发";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"黄色药水","护士帽","1S韩服","2S双刃短剑";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"光滑的头发","0S披肩","韩服","蓝色药水";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"黄色药水","白色药水","2S双刃短剑","长发";
+	break;
+case 3:
+	set $@GameQz$,"下列何者是链锤哥布灵的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"雪勒结晶","2S流星  ","无言面具","时毫眼镜";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"链锤哥布灵卡片","气愤面具","加勒结晶","3S链锤";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"2S链锤","无言面具","印地安头饰","黄色药水";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"头巾","钢铁","3S链锤","黄色药草";
+	break;
+case 4:
+	set $@GameQz$,"请问下列哪个人是克魔岛赌场内的职员？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"乐呀勒","马卡刍","伊乐","堕落的赌徒";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"堕落的赌徒","水伊乐娜","陶舞斯副","曼智";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"陶舞斯副","马乐  纳","水伊乐娜","乐呀奇";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"马卡刍","伊乐","堕落的赌徒","无";
+	break;
+
+case 5:
+	set $@GameQz$,"请问克魔岛的村长叫什麽名字？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"陶舞斯副","陶舞副斯","副斯陶舞","副斯舞陶";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"陶舞副斯","陶舞斯副","副斯舞陶","副斯陶舞";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"马乐  纳","戴妮罗斯","陶舞斯副","斯库世基";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"斯库世基","马乐  纳","戴妮罗斯","陶舞斯副";
+	break;
+case 6:
+	set $@GameQz$,"以下是神秘的老人说过的话，请问哪一句出错了？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"传说中的救世主！何时才会降临我们的世界？他将死而重生，从天堂降临。","普隆德拉百年来的期盼，何时才会实现？","传说中的救世主！我在此地等待着你。","我接受命运的引导，在众人之中，寻找着你!!!";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"传说中的救世主！何时才会降临我们的世界？他将死而重生，由地狱归来。","米德加尔特王国千年来的期盼，何时才会实现？","传说中的救世主！我在此地等待着你。","我接受命运的引导，在众人之中，寻找着你!!!";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"传说中的救世主！何时才会降临我们的世界？他将死而重生，由地狱归来。","普隆德拉百年来的期盼，何时才会实现？","传说中的救世主！我在这里等你降临。","我接受命运的引导，在众人之中，寻找着你!!!";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"传说中的救世主！何时才会降临我们的世界？他将死而重生，由地狱归来。","普隆德拉百年来的期盼，何时才会实现？","传说中的救世主！我在此地等待着你。","我接受索尔的指引，在众人之中，寻找着你!!!";
+	break;
+case 7:
+	set $@GameQz$,"下列有关卡片的说明何者有错或是不完整？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"小鸡卡片功效为 Str+1","盗  卵卡片功效为 Mhp+400","白蚁幼  卡片功效为 Int+1 Msp+10","魔菇卡片功效为 Vit+2";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"僵  卡片装备位置为 盾牌","草精卡片装备位置为 披肩","帕莎纳卡片装备位置为盔甲","狄奥斯卡片装备位置为 武器";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"安毕斯卡片功效为 受到天使系怪物攻击时减少30%伤害","艾吉欧蜈蚣卡片功效为 盔甲毒属性 Def+1","黄金  卡片功效为 避免被施展任何魔法(包括治疗术在内)","虎王卡片效果为 无限「霸体」技能 Mhp25%减少";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"巨石怪卡片装备位置为 武器","野猪卡片装备位置为 盔甲","绿棉  卡片装备位置为 武器","蛋壳小鸡卡片装备位置为 武器";
+	break;
+case 8:
+	set $@GameQz$,"下列有关草叶的叙述何者正确？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"重量10","可以减少植物系敌人5%的伤害","只有一转职业才能装备","红草会掉落";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"黄草会掉落","没有防御力","只有二转职业才能装备","位置 头中下";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"所有职业都可以装备","重量20","含在嘴里，会感到随风飘荡，到处流浪的感觉。","可以增加对植物系敌人3%的伤害";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"防御力1","光芒草会掉落","白草会掉落","所有怪物中只有3种怪会掉落";
+	break;
+case 9:
+	set $@GameQz$,"请问华丽金属无法由下列哪一种怪物获得？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"圣天使波利","狼人","诺可伊","幽灵波利";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"天使波利","魔羌","黄金  ","邪恶箱";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"巴风特","邪恶箱","杰洛米","兽人腐  ";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"狼人","兽人腐  ","光芒草","黑暗之王";
+	break;
+case 10:
+	set $@GameQz$,"请问关於精练NPC的叙述何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"斐杨的精炼师名字叫做夏金","梦罗克的精炼师名字叫做亚拉甘","艾尔贝塔的精炼师名字叫做弗雷德利 贺乐曼孙","朱诺的精炼师名字叫做尤思特";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"朱诺的精炼师名字叫做尤思特","艾尔贝塔的精炼师名字叫做卡拉曼莉斯","斐杨的精炼师名字叫做安东尼奥","普隆德拉的精炼师名字叫做忽克连";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"普隆德拉的精炼师名字叫做忽克连","艾尔贝塔的精炼师名字叫弗雷德利 贺乐曼孙","朱诺的精炼师名字叫做艾尔来特","梦罗克的精炼师名字叫做亚拉甘";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"斐杨的精炼师名字叫做安东尼","朱诺的精炼师名字叫做尤思特","艾尔贝塔的精炼师名字叫做弗雷德利 贺乐曼孙","普隆德拉的精炼师名字叫做忽连克";
+	break;
+case 11:
+	set $@GameQz$,"请问关於天使耳环的叙述何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"等级40以上的人才能装备","初心者可以装备","装备位置为头中","怪物不会掉落此物品";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"制作的材料之中需要妖精长耳朵头饰","LUK+1 AGI+1","模仿天使翅膀制作的耳饰，象徵神圣的力量","制作的材料中需要天使法圈";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"AGI+0","STR+1","仿照天使玻利的样子制作而成的头饰，象徵守护他人的心。","重量10";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"防御力1","等级70以上的人才能装备","重量10","除了初心者以外的职业都可以装备";
+	break;
+case 12:
+	set $@GameQz$,"请问关於骨制头盔的叙述何者正确？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"以骨头制成相当坚硬的头具。虽然戴起来相当重且费力，但是拥有卓越的防御力。","受到黑暗属性攻击时增加5%伤害值","需求等级80","所有的一转职业皆无法装备";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"只有等级80以上，且必须是剑士系列才能装备。","需求等级70","重量90","以骨头制成相当坚硬的头具。戴起来相当轻便，而且拥有卓越的防御力。";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"迷幻之王不会掉落此物品","黑暗之王不会掉落此物品","法老王不会掉落此物品","工会箱不会掉落此物品";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"只有等级70以上的剑士系列才能装备。","以卡格利斯的骨头制成相当坚硬的头具。虽然戴起来相当重且费力，但是拥有卓越的防御力。","攻击黑暗属性怪物时时增加15%伤害值","精练到+10防御力可达15";
+	break;
+case 13:
+	set $@GameQz$,"红色魔力矿石不能由下列何者获得？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"玛勒盗  ","盗  卵","卡浩","梅纳海葵";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"单眼  ","伞蜥","狂暴恶灵","狂暴伞蜥";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"狂暴铁蝎","伪天使","绿腐  ","卷甲  ";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"浮勒盗  ","恶灵","腐  首领","恶灵";
+	break;
+case 14:
+	set $@GameQz$,"下列何者是邪骸兽人的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"死人遗骨","神之金属原石","万灵药","万能药水";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"万灵药","绿色药水","铝","邪骸兽人战士卡片";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"亡者遗物","1s毁灭之斧","铝原石","兽人卡片";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"红色药水","神之金属","死人遗物","2s毁灭之斧";
+	break;
+case 15:
+	set $@GameQz$,"下列哪种怪物不会掉落神之金属？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"哥布灵","直升机哥布灵","行刑者","血腥骑士";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"水灵龟","岩石龟","蓝鼠","虎蜥人";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"怨灵武士","圣天使波利","天使玻利","狂暴米诺斯";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"钟怪","艾斯恩魔女","裘卡","弑神者";
+	break;
+case 16:
+	set $@GameQz$,"下列何者是狄奥斯的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"人鱼嘴巴","菠色克药水","铝","人鱼之泪";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"白色药水","神之金属原石","卡勒波迪药水","觉醒药水";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"人鱼之哀","神之金属","水灵原石","铝原石";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"集中药水","水灵矿石","人鱼之心","帝特立米药水";
+	break;
+case 17:
+	set $@GameQz$,"下列何者是狂暴绿绵  的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"1S无边帽","毛","绿色药水","星星的粉末";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"3S木锤","布里刊","黄色药水","绿色药草";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"4S木锤","0S无边帽","星星的角","绿色药水";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"毛","土灵矿石","叁叶幸运草","蓝色药水";
+	break;
+case 18:
+	set $@GameQz$,"下列何者是邪灵魔导士的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"撕裂的卷轴","老旧卷轴","2S言灵魔杖","回忆书签";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"圣杖 英灵","大巫师之杖","破旧的卷轴","破旧卷轴";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"3S智慧魔杖","1S言灵魔杖","灵魂之杖","魔法书";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"圣言之书","骷髅魔杖","破旧魔法图","老旧魔法书";
+	break;
+case 19:
+	set $@GameQz$,"请问下列哪个NPC不是位於克魔岛";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"德邱大婶","林达","卢哈","阿希娜 斯诺特拉";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"爱默蓝汉它斯","伯克纳德"," 阿伊欧乐","赫拉丽丝";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"露奇特","雷依基","迪思恩","乌兹德";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"马卡刍","戚致理","帕帕亚","马雷克汉森";
+	break;
+case 20:
+	set $@GameQz$,"下列何者是白草的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"西纳雷花","曼特花","草叶","幻想花";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"哀唱草","鳞片梗","茉莉花","天地树叶子";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"野生花","捧花","芦荟叶子","呢喃花";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"哀唱草","花束","草叶","青嫩毒草";
+	break;
+case 21:
+	set $@GameQz$,"下列何者是光芒草的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"天地树?","芦荟叶子","草叶","神之金属";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"蜂胶","华丽金属","花叶","西纳雷花";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"蜂胶","曼特花","幻想花","哀唱草";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"呢喃花","草叶","哀唱草","蜂蜜";
+	break;
+case 22:
+	set $@GameQz$,"下列何者是九尾狐的掉落物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"神秘箱子","蜂蜜","1S皮制外套","狐狸皮革";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"蜂蜜","蜂胶","神秘紫箱","1S毛皮大衣";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"弹珠","枯木汁","神之金属原石","九尾狐卡片";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"狐狸皮革","动物皮革","铝原石","玻璃珠";
+	break;
+case 23:
+	set $@GameQz$,"下列有关卡片附加於装备前的名字，何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"弑神者卡片 抓狂的","狄奥斯卡片 水生的","苍蝇 发光二极体","德古拉男爵卡片 心灵的";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"乌贼卡片 魔神之","兽人腐  卡片 腐烂的","  神官卡片 致命的","僵  卡片 护身符的";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"蚂蚁卵卡片 佳的","邪骇战士卡片 敏的","麦斯特卡片 有害的","蛋壳小鸡卡片 冲的";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"蛇女伊丝卡片 神圣的","弑神者卡片 发疯的","卡浩卡片 下之","傀儡娃娃卡片 玩偶之";
+	break;
+case 24:
+	set $@GameQz$,"下列魔物中HP最高的是？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"兽人女战士","兽人战士","兽人腐  ","巧克猴";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"绿棉  ","树精","苍蝇","秃鹰";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"绿腐  ","木乃伊","赤苍蝇","黑蛇";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"乌龟将军","俄赛里斯","法老王","巴风特";
+	break;
+case 25:
+	set $@GameQz$,"请选出下列魔物中，属性与其他不同者？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"刺刀哥布灵","钓鱼河童","鬼女","卡那多斯";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"流氓","小恶魔","米杜沙","恶云仙人";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"玛勒盗  ","白鼠","绿饼人","吸血蝙蝠";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"猴桃木","兽人女战士","野猪","钟怪";
+	break;
+case 26:
+	set $@GameQz$,"下列有关属性的攻击力加乘，何者错误？(攻方属性-->守方属性 加乘伤害)";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"不死-->地2 100%","不死-->圣1 100%","不死-->  1 miss","不死-->不死1 miss";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"水-->不死2 100%","水-->火2 150%","水-->毒4 75%","水-->风2 25%";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"  -->火4 75%","  -->  1 miss","  -->不死4 75%","  -->念4 100%";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"念-->火1 miss","念-->不死3 175%","念-->圣3 25%","念-->毒2 50%";
+	break;
+case 27:
+	set $@GameQz$,"请问下列地图的俗称以及正式中文名称的配对，何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"斐杨5F(pay_dun04)：僵尸洞","人面3F(in_sphinx3)：史芬克斯 密穴","克魔岛西边的洞窟：西边 洞穴 加露","吉芬塔地下1F(gef_dun00)：吉芬 地下 密穴";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"斐杨5F(pay_dun04)：地下废弃村落","人面3F：史帝芬斯 密穴","克魔岛东边的洞窟：东边 洞穴 马吾","吉芬塔地下2F(gef_dun01)：吉芬 地下 密穴";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"斐杨3F(pay_dun02)：斐杨 地下","火洞：诺可罗德","海洞5F(iz_dun04)：海底 遗迹","矿坑：妙勒尼 废弃矿场";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"海洞1F(iz_dun00)：海底 洞窟","蚁洞：蚂蚁 地狱","克魔岛北边的洞窟：北边 洞穴 卢安达","火洞：熔岩 洞窟";
+	break;
+case 28:
+	set $@GameQz$,"请问下列地图的俗称以及正式中文名称的配对，何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"吉芬塔地下3F(gef_dun02)：吉芬 地下 密穴","矿坑：妙勒尼 废弃矿场","人面3F(in_sphinx3)：史帝芬斯 密穴","矿坑：妙勒尼 废弃矿场";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"蚁洞：蚂蚁 地狱","斐杨5F(pay_dun04)：斐杨 地下","海洞5F(iz_dun04)：海底 洞窟","金二：金字塔 迷宫";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"斐杨3F：斐杨 地下","吉芬塔地下2F(gef_dun01)：吉芬 地下 密穴","蚁洞：蚂蚁 洞窟","克魔岛西边的洞窟：西边 洞穴 加露";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"克魔岛北边的洞窟：北边 洞穴 卢安达","火洞：诺可罗德","金字塔地下2F(moc_pryd2)：金字塔 迷宫","克魔岛西边的洞窟：西边 洞穴 马吾";
+	break;
+case 29:
+	set $@GameQz$,"请问下列地图的俗称以及正式中文名称的配对，何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"欧洞：兽人 洞窟","昆仑1F(gon_dun01)：西王母神殿","龟岛4F(tur_dun04)：旧良宫","长老树精区：普隆德拉 区域";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"昆仑2F(gon_dun02)：神仙的围棋台","斐杨长老树精区：斐杨 丛林","龟岛2F(tur_dun02)：乌龟岛 密穴","兽人村(英雄出现的地图)：西边 兽人村落";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"昆仑3F(gon_dun03)：武陵道院","龟岛1F(tur_dun01)：乌龟岛","波利岛：波利 岛屿","克岛灯塔：发乐斯 灯塔岛";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"波利岛：苏克拉特 沙漠","斐杨长老树精区：斐杨 树林","龟岛3F(tur_dun03)：乌龟村","克岛灯塔：克魔岛 灯塔";
+	break;
+case 30:
+	set $@GameQz$,"请问下列地图的俗称以及正式中文名称的配对，何者错误？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"克魔岛北边的洞窟：北边 洞穴 加露","欧洞：兽人地下洞窟","龟岛3F：乌龟村","昆仑1F(gon_dun01)：西王母神殿";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"金字塔地下2F(moc_pryd2)：金字塔 迷宫","昆仑1F(gon_dun01)：武陵道院","龟岛4F(tur_dun04)：旧良宫","克岛灯塔：发乐斯 灯塔岛";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"昆仑3F(gon_dun03)：武陵道院","吉芬塔地下2F：吉芬 地下 密穴","龟岛2F(tur_dun02)：乌龟岛 洞窟","克魔岛东边的洞窟：东边 洞穴 马吾";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"克魔岛北边的洞窟：北边 洞穴 卢安达","克魔岛西边的洞窟：西边 洞穴 加露","龟岛4F(tur_dun04)：旧良宫","昆仑1F(gon_dun01)：圣王母圣殿";
+	break;
+case 31:
+	set $@GameQz$,"下列何者不是宠物波利的台词？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"痛快!全是不堪一击的废物啊!哈哈!","ROO~有种果汁真好喝~","哈啾!天气变凉罗!","还在发呆呀!赶快练功准备新二转哦!";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"开香槟庆祝吧","给我一杯新鲜果汁!均衡一下!","嘿呀!主人真赞!","天下第一强者在这啦!";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"你真是个大好人啊^^","主人, 你看那里?!","衣服有点大啊.","你们好弱,完全不是主人的对手!";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"别以为你是睡美人!快醒醒吧!","骑士和十字军?你觉得谁比较强呀?","哇咧!别突然出现吓我啦!","一起吃吧!这可是你的荣幸哦!";
+	break;
+case 32:
+	set $@GameQz$,"下列何者不是宠物波波利的台词？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"主人，我的卡片要插在夹子上才可以哦...","好险!偶差一点就变成饿死鬼波利了@@","气死我也!现在才上菜@@","怪物什麽时候才清光啊!肚子好饿哦";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"主人，您好像已经趴了很多次喔~","好呀!十年苦练无人问,一举升级天下知!","天堂有路您不走，地狱无门您偏闯","没关系,失败为成功之母";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"奇怪?我饿过头了吗?怎麽眼前好多食物在飞","嘘~嘘~我在练习吟游诗人的吹口哨技能","昏天暗地，征战一番苦尽甘来，佩服!佩服!","嘿嘿，波波利果然是主人的幸运物";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"我要把眼睛睁大一点看!","能当主人的宠物是很幸福的一件事","铁沙掌!六合拳!连环全身掌!!通通给我上呀!","生不带来,死不带去!所以主人你自己走吧!";
+	break;
+case 33:
+	set $@GameQz$,"下列何者不是宠物僵  的台词？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"主人和我真是心灵相通,知道我在想什麽...","危险罗!该喝药水还是得喝...","哇哇!怎麽丢下人家就走啦!","有纸巾吗?我要擦擦嘴^^";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"看吧!这就是一直不给我吃东西的结果!","魔物走开...不要欺负我们家主人.","打怪归打怪，也记得让可爱的我吃些东西吧!","主人别担心,我不会弃您而去的";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"现在有妖道陪着我了，感觉不这麽孤单了!","我不喜欢太亮的地方!","快点回来吧~我一个人在这儿会无聊哦!","发了夏伤的芽，开了叹息的花，在多心的园地里，任它恣意的长大...";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"您好!想不想像我这样跳跳跳呀^^","少年不识愁滋味，爱上层楼!爱上层楼!","快!暂时停止呼吸!......哇!没有用!","主人您有什麽烦恼也可以说给我听听啊!";
+	break;
+case 34:
+	set $@GameQz$,"下列何者不是宠物鬼女的台词？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"嫩嫩入口好消化，口齿留香。","呵呵...正好有点饿了..","淑女即使肚子饿了，吃东西仍然要优雅又端庄","您看起来似乎很虚弱喔,喝点水歇息歇息吧";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"主人这样不行喔!请再加油^^","给我一杯柠檬茶!我要做蜂蜜柠檬茶喝^^","主人可以买个卡普拉发圈给我吗?这样我就不怕魔法伤害哩^^","别难过,等会我们又可以见面啦";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"别难过,等会我们又可以见面啦","以前的我实在太凶了,从现在起我会更温柔的对待您地^^","早点回来吧!我等你!","恭喜^^来!我在空中跳舞给您看!";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"不要被我华丽的身影所迷惑罗!","主人要坚强撑下去，人家会一直陪着你的","传说中的天空之城如果真在天上,那我可以飞上去罗^^","你看起来不大对劲啊!先去一旁休息吧!";
+	break;
+case 35:
+	set $@GameQz$,"下列何者不是宠物妖道的台词？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"只有在趴掉的时後才会体会活着的快乐!偶没说错吧!","这麽晚才  我,难道你是嫉妒我的美丽,企图饿死我吗?","除了我的潇  外,食物就是我的第二最爱^_^","嘿嘿!别被我的华丽身影迷惑住哦!";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"嘿嘿!这里让我表演就好!你去帮我准备食物吧!","主人刚刚那招乱猛的说!","啧!要是我吃饱的话,这些嫩角色根本不算什麽!","你先躺一下,我先去找吃的哦!";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"不错哦!越来越知道我的需求!","你们全上吧!让我享受杀戮快感吧!别欺负命危的主人","如果有饭後甜点更好唷~","铃~铃~铃~铃~安息吧!";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"我会烧纸钱给你的......啊!烧信用卡就可以了嘛!","波!你看我飞吻一出,旁人立刻迷倒在地^^","给我一杯新鲜果汁!均衡一下!","孤独的修行者...我想这是在形容武道家这个职业吧!";
+	break;
+case 36:
+	set $@GameQz$,"以一般精练师而言，请问有关精练的机率叙述何者正确？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"除了武器Lv.1之外，其他的装备由+8冲+9的机率都一样","忽克连由於会私藏精练成功的装备，所以冲过的机率比较低","精练武器都是使用神之金属","武器Lv.3由+6冲+7与+7冲+8的机率一样";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"防具一口气冲到+8的机率为2.19%","防具一口气冲到+8的机率为1.92%","防具一口气冲到+8的机率为1.95%","防具一口气冲到+8的机率为2.91%";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"安全鞋可以安全精练到+4","圣耀之盾可以安全精练到+4","神秘的水果皮帽可以安全精练到+4","生存斗篷可以安全精练到+4";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"所有武器都能安全冲到+4","所有盾都能安全冲到+4","所有披肩都能安全冲到+4","所有盔甲都能安全冲到+4";
+	break;
+case 37:
+	set $@GameQz$,"法王路易十四被砍头后他的儿子当了什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"孤儿","傀儡","平民","路易十五";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"路易十五","孤儿","傀儡","平民";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"平民","路易十五","孤儿","傀儡";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"傀儡","平民","路易十五","孤儿";
+	break;
+case 38:
+	set $@GameQz$,"世界上什么没有标价？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"情意","粮食","钞票","人";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"人","情意","粮食","钞票";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"钞票","人","情意","粮食";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"粮食","钞票","人","情意";
+	break;
+case 39:
+	set $@GameQz$,"每个人身上什么东西能大能小？？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"心眼儿","嘴巴","Man的那个东西！·#￥%…—*+","心脏";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"心脏","Man的那个东西！·#￥%…—*+","嘴巴","眼睛";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"眼睛","心脏","脾气","嘴巴";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"嘴巴","Woman的那个东西！·#￥%…—*+","心脏","瞳孔";
+	break;
+case 40:
+	set $@GameQz$,"2006年的元旦，所有人都在做了件非常重要的事，你还记得是什么事吗？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"呼吸","庆祝","工作","吃饭";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"吃饭","呼吸","庆祝","工作";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"工作","吃饭","呼吸","庆祝";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"庆祝","工作","吃饭","呼吸";
+	break;
+case 41:
+	set $@GameQz$,"用椰子和西瓜打头哪一个比较痛？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"头痛","椰子","榔头","都痛";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"都痛","头痛","椰子","榔头";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"榔头","都痛","头痛","椰子";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"椰子","榔头","都痛","头痛";
+	break;
+case 42:
+	set $@GameQz$,"左看像电风扇，右看像电风扇，虽然像电风扇，请问这究竟是什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"电风扇","螺旋桨","飞叶","齿轮";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"齿轮","电风扇","螺旋桨","飞叶";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"飞叶","齿轮","电风扇","螺旋桨";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"螺旋桨","飞叶","齿轮","电风扇";
+	break;
+case 43:
+	set $@GameQz$,"这道是千年难遇的RP题目！";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"没答案","没答案","没答案","没答案";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"没答案","没答案","没答案","没答案";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"没答案","没答案","没答案","没答案";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"没答案","没答案","没答案","没答案";
+	break;
+case 44:
+	set $@GameQz$,"为什么有一个人从十米高的地方不带任何安全装置跳下？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"拍戏需要","因为他是灵媒","因为他是刺客","因为地板是水泥的";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"因为地板是水泥的","因为他是跳水运动员","因为他是灵媒","因为他是刺客";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"因为他是刺客","因为地板是水泥的","在宇宙","因为他是灵媒";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"因为他是灵媒","因为他是刺客","因为地板是水泥的","不小心摔下来";
+	break;
+case 45:
+	set $@GameQz$,"小王因工作需常应酬，即使每天都很早回家，可妻子还是抱怨，这为什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"因为他每天凌晨回家","因为他妻子又神经病","以上都不对","因为他和他妻子感情不和";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"因为他和他妻子感情不和","因为他每天凌晨回家","因为他妻子又神经病","以上都不对";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"以上都不对","因为他和他妻子感情不和","因为他每天凌晨回家","因为他妻子又神经病";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"因为他妻子又神经病","以上都不对","因为他和他妻子感情不和","因为他每天凌晨回家";
+	break;
+case 46:
+	set $@GameQz$,"一个不会游泳的人掉进了水里却没有淹死，为什么？";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"上帝救了他","死海","别人救了他","有船经过";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"上帝救了他","有船经过","水比较浅","别人救了他";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"上帝救了他","有船经过","别人救了他","穿着救生衣";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"因为他已经死了","有船经过","上帝救了他","别人救了他";
+	break;
+case 47:
+	set $@GameQz$,"加热会凝固的东西是什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"蛋","氢氧化铝","碳酸钙","冰";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"碳酸钙","蛋","氢氧化铝","冰";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"冰","碳酸钙","蛋","氢氧化铝";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"氢氧化铝","冰","碳酸钙","蛋";
+	break;
+case 48:
+	set $@GameQz$,"什么英文字母最多人喜欢听呢?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"CD","VCD","DVD","DVCD";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"DVCD","CD","VCD","DVD";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"DVD","DVCD","CD","VCD";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"VCD","DVD","DVCD","CD";
+	break;
+case 49:
+	set $@GameQz$,"牙医靠什么吃饭?";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"农民","病人","嘴","上帝";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"上帝","农民","病人","嘴";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"嘴","上帝","农民","病人";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"病人","嘴","上帝","农民";
+	break;
+case 50:
+	set $@GameQz$,"你的爸爸的妹妹的堂弟的表哥的爸爸与你叔叔的儿子的嫂子是什么关系?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"亲戚","堂嫂","表嫂","姐姐";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"姐姐","亲戚","堂嫂","表嫂";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"表嫂","姐姐","亲戚","堂嫂";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"堂嫂","表嫂","姐姐","亲戚";
+	break;
+case 51:
+	set $@GameQz$,"哪项比赛是往后跑的?";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"特殊规则的跑步","跑步","拔河","网球";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"网球","特殊规则的跑步","跑步","拔河";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"拔河","网球","特殊规则的跑步","跑步";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"跑步","拔河","网球","特殊规则的跑步";
+	break;
+case 52:
+	set $@GameQz$,"什么时候最好还是要高高举起你的双手好些?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"被人拿枪指着你的头","被人魔法锁定时","你被别人打得红血了","没有选项";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"没有选项","被人拿枪指着你的头","被人魔法锁定时","你被别人打得红血了";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"你被别人打得红血了","没有选项","被人拿枪指着你的头","被人魔法锁定时";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"被人魔法锁定时","你被别人打得红血了","没有选项","被人拿枪指着你的头";
+	break;
+case 53:
+	set $@GameQz$,"什么时候有人敲门，你绝不会说请进。";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"老师家访","厕所里","推销员上门","学校里";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"学校里","老师家访","厕所里","推销员上门";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"推销员上门","学校里","老师家访","厕所里";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"厕所里","推销员上门","学校里","老师家访";
+	break;
+case 54:
+	set $@GameQz$,"明明是个近视眼，也是个出名的馋小子，在他面前放一堆书，书后放一个苹果，你说他会先看什么?";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"书","苹果","眼镜","什么也看不见";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"什么也看不见","书","苹果","眼镜";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"眼镜","什么也看不见","书","苹果";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"苹果","眼镜","什么也看不见","书";
+	break;
+case 55:
+	set $@GameQz$,"用什么可以解开所有的谜?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"答案","电脑","钥匙","大脑";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"大脑","答案","电脑","钥匙";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"钥匙","大脑","答案","电脑";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"电脑","钥匙","大脑","答案";
+	break;
+case 56:
+	set $@GameQz$,"中国人最早的姓氏是什么?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"善","禹","炎","黄";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"黄","善","禹","炎";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"炎","黄","善","禹";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"禹","炎","黄","善";
+	break;
+case 57:
+	set $@GameQz$,"两只狗赛跑，甲狗跑得快，乙狗跑得慢，跑到终点时，哪只狗出汗多?";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"甲狗","乙狗","一样多","不出汗";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"不出汗","甲狗","乙狗","一样多";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"一样多","不出汗","甲狗","乙狗";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"乙狗","一样多","不出汗","甲狗";
+	break;
+case 58:
+	set $@GameQz$,"楚楚属一个马，今年不大于20岁，他生日在三月三十日，请问是哪年的三月三十日?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"以上答案都不对","1989","1990","1991";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"1991","以上答案都不对","1989","1990";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"1990","1991","以上答案都不对","1989";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"1989","1990","1991","以上答案都不对";
+	break;
+case 59:
+	set $@GameQz$,"小明的口袋里有5张200元，他会干什么？";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"交给警察","去买彩票","去投资发大财","买+10BJL装备";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"买+10BJL装备","交给警察","去买彩票","去投资发大财";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"去投资发大财","买+10BJL装备","交给警察","去买彩票";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"去买彩票","去投资发大财","买+10BJL装备","交给警察";
+
+	break;
+case 60:
+	set $@GameQz$,"吃苹果时，吃出一条虫子，感觉很恶心，那么吃出几只虫子感觉最恶心?";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"n(n趋向于无穷大)","半只","一只","零只";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"零只","n(n趋向于无穷大)","半只","一只";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"一只","零只","n(n趋向于无穷大)","半只";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"半只","一只","零只","n(n趋向于无穷大)";
+	break;
+case 61:
+	set $@GameQz$,"小明为什么竟然能一连十几个小时不眨眼?";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"不是人","睡觉了","是超人","上帝给他力量";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"上帝给他力量","不是人","睡觉了","是超人";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"是超人","上帝给他力量","不是人","睡觉了";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"在打贝雷杰","是超人","上帝给他力量","不是人";
+	break;
+case 62:
+	set $@GameQz$,"小王中午时候去开会，为什么半个人影也没看到?";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"会所用了无影灯","没半个人影","都迟到了","会议提前了";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"会议提前了","会所用了无影灯","没半个人影","都迟到了";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"都迟到了","会议提前了","会所用了无影灯","没半个人影";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"没半个人影","都迟到了","会议提前了","会所用了无影灯";
+	break;
+case 63:
+	set $@GameQz$,"三个金“鑫”，三个水叫“淼”，三个人叫“众”，那么三个鬼应该叫什么?";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"help","ghost","shit","damn it";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"damn it","help","ghost","shit";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"deity","damn it","help","ghost";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"ghost","shit","damn it","help";
+	break;
+case 64:
+	set $@GameQz$,"船边挂着软梯，离海面0.5米，海水每小时上涨半米，几个小时海水能碰到软梯?";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"0个小时","半个小时","1个小时","不可能";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"不可能","0个小时","半个小时","1个小时";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"1个小时","不可能","0个小时","半个小时";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"半个小时","1个小时","不可能","0个小时";
+	break;
+case 65:
+	set $@GameQz$,"什么样的轮子只转不走?";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"轮胎","齿轮","风车","引擎";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"引擎","轮胎","齿轮","风车";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"风车","引擎","轮胎","齿轮";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"齿轮","风车","引擎","轮胎";
+	break;
+case 66:
+	set $@GameQz$,"半瓶酒，瓶口用软木塞塞住，不敲碎瓶子，不拔去木塞，不在塞子上钻孔的情况下，怎样最快喝光瓶子里的酒？";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"把瓶子倒过来","用吸管","借助神的力量","把塞子慢慢推到瓶中";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"把塞子慢慢推到瓶中","把瓶子倒过来","用吸管","借助神的力量";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"借助神的力量","把塞子慢慢推到瓶中","把瓶子倒过来","用吸管";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"用吸管","借助神的力量","把塞子慢慢推到瓶中","把瓶子倒过来";
+	break;
+case 67:
+	set $@GameQz$,"小王是一名优秀士兵，一天他在站岗值勤时，明明看到有敌人悄悄向他摸过来，为什么他却睁一只眼闭一只眼？";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"他是独眼龙","他在瞄准","那人是间谍","他在打瞌睡";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"他在打瞌睡","他是独眼龙","他在瞄准","那人是间谍";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"那人是间谍","他在打瞌睡","他是独眼龙","他在瞄准";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"他在瞄准","那人是间谍","他在打瞌睡","他是独眼龙";
+	break;
+case 68:
+	set $@GameQz$,"南来北往的二个人，一个挑担，一个背包，他们没争也没吵，也没有人让路，却顺利的通过了独木桥，为什么?";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"桥足够宽","因为一个人吊在桥上","因为南来北往","一人以轻工飞过";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"一人以轻工飞过","桥足够宽","因为一个人吊在桥上","因为南来北往";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"因为南来北往","一人以轻工飞过","桥足够宽","因为一个人吊在桥上";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"因为一个人吊在桥上","因为南来北往","一人以轻工飞过","桥足够宽";
+	break;
+case 69:
+	set $@GameQz$,"有一位老太太上了公车，为什么没人让座？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"车子上面没装座位","老太太太年轻了","老太太长得太丑了","老太太是售票员";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"老太太是售票员","有空的座位","老太太太年轻了","老太太长得太丑了";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"老太太是售票员","老太太太年轻了","车上都是老婆婆","老太太长得太丑了";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"老太太长得太丑了","老太太是售票员","老太太太年轻了","车上没人";
+	break;
+case 70:
+	set $@GameQz$,"有一个人，他是你父母生的，但却不是你的兄弟姐妹，他是谁？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"你自己","你的老婆","你的身体","你弟弟";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"你弟弟","你自己","你的老婆","你的身体";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"你的身体","你弟弟","你自己","你的老婆";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"你的老婆","你的身体","你弟弟","你自己";
+	break;
+case 71:
+	set $@GameQz$,"“水蛇”“蟒蛇”“青竹蛇”哪一个比较长？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"青竹蛇","一样长","水蛇","蟒蛇";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"蟒蛇","青竹蛇","一样长","水蛇";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"水蛇","蟒蛇","青竹蛇","一样长";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"一样长","水蛇","蟒蛇","青竹蛇";
+	break;
+case 72:
+	set $@GameQz$,"古古想去书店买书，但是有本书他买不到，是什么书？";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"花花公子","语文书","数学书","秘书";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"秘书","花花公子","语文书","数学书";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"数学书","秘书","花花公子","语文书";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"语文书","数学书","秘书","花花公子";
+	break;
+case 73:
+	set $@GameQz$,"什么水取之不尽用之不竭？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"口水","海水","地下水","薪水";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"薪水","口水","海水","地下水";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"地下水","薪水","口水","海水";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"海水","地下水","薪水","口水";
+	break;
+case 74:
+	set $@GameQz$,"农民、工人、科学家都是靠什么吃饭的？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"靠嘴","靠知识","靠劳动","靠团结";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"靠团结","靠嘴","靠知识","靠劳动";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"靠劳动","靠团结","靠嘴","靠知识";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"靠知识","靠劳动","靠团结","靠嘴";
+	break;
+case 75:
+	set $@GameQz$,"小明一直在吹电扇，可是他还是满头大汗，为什么？";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"他同时还在运动","电扇坏了","他在吹电扇","温度过高";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"温度过高","他同时还在运动","电扇坏了","他在吹电扇";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"他在吹电扇","温度过高","他同时还在运动","电扇坏了";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"电扇坏了","他在吹电扇","温度过高","他同时还在运动";
+	break;
+case 76:
+	set $@GameQz$,"两只鹅同时放进冰箱里一个月，一只被冻死了，一只却没有，为什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"一只是假的","一只是企鹅","活着的毛比较多","活着的企鹅在里面筑了巢";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"活着的企鹅在里面筑了巢","一只是假的","一只是企鹅","活着的毛比较多";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"活着的毛比较多","活着的企鹅在里面筑了巢","那只是被闷死的","一只是企鹅";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"一只是企鹅","活着的毛比较多","活着的企鹅在里面筑了巢","那只是被闷死的";
+	break;
+case 77:
+	set $@GameQz$,"哪种比赛输的人有奖品而赢的没有？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"划拳","耍赖的时候","输了就得死","比谁最晚到学校";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"比谁最晚到学校","划拳","耍赖的时候","输了就得死";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"输了就得死","比谁最晚到学校","划拳","耍赖的时候";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"耍赖的时候","输了就得死","比谁最晚到学校","划拳";
+	break;
+case 78:
+	set $@GameQz$,"报纸上登的消息不一定是正确的，但是有一条，却绝对不会是错误的， 是什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"年月日","天气预报","广告","头版新闻";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"头版新闻","年月日","天气预报","广告";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"广告","头版新闻","年月日","天气预报";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"天气预报","广告","头版新闻","年月日";
+	break;
+case 79:
+	set $@GameQz$,"大月有31天，小月有30天，那么一年中几个月有28天？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"12个","每4年1个","1个","阴历和阳历各有1个";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"阴历和阳历各有1个","12个","每4年1个","1个";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"1个","阴历和阳历各有1个","12个","每4年1个";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"每4年1个","1个","阴历和阳历各有1个","12个";
+	break;
+case 80:
+	set $@GameQz$,"开会时一个人和所有人都握了一次手，一共握了五十次手，那一共有多少人";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"50","51","52","49";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"49","50","51","52";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"52","49","50","51";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"51","52","49","50";
+	break;
+case 81:
+	set $@GameQz$,"动物园里谁是最高级人物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"饲养员","院长","狮子","大象";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"大象","饲养员","院长","狮子";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"狮子","大象","饲养员","院长";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"院长","狮子","大象","饲养员";
+	break;
+case 82:
+	set $@GameQz$,"明天的明天的大前天的后天是昨天的哪天？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"后天","前天","明天","昨天";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"昨天","后天","前天","明天";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"明天","昨天","后天","前天";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"前天","明天","昨天","后天";
+	break;
+case 83:
+	set $@GameQz$,"什么东西越生气，它就越大？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"脾气","气球","火","氧气瓶";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"氧气瓶","脾气","气球","火";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"火","氧气瓶","脾气","气球";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"气球","火","氧气瓶","脾气";
+	break;
+case 84:
+	set $@GameQz$,"用来记载音符的五条平行横线叫什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"五线谱","五行线","五音线","乐谱";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"乐谱","五线谱","五行线","五音线";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"五音线","乐谱","五线谱","五行线";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"五行线","五音线","乐谱","五线谱";
+	break;
+case 85:
+	set $@GameQz$,"小A给小B写情书，小B看了很不高兴，你猜小A情书上写了什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"敬爱的","可爱的","亲爱的","最爱的";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"最爱的","敬爱的","可爱的","亲爱的";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"亲爱的","最爱的","敬爱的","可爱的";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"可爱的","亲爱的","最爱的","敬爱的";
+	break;
+case 86:
+	set $@GameQz$,"把一件蓝色的衣服放到黄河里，会发生什么状况？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"没什么事","衣服变成绿色了","衣服变成黄色了","河水变成蓝色的了";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"河水变成蓝色的了","没什么事","衣服变成绿色了","衣服变成黄色了";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"衣服变成黄色了","河水变成蓝色的了","没什么事","衣服变成绿色了";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"衣服变成绿色了","衣服变成黄色了","河水变成蓝色的了","没什么事";
+	break;
+case 87:
+	set $@GameQz$,"有9个孩子，但只有7个苹果。应该怎么平分？";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"分成9份","榨成果汁","大的应该让小的","年龄大的少吃点";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"年龄大的少吃点","分成9份","榨成果汁","大的应该让小的";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"大的应该让小的","年龄大的少吃点","分成9份","榨成果汁";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"榨成果汁","大的应该让小的","年龄大的少吃点","分成9份";
+	break;
+case 88:
+	set $@GameQz$,"有种动物，大小像只猫，长相又像虎，这是什么动物？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"小老虎","小狮子","豹子","狼";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"狼","小老虎","小狮子","豹子";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"豹子","狼","小老虎","小狮子";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"小狮子","豹子","狼","小老虎";
+	break;
+case 89:
+	set $@GameQz$,"猴子每分钟能掰一个玉米，假设在一个足够大的果园里，十一只猴子十分钟能掰几个玉米？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"一个都不能掰","能掰十一乘以十个（110个）","能全部掰下来","能掰十一乘以十一个";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"能掰十一乘以十一个","一个都不能掰","能掰十一乘以十个（110个）","能全部掰下来";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"能全部掰下来","能掰十一乘以十一个","一个都不能掰","能掰十一乘以十个（110个）";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"能掰十一乘以十个（110个）","能全部掰下来","能掰十一乘以十一个","一个都不能掰";
+	break;
+case 90:
+	set $@GameQz$,"小红口袋里原有１０个铜钱，但它们都掉了，请问小红口袋里还剩下什么？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"什么也没有","一只铜钱","一只手","一个洞";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"一个洞","什么也没有","一只铜钱","一只手";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"一只手","一个洞","什么也没有","一只铜钱";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"一只铜钱","一只手","一个洞","什么也没有";
+	break;
+case 92:
+	set $@GameQz$,"三个孩子吃六个饼要用六分钟，九十个孩子吃九十个饼要用多少时间？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"至少半小时","三分钟","一分钟","两分钟";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"两分钟","至少半小时","三分钟","一分钟";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"一分钟","两分钟","至少半小时","三分钟";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"三分钟","一分钟","两分钟","至少半小时";
+	break;
+case 93:
+	set $@GameQz$,"一个伟大的男人和一只伟大的公狮子同一天诞生，有什么关系？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"没关系","都是动物","世界上多了两个生命","都是上帝的儿子";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"都是上帝的儿子","没关系","都是动物","世界上多了两个生命";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"世界上多了两个生命","都是上帝的儿子","没关系","都是动物";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"都是动物","世界上多了两个生命","都是上帝的儿子","没关系";
+	break;
+case 94:
+	set $@GameQz$,"哪一件衣服最耐穿？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"不喜欢的那件","帆布做的","上面有Made in China记号的","宇航服";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"宇航服","不喜欢的那件","帆布做的","上面有Made in China记号的";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"上面有Made in China记号的","宇航服","不喜欢的那件","帆布做的";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"帆布做的","上面有Made in China记号的","宇航服","不喜欢的那件";
+	break;
+case 95:
+	set $@GameQz$,"一头牛头朝南，它向右转365度，然后向左转173度，再向左转28度，这时它尾巴朝哪？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"下","上","左","右";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"右","下","上","左";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"右","左","西","东";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"北","左","右","南";
+	break;
+case 96:
+	set $@GameQz$,"为什么有家医院从不给人看病？";
+	if (.@QZnum == 1) setarray $@NumAns$[1],"宠物医院","修道院","神经病医院","医务所";
+	if (.@QZnum == 2) setarray $@NumAns$[1],"医务所","宠物医院","修道院","神经病医院";
+	if (.@QZnum == 3) setarray $@NumAns$[1],"神经病医院","医务所","宠物医院","修道院";
+	if (.@QZnum == 4) setarray $@NumAns$[1],"修道院","神经病医院","医务所","宠物医院";
+	break;
+}
+	set $@GameAns,.@QZnum;
+	return;
+}

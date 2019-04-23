@@ -12481,12 +12481,12 @@ int skill_castend_pos2(struct block_list* src, int x, int y, uint16 skill_id, ui
 	case SU_LOPE:
 		{
 			uint8 dir = map_calc_dir(src, x, y);
-
+			
 			// Fails on noteleport maps, except for GvG and BG maps
-			if (map_getmapflag(src->m, MF_NOTELEPORT) && !(map_getmapflag(src->m, MF_BATTLEGROUND) || map_flag_gvg2(src->m))) {
-				x = src->x;
-				y = src->y;
-			}
+			//if (map_getmapflag(src->m, MF_NOTELEPORT) && !(map_getmapflag(src->m, MF_BATTLEGROUND) || map_flag_gvg2(src->m))) {
+			//	x = src->x;
+			//	y = src->y;
+			//}
 
 			clif_skill_nodamage(src, src, skill_id, skill_lv, 1);
 			if (!map_count_oncell(src->m, x, y, BL_PC|BL_NPC|BL_MOB, 0) && map_getcell(src->m, x, y, CELL_CHKREACH) && unit_movepos(src, x, y, 1, 0))

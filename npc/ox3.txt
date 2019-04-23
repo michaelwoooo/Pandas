@@ -1,0 +1,1099 @@
+-	script	quizOX	-1,{
+OnStart:
+	sleep 1000;
+	set $@OXActionQuiz,$@OXActionQuiz + 1;
+	MapAnnounce "quiz_01","20秒後将进行第 " + $@OXActionQuiz + " 题，准备好了吗？",17;
+	sleep 10000;
+	MapAnnounce "quiz_01","还有10秒，请做好准备。",17;
+	sleep 10000;
+	callsub OnData;
+	MapAnnounce "quiz_01","益智问答主持人：第"+$@OXActionQuiz+"题："+$@GameQz$,15;
+	sleep 1000;
+	MapAnnounce "quiz_01","你有10秒的思考时间。",17;
+	sleep 5000;
+	MapAnnounce "quiz_01","还有5秒的思考时间，决定好你的答案了吗？",17;
+	sleep 5000;
+	MapAnnounce "quiz_01","益智问答主持人：现在公布答案。",15;
+	sleep 1000;
+	MapAnnounce "quiz_01","益智问答主持人：答案是......。",15;
+	sleep 500;
+	MapAnnounce "quiz_01","益智问答主持人："+($@GameAns?"X":"O"),15;
+	sleep 500;
+	set $@OXM,$@OXActionQuiz + 1;
+	areawarp $@QuizoxMm$[$@OXActionQuiz],$@QuizoxMXs[$@OXActionQuiz],$@QuizoxMYs[$@OXActionQuiz],$@QuizoxMXe[$@OXActionQuiz],$@QuizoxMYe[$@OXActionQuiz],"prontera",156,118;
+	if (!$@GameAns) {
+		areawarp $@QuizoxOm$[$@OXActionQuiz],$@QuizoxOXs[$@OXActionQuiz],$@QuizoxOYs[$@OXActionQuiz],$@QuizoxOXe[$@OXActionQuiz],$@QuizoxOYe[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+		areawarp $@QuizoxXm$[$@OXActionQuiz],$@QuizoxXXs[$@OXActionQuiz],$@QuizoxXYs[$@OXActionQuiz],$@QuizoxXXe[$@OXActionQuiz],$@QuizoxXYe[$@OXActionQuiz],"prontera",156,118;
+	} else {
+		areawarp $@QuizoxOm$[$@OXActionQuiz],$@QuizoxOXs[$@OXActionQuiz],$@QuizoxOYs[$@OXActionQuiz],$@QuizoxOXe[$@OXActionQuiz],$@QuizoxOYe[$@OXActionQuiz],"prontera",156,118;
+		areawarp $@QuizoxXm$[$@OXActionQuiz],$@QuizoxXXs[$@OXActionQuiz],$@QuizoxXYs[$@OXActionQuiz],$@QuizoxXXe[$@OXActionQuiz],$@QuizoxXYe[$@OXActionQuiz],$@QzStOXMp$[$@OXM],$@QzStOXPoX[$@OXM],$@QzStOXPoY[$@OXM];
+	}
+	sleep 3000;
+	if (getmapusers("quiz_01"))
+		MapAnnounce "quiz_01","益智问答主持人：OX机智问答进行至第" + $@OXActionQuiz + "题，目前场内剩下" + getmapusers("quiz_01") + "人",15;
+	else {
+		set $@GameQz$,"";
+		set $@GameAns,0;
+		announce "益智问答主持人：这次的OX机智问答最後的参加者在第 " + $@OXActionQuiz + " 题出局，无人获胜。",15;
+		set $@QuizeStart,0;
+		end;
+	}
+	sleep 5000;
+	if ($@OXActionQuiz < 7)
+		goto OnStart;
+	donpcevent "quiz1of4::OnStart";
+	end;
+
+OnData:
+	set .@QZnum,rand(2);
+	switch(rand(208))
+{
+case 0:
+	if (.@QZnum == 0)set $@GameQz$,"不卖双刃短剑的城市是普隆德拉，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"不卖双刃短剑的城市是姜饼城，对或错？";
+
+	break;
+case 1:
+	if (.@QZnum == 0)set $@GameQz$,"秘银金属盔甲重量550，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"怪物情报是巫师专有的技能，对或错？";
+
+	break;
+case 2:
+	if (.@QZnum == 0) set $@GameQz$,"剑士的技能怒爆的攻击范围为5X5格，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"剑士的技能怒爆的攻击范围为3X3格，对或错？";
+
+	break;
+case 3:
+	if (.@QZnum == 0) set $@GameQz$,"剑士的技能怒爆的攻击范围为25格，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"剑士的技能狂击的攻击范围为3X3格，对或错？";
+
+	break;
+case 4:
+	if (.@QZnum == 0) set $@GameQz$,"法师的技能心灵爆破是单目标法术，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"法师的技能火狩是火球术的前置技能，对或错？";
+
+	break;
+case 5:
+	set .@QZnum,.@QZnum+4;
+	set $@GameQz$,"法师的技能心灵爆破LV" + .@QZnum + "是圣灵召唤的前置技能，对或错？";
+	set .@QZnum,.@QZnum-4;
+	break;
+case 6:
+	set $@GameQz$,"在一般状况下弓箭手的射程比其他职业的射程多了1" + .@QZnum * 2 + "格，对或错？";
+
+	break;
+case 7:
+	set .@QZnum,rand(2)*2 + 13;
+	set $@GameQz$,"弓箭手的技能心神凝聚LV10，对素质点99+14的裸体者增加" + .@QZnum + "DEX，对或错？";
+	set .@QZnum,(.@QZnum-13)/2;
+	break;
+case 8:
+	if (.@QZnum == 0)set $@GameQz$,"RO的故事主要发生在米德加尔特王国，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"RO的故事主要发生在米德加德尔王国，对或错？";
+
+	break;
+case 9:
+	if (.@QZnum == 0)set $@GameQz$,"RO的故事中创造世界的巨人为太初巨人，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"RO的故事中创造世界的巨人为盘古巨人，对或错？";
+
+	break;
+case 10:
+	if (.@QZnum == 0)set $@GameQz$,"增加DEX会影响ASPD，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"LUK会影响掉宝率，对或错？";
+
+	break;
+case 11:
+	if (.@QZnum == 0)set $@GameQz$,"增加DEX会影响ATK，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"LUK会影响掉FLEE，对或错？";
+
+	break;
+case 12:
+	if (.@QZnum == 0)set $@GameQz$,"以属性而言，暗属性攻击可以对天使玻利造成二倍伤害，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"不管是使用任何属性的武器攻击无属性的怪物，伤害都是100%，对或错？";
+
+	break;
+case 13:
+	if (.@QZnum == 0)set $@GameQz$,"怪物波利之王的等级跟绿棉虫一样，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"波力的HP比疯兔多，对或错？";
+
+	break;
+case 14:
+	if (.@QZnum == 0)set $@GameQz$,"刺客对自己施展涂毒之後打巴风特会一直miss，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"以属性而言，圣属性攻击可以对死灵骑士造成二倍伤害，对或错？";
+
+	break;
+case 15:
+	if (.@QZnum == 0)set $@GameQz$,"除了痊愈术与时间到自动解除之外，没有办法解除晕眩状态，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"玩家若想使敌方陷入诅咒状态，只能以插上魔锅蛋卡的武器攻击，对或错？";
+
+	break;
+case 16:
+	if (.@QZnum == 0)set $@GameQz$,"祭师除了解毒以外，可以使用技能解除所有发生在玩家上异常状态，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用万能药可以解除睡眠状态，对或错？";
+
+	break;
+case 17:
+	if (.@QZnum == 0)set $@GameQz$,"兽牙怪会掉落捕捉鬼女的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"行邢者会掉落捕捉鬼女的道具，对或错？";
+
+	break;
+case 18:
+	if (.@QZnum == 0)set $@GameQz$,"宠物土人的食物是魔物饲料，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"香蕉是捕捉溜溜猴的道具，对或错？";
+
+	break;
+case 19:
+	if (.@QZnum == 0)set $@GameQz$,"魔物之证是捕捉兽人战士的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"魔物之证是捕捉兽人战士长的道具，对或错？";
+
+	break;
+case 20:
+	if (.@QZnum == 0)set $@GameQz$,"蝎子会掉落捕捉绿苍蝇的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"DEX影响了回避率，对或错？";
+
+	break;
+case 21:
+	if (.@QZnum == 0)set $@GameQz$,"魔物信件是抓僵尸的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"魔物信件是抓妖道的道具，对或错？";
+
+	break;
+case 22:
+	if (.@QZnum == 0)set $@GameQz$,"妖道与僵尸生前的关系是邻居姊姊与弟弟，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"妖道与僵尸生前的关系是恋人，对或错？";
+
+	break;
+case 23:
+	if (.@QZnum == 0)set $@GameQz$,"鬼女认识妖道，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"妖道与鬼女生前的关系是恋人，对或错？";
+
+	break;
+case 24:
+	if (.@QZnum == 0)set $@GameQz$,"彩色萝卜是抓疯兔的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"红萝卜是抓疯兔的道具，对或错？";
+
+	break;
+case 25:
+	if (.@QZnum == 0)set $@GameQz$,"营养蚯蚓是抓大嘴鸟的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"变态蚯蚓是抓大嘴鸟的道具，对或错？";
+
+	break;
+case 26:
+	if (.@QZnum == 0)set $@GameQz$,"变态蚯蚓是抓小鸡的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"营养蚯蚓是抓小鸡的道具，对或错？";
+
+	break;
+case 27:
+	if (.@QZnum == 0)set $@GameQz$,"变态蚯蚓是抓小鸡的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"营养蚯蚓是抓小鸡的道具，对或错？";
+
+	break;
+case 28:
+	if (.@QZnum == 0)set $@GameQz$,"心爱女人的回忆是抓妖道的道具，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"心爱女人的回忆是抓僵尸的道具，对或错？";
+
+	break;
+case 29:
+	if (.@QZnum == 0)set $@GameQz$,"斧头对小型怪伤害减半，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"斧头对小型怪伤害减为75%，对或错？";
+
+	break;
+case 30:
+	if (.@QZnum == 0)set $@GameQz$,"枪对大型怪伤害不会增加，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"骑鸟拿枪对小型怪伤害不会减少，对或错？";
+
+	break;
+case 31:
+	if (.@QZnum == 0)set $@GameQz$,"不论任何法杖都有MATK+15%的能力加乘，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"法杖的普通攻击对大型怪的攻击力为75%，对或错？";
+
+	break;
+case 32:
+	if (.@QZnum == 0)set $@GameQz$,"RO的全文是Ragnarok Online，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"RO的全文是Regolark Online，对或错？";
+
+	break;
+case 33:
+	if (.@QZnum == 0)set $@GameQz$,"天空之城-朱诺位於尤配擂斯，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"天空之城-朱诺位於米德加尔特，对或错？";
+
+	break;
+case 34:
+	if (.@QZnum == 0)set $@GameQz$,"梦幻之岛-克魔岛位於洞穴中，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"梦幻之岛-克魔岛是练金术士转职的地方，对或错？";
+
+	break;
+case 35:
+	if (.@QZnum == 0)set $@GameQz$,"魔幻之都─吉芬位於首都的西北方，传说中这个城市的地底下有一个已灭亡的王国，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"魔幻之都─吉芬位於首都的西北方，与尤配擂斯共和国为邻，对或错？";
+
+	break;
+case 36:
+	if (.@QZnum == 0)set $@GameQz$,"边境之都─梦罗克，大家谣传着邪恶之神落基的暗杀者秘密组织密藏在这个城市中的某处，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"边境之都─梦罗克，大家谣传着雷神索尔的暗杀者秘密组织密藏在这个城市中的某处，对或错？";
+
+	break;
+case 37:
+	if (.@QZnum == 0)set $@GameQz$,"边境之都─梦罗克，棉花工业在这里获得高度发展，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"边境之都─梦罗克是刺客转职的地方，对或错？";
+
+	break;
+case 38:
+	if (.@QZnum == 0)set $@GameQz$,"运河之都─艾尔帕兰，在原作中是shu-bal-chi-balde共和国最南边的城市，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"艾尔帕兰是贤者的转职场所，对或错？";
+
+	break;
+case 39:
+	if (.@QZnum == 0)set $@GameQz$,"港口之都─艾尔贝塔是米德加尔特王国的贸易中心，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"港口之都─艾尔贝塔可以经过坐船的方式通往世界各地，对或错？";
+
+	break;
+case 40:
+	if (.@QZnum == 0)set $@GameQz$,"山岳之都─斐扬是制作各种果汁的地方，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"港口之都─艾尔贝塔可以经过坐船的方式直达骷髅岛，对或错？";
+
+	break;
+case 41:
+	if (.@QZnum == 0)set $@GameQz$,"山岳之都─斐扬是传说中的彩虹故乡，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"山岳之都─斐扬是传说中的云朵故乡，对或错？";
+
+	break;
+case 42:
+	if (.@QZnum == 0)set $@GameQz$,"乌龟岛是只要你搭船靠近的话，就会看到哪里被一团什麽都看不见的浓雾包围住的岛屿，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"乌龟将军出现在乌龟岛地下最底层，对或错？";
+
+	break;
+case 43:
+	if (.@QZnum == 0)set $@GameQz$,"巫师的技能暗之障壁Lv6时, 消耗40SP跟回避次数7次，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"当初学者转职成魔法师时, 形成3号混合液的矿石是红色魔力矿石，对或错？";
+
+	break;
+case 44:
+	if (.@QZnum == 0)set $@GameQz$,"当初学者转职成魔法师时, 形成3号混合液的矿石是蓝色魔力矿石，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"吉芬道具店在吉芬塔为中心6点钟方向，对或错？";
+
+	break;
+case 45:
+	if (.@QZnum == 0)set $@GameQz$,"吉芬道具店在吉芬塔为中心8点钟方向，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"吉芬道具店在吉芬塔为中心11点钟方向，对或错？";
+
+	break;
+case 46:
+	if (.@QZnum == 0)set $@GameQz$,"铁匠制作升龙拳套需要的神之金属比龙爪拳套多，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"水球术只有站在水面上才能施放，对或错？";
+
+	break;
+case 47:
+	if (.@QZnum == 0)set $@GameQz$,"吉芬的铁匠族人最多，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"艾尔贝塔的铁匠族人最多，对或错？";
+
+	break;
+case 48:
+	if (.@QZnum == 0)set $@GameQz$,"有洞的笨拙短剑可以从蜂兵身上获得，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有洞的笨拙短剑可以从沙漠之狼身上获得，对或错？";
+
+	break;
+case 49:
+	if (.@QZnum == 0)set $@GameQz$,"虫蛹可以看到，隐匿／伪装的盗贼，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"木乃伊可以看到，隐匿／伪装的盗贼，对或错？";
+
+	break;
+case 50:
+	if (.@QZnum == 0)set $@GameQz$,"舞娘的舞蹈中，女神之吻会增加必杀攻击，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"舞娘的舞蹈中，为你服务会史敌方受到SP伤害，对或错？";
+
+	break;
+case 51:
+	if (.@QZnum == 0)set $@GameQz$,"到克魔岛之前，位於发乐斯灯塔岛，东北方的海边地名是克克魔 海边，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"到克魔岛之前，位於发乐斯灯塔岛，东北方的海边地名是克幕克 海边，对或错？";
+
+	break;
+case 52:
+	if (.@QZnum == 0)set $@GameQz$,"克魔岛赌博场的负责人是 无，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"克魔岛赌博场的负责人是 水伊乐娜，对或错？";
+
+	break;
+case 53:
+	if (.@QZnum == 0)set $@GameQz$,"在舞台跳完舞之後，对舞伴没礼貌的行动是不足於当自己的舞伴而拒绝人家，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在舞台跳完舞之後，对舞伴没礼貌的行动是提议跳其它的舞蹈，对或错？";
+
+	break;
+case 54:
+	if (.@QZnum == 0)set $@GameQz$,"位於克魔岛的卡普拉正式名称是卡普拉 西部分社，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"位於克魔岛的卡普拉正式名称是卡普拉 西部服务社，对或错？";
+
+	break;
+case 55:
+	if (.@QZnum == 0)set $@GameQz$,"二级武器一口气冲到+9的成功率是4.8%，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"叁级武器一口气冲到+9的成功率是1.3%，对或错？";
+
+	break;
+case 56:
+	if (.@QZnum == 0)set $@GameQz$,"四级武器精练过+1时ATK+7，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"沙漠毒蝎是地属性怪物，对或错？";
+
+	break;
+case 57:
+	if (.@QZnum == 0)set $@GameQz$,"艾斯恩魔女是无属性怪物，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"沙漠毒蝎是毒属性怪物，对或错？";
+
+	break;
+case 58:
+	if (.@QZnum == 0)set $@GameQz$,"舞娘的练习舞蹈技能效果是增加舞蹈技能的效果，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"舞娘的练习舞蹈技能效果是重复上次舞蹈技能的效果，对或错？";
+
+	break;
+case 59:
+	if (.@QZnum == 0)set $@GameQz$,"普隆德拉的礼品商人不卖的物品是花束，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"普隆德拉的礼品商人不卖的物品是白色盘子，对或错？";
+
+	break;
+case 60:
+	if (.@QZnum == 0)set $@GameQz$,"有卖双刃短剑的城市是梦罗克，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"不卖双刃短剑的城市是吉芬，对或错？";
+
+	break;
+case 61:
+	if (.@QZnum == 0)set $@GameQz$,"鬼火会掉酒精，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"狂暴鬼火会掉酒精，对或错？";
+
+	break;
+case 62:
+	if (.@QZnum == 0)set $@GameQz$,"佑比是普隆德拉的居民，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"比娜是普隆德拉的居民，对或错？";
+
+	break;
+case 63:
+	if (.@QZnum == 0)set $@GameQz$,"佑罗是普隆德拉的居民，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"克里斯多夫是普隆德拉的居民，对或错？";
+
+	break;
+case 64:
+	if (.@QZnum == 0)set $@GameQz$,"小巴风特是会给「天地树叶子」的魔物，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"马尔杜克是会给「天地树叶子」的魔物，对或错？";
+
+	break;
+case 65:
+	if (.@QZnum == 0)set $@GameQz$,"与祭司转职没有关系的人是文强 派内迪特，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"与祭司转职没有关系的人是汤姆斯 塞尔班特斯，对或错？";
+
+	break;
+case 66:
+	if (.@QZnum == 0)set $@GameQz$,"吉芬的魔法商人不卖的物品是大衣，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"吉芬的所有商店都不卖厚刃剑，对或错？";
+
+	break;
+case 67:
+	if (.@QZnum == 0)set $@GameQz$,"最年轻的卡普拉职员的名字是德帛硫，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"最年轻的卡普拉职员的名字是泰依琳，对或错？";
+
+	break;
+case 68:
+	if (.@QZnum == 0)set $@GameQz$,"初学者转职成为魔法师时，可以成为混合剂4号的触媒的矿石是透明的宝石，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"初学者转职成为魔法师时，可以成为混合剂4号的触媒的矿石是蓝色魔力矿石，对或错？";
+
+	break;
+case 69:
+	if (.@QZnum == 0)set $@GameQz$,"与迷藏森林最近的城市是普隆德拉，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"与迷藏森林最近的城市是朱诺，对或错？";
+
+	break;
+case 70:
+	if (.@QZnum == 0)set $@GameQz$,"当魔物是不死属性Lv2时，比起火属性圣属性所增加的伤害力是50%，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"当魔物是不死属性Lv2时，比起火属性圣属性所增加的伤害力是75%，对或错？";
+
+	break;
+case 71:
+	if (.@QZnum == 0)set $@GameQz$,"不能从暗神官获得的物品是神圣之帽，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"不能从暗神官获得的物品是圣职之帽，对或错？";
+
+	break;
+case 72:
+	if (.@QZnum == 0)set $@GameQz$,"插卡而言，对恶魔型魔物最好的剑是＂交叉的″开头，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"插卡而言，对恶魔型魔物最好的剑是＂可恶的″开头，对或错？";
+
+	break;
+case 73:
+	if (.@QZnum == 0)set $@GameQz$,"不能从土人身上获得的物品是黄金锤子，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"不能从土人身上获得的物品是黄金，对或错？";
+
+	break;
+case 74:
+	if (.@QZnum == 0)set $@GameQz$,"可以对恶魔型魔物，减少伤害力的钢盾是激烈的钢盾，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"可以对恶魔型魔物，减少伤害力的钢盾是护身符的钢盾，对或错？";
+
+	break;
+case 75:
+	if (.@QZnum == 0)set $@GameQz$,"天使之护Lv. 7时，对不死系增加的防御力是21，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"天使之护Lv. 6时，对不死系增加的防御力是21，对或错？";
+
+	break;
+case 76:
+	if (.@QZnum == 0)set $@GameQz$,"骑兵修练学到Lv3时攻击速度是平常时的80%，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"骑兵修练学到Lv3时攻击速度是平常时的60%，对或错？";
+
+	break;
+case 77:
+	if (.@QZnum == 0)set $@GameQz$,"天使之击修练完成时对不死系的攻击力增加＋30，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"天使之击只属於服事的技能，对或错？";
+
+	break;
+case 78:
+	if (.@QZnum == 0)set $@GameQz$,"伪装可以在对方看不到的情况下移动，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"後退回避可以在对方看不到的情况下移动，对或错？";
+
+	break;
+case 79:
+	if (.@QZnum == 0)set $@GameQz$,"人物等级由LV98升到LV99需要99999999的EXP，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"人物等级由LV98升到LV99需要999999999的EXP，对或错？";
+
+	break;
+case 80:
+	if (.@QZnum == 0)set $@GameQz$,"剑士技能单手剑使用熟练度LV5，使用单手剑时可增加攻击力20，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"剑士技能单手剑使用熟练度LV8，使用单手剑时可增加攻击力30，对或错？";
+
+	break;
+case 81:
+	if (.@QZnum == 0)set $@GameQz$,"剑士技能狂暴状态为快要死亡时（HP在25%以下）会变成狂暴状态，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"剑士技能狂暴状态为快要死亡时（HP在33%以下）会变成狂暴状态，对或错？";
+
+	break;
+case 82:
+	set .@QUNUM2,rand(9)+1;
+	set .@QUNUM3,.@QUNUM2+1;
+	if (.@QZnum == 0)set $@GameQz$,"法师技能暗之障壁LV" + .@QUNUM2 + "能回避敌人" + .@QUNUM3 + "次攻击，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"法师技能暗之障壁LV" + .@QUNUM2 + "能回避敌人" + .@QUNUM2 + "次攻击，对或错？";
+
+	break;
+case 83:
+	if (.@QZnum == 0)set $@GameQz$,"法师技能冰冻术成功冻结目标的机率与INT无关，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"法师技能冰冻术成功冻结目标的机率与怪物属性无关，对或错？";
+
+	break;
+case 84:
+	if (.@QZnum == 0)set $@GameQz$,"使用石化术需使用一颗红色魔力矿石做为催化剂，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用石化术需使用一颗黄色魔力矿石做为催化剂，对或错？";
+
+	break;
+case 85:
+	if (.@QZnum == 0)set $@GameQz$,"使用传送之阵需使用一颗蓝色魔力矿石做为催化剂，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用传送之阵需使用一颗蓝色的宝石做为催化剂，对或错？";
+
+	break;
+case 86:
+	set .@QUNUM2,rand(9)+1;
+	if (.@QZnum == 0)set $@GameQz$,"盗贼技能隐匿LV" + .@QUNUM2 + "持续时间" + (.@QUNUM2 * 30) + "秒，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"盗贼技能隐匿LV" + .@QUNUM2 + "持续时间" + (.@QUNUM2 * 40) + "秒，对或错？";
+
+	break;
+case 87:
+	if (.@QZnum == 0)set $@GameQz$,"喷砂的攻击力为一般的四分之五，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"喷砂的攻击力为一般的150%，对或错？";
+
+	break;
+case 88:
+	set .@QUNUM2,rand(5)+1;
+	if (.@QZnum == 0)set $@GameQz$,"祭师的技能神威祈福在LV" + .@QUNUM2 + "时可增加" + (.@QUNUM2 * 5 ) + "ATK，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"祭师的技能神威祈福在LV" + .@QUNUM2 + "时可增加" + (.@QUNUM2 * 6 ) + "ATK，对或错？";
+
+	break;
+case 89:
+	if (.@QZnum == 0)set $@GameQz$,"喷砂技能的攻击力为一般的四分之五而且有机会使对方陷入黑暗状态，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"喷砂技能的攻击力为一般的125%而且有机会使对方陷入混乱状态，对或错？";
+
+	break;
+case 90:
+	if (.@QZnum == 0)set $@GameQz$,"使用火焰属性附加时需要消耗火灵矿石一颗，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用火焰属性附加时需要消耗火灵原石一颗，对或错？";
+
+	break;
+case 91:
+	if (.@QZnum == 0)set $@GameQz$,"使用金刚不坏时消耗200sp，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用火焰属性附加时需要消耗黄色魔力矿石一颗，对或错？";
+
+	break;
+case 92:
+	if (.@QZnum == 0)set $@GameQz$,"使用水元素领域时需要消耗黄色魔力矿石一颗，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用火元素领域时需要消耗红色魔力矿石一颗，对或错？";
+
+	break;
+case 93:
+	if (.@QZnum == 0)set $@GameQz$,"进阶骑士的技能灵气刃的持续时间会因为技能的提升而减少，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"进阶骑士的技能灵气刃消耗SP会因为技能的提升而减少，对或错？";
+
+	break;
+case 94:
+	if (.@QZnum == 0)set $@GameQz$,"进阶骑士的技能灵气刃LV5时消耗的SP为30，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"进阶骑士的技能集中持续时间会因为技能的提升而减少，对或错？";
+
+	break;
+case 95:
+	if (.@QZnum == 0)set $@GameQz$,"商人的技能大声呐喊消耗的SP为8，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"商人的技能大声呐喊能增加str8点，对或错？";
+
+	break;
+case 96:
+	if (.@QZnum == 0)set $@GameQz$,"成功反击时，反击增加的暴击机率是二倍，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"成功反击时，反击增加的命中率是二倍，对或错？";
+
+	break;
+case 97:
+	if (.@QZnum == 0)set $@GameQz$,"撒水祈福不论是LV1或是LV5，效果皆是使武器转为圣属性，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"撒水祈福不论是LV1或是LV5，持续时间皆是五分钟，对或错？";
+
+	break;
+case 98:
+	if (.@QZnum == 0)set $@GameQz$,"牺牲祈福不论是LV1或是LV3，消耗SP皆为8，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"牺牲祈福效果持续时间会随着等级上升而增加，对或错？";
+
+	break;
+case 99:
+	if (.@QZnum == 0)set $@GameQz$,"JobLV6的铁匠可能已经可以制造骑士长矛，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"JobLV5的铁匠可能已经可以制造骑士长矛，对或错？";
+
+	break;
+case 100:
+	if (.@QZnum == 0)set $@GameQz$,"一般的二转祭师有可能将十字驱魔与圣之祈福同时点出来，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"一般的二转祭师有可能将十字驱魔、暗之障璧与圣之祈福同时点到最高级，对或错？";
+
+	break;
+case 101:
+	set .@QUNUM2,rand(9)+1;
+	if (.@QZnum == 0)set $@GameQz$,"商人的技能最大负重量上升LV" + .@QUNUM2 + "时，可增加最大负重量" + (.@QUNUM2 * 200) + "，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"商人的技能最大负重量上升LV" + .@QUNUM2 + "时，可增加最大负重量" + (.@QUNUM2 * 100) + "，对或错？";
+
+	break;
+case 102:
+	set .@QUNUM2,rand(9)+1;
+	if (.@QZnum == 0)set $@GameQz$,"使用技能偷窃LV" + .@QUNUM2 + "需要消耗10SP，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用技能残影LV" + .@QUNUM2 + "时需要消耗10SP，对或错？";
+
+	break;
+case 103:
+	set .@QUNUM2,rand(9)+1;
+	if (.@QZnum == 0)set $@GameQz$,"使用技能残影LV" + .@QUNUM2 + "时需要消耗0SP，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"使用技能二刀连击LV" + .@QUNUM2 + "需要消耗" + .@QUNUM2 * 4 + "SP，对或错？";
+
+	break;
+case 104:
+	if (.@QZnum == 0)set $@GameQz$,"在中央的精炼房贩卖一、二级强化金属的NPC是卡拉曼莉斯，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在中央的精炼房贩卖一、二级强化金属的NPC是卡曼拉斯莉，对或错？";
+
+	break;
+case 105:
+	if (.@QZnum == 0)set $@GameQz$,"在中央的精炼房提炼铝与神之金属的NPC叫做帝特立西，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在中央的精炼房提炼铝与神之金属的NPC叫做帝西立特，对或错？";
+
+	break;
+case 106:
+	if (.@QZnum == 0)set $@GameQz$,"在艾尔帕兰左下角的一位拾蛤蜊的女孩叫做乔丝，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在艾尔帕兰左下角的一位拾蜗牛的女孩叫做乔丝，对或错？";
+
+	break;
+case 107:
+	if (.@QZnum == 0)set $@GameQz$,"金属头盔的防御力是6，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"金属头盔的防御力是5，对或错？";
+
+	break;
+case 108:
+	if (.@QZnum == 0)set $@GameQz$,"长大衣的重量是大衣的二倍，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"大衣的重量是长大衣的二倍，对或错？";
+
+	break;
+case 109:
+	if (.@QZnum == 0)set $@GameQz$,"斗篷的重量与战事长靴一样，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"皮带的重量比斗篷轻，对或错？";
+
+	break;
+case 110:
+	if (.@QZnum == 0)set $@GameQz$,"金属头盔的防御力与纲盾一样，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"金属头盔的防御力与圆盾一样，对或错？";
+
+	break;
+case 111:
+	if (.@QZnum == 0)set $@GameQz$,"卡普拉总公司位於运河之都-艾尔帕兰，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"卡普拉总公司位於运河之都-艾尔贝塔，对或错？";
+
+	break;
+case 112:
+	if (.@QZnum == 0)set $@GameQz$,"传送人员传送费用固定为为2000，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"传送人员传送费用会随着地点而改变，对或错？";
+
+	break;
+case 113:
+	if (.@QZnum == 0)set $@GameQz$,"可以藉由传送人员到达各个城市，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"传送人员传送费用固定为为3000，对或错？";
+
+	break;
+case 114:
+	if (.@QZnum == 0)set $@GameQz$,"位於初心者炫练场中，里欧本弗里修是担任普隆德拉第4祭坛情报所属新兵教育训练官，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"位於初心者炫练场中，里欧本弗里修是担任普隆德拉第4情报大队所属新兵教育训练官，对或错？";
+
+	break;
+case 115:
+	if (.@QZnum == 0)set $@GameQz$,"在普隆德拉中央的水池的神*雕像是子息之神，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在普隆德拉中央的水池的神*雕像是雷神，对或错？";
+
+	break;
+case 116:
+	if (.@QZnum == 0)set $@GameQz$,"昆仑宣传官的名字是佤巴，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"昆仑宣传官的名字是佤喇，对或错？";
+
+	break;
+case 117:
+	if (.@QZnum == 0)set $@GameQz$,"龟岛4F(tur_dun04)没有岩石龟的分布，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"龟岛3F(tur_dun02)没有火焰龟的分布，对或错？";
+
+	break;
+case 118:
+	if (.@QZnum == 0)set $@GameQz$,"普隆德拉随处可见的旗帜中画的是双头鸟，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"普隆德拉随处可见的旗帜中画的是凤凰，对或错？";
+
+	break;
+case 119:
+	if (.@QZnum == 0)set $@GameQz$,"司葵古是普隆德拉的城堡，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"关德是斐杨的城堡，对或错？";
+
+	break;
+case 120:
+	if (.@QZnum == 0)set $@GameQz$,"剑士工会原本位於首都普隆德拉之中，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"大教堂位於克雷斯特汉姆古城中，对或错？";
+
+	break;
+case 121:
+	if (.@QZnum == 0)set $@GameQz$,"卡普拉发圈def跟MDEF+3，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"卡普拉发圈除了初新者之外的所有职业都能装备，对或错？";
+
+	break;
+case 122:
+	if (.@QZnum == 0)set $@GameQz$,"水果皮帽的防御是4，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"神秘的水果皮帽的防御是4，对或错？";
+
+	break;
+case 123:
+	if (.@QZnum == 0)set $@GameQz$,"熊猫帽的重量是80，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"熊猫帽的防御是4，对或错？";
+
+	break;
+case 124:
+	if (.@QZnum == 0)set $@GameQz$,"铁匠制作击刺长剑的材料是钢铁×20+黄金槌子，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"铁匠制作斧的材料钢铁×15+神之金属×8+紫宝石+神之金属槌子，对或错？";
+
+	break;
+case 125:
+	if (.@QZnum == 0)set $@GameQz$,"铁匠制作水纹之剑的材料是神之金属×16+诅咒红宝石+神之金属槌子，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"铁匠制作双刃长戟的材料是钢铁*50+黄金槌子，对或错？";
+
+	break;
+case 126:
+	if (.@QZnum == 0)set $@GameQz$,"铁匠制作虎爪拳套的材料是铁×160+珍珠×1+钢铁槌子，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"铁匠制作钢铁拳套的材料是钢铁×65+黄金槌子，对或错？";
+
+	break;
+case 127:
+	if (.@QZnum == 0)set $@GameQz$,"燕尾服可藉由购买获得，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"在普隆德拉初心者盔甲可藉由购买获得，对或错？";
+
+	break;
+case 128:
+	if (.@QZnum == 0)set $@GameQz$,"活性水又叫小分子团水，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"活性水又叫富氧水，对或错？";
+
+	break;
+case 129:
+	if (.@QZnum == 0)set $@GameQz$,"轻便鞋的卖价是400，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"披肩的卖价4000，对或错？";
+
+	break;
+case 130:
+	if (.@QZnum == 0)set $@GameQz$,"渔夫帽的卖价是1000，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"防具精练+1，def增加1，对或错？";
+
+	break;
+case 131:
+	if (.@QZnum == 0)set $@GameQz$,"无边帽的防御比冒险衣高，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"长大衣的重量比皮带重，对或错？";
+
+	break;
+case 132:
+	if (.@QZnum == 0)set $@GameQz$,"长靴的防御力比连帽披肩高，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"长大衣的重量比皮带轻，对或错？";
+
+	break;
+case 133:
+	if (.@QZnum == 0)set $@GameQz$,"钢铁面具的制作材料是钢铁×50+2000Zeny，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"兔耳发夹的制作材料是柔毛×100+四片叶幸运草+猫发夹，对或错？";
+
+	break;
+case 134:
+	if (.@QZnum == 0)set $@GameQz$,"日立日立HITACHI，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"日立日立TOSHIBA，对或错？";
+
+	break;
+case 135:
+	if (.@QZnum == 0)set $@GameQz$,"邪骸士兵卡片的效果是CRI+9，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"邪骸战士卡片的效果是CRI+9，对或错？";
+
+	break;
+case 136:
+	if (.@QZnum == 0)set $@GameQz$,"浮勒盗虫卡片效果为AGI+1 FREE+1，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"绿绵虫卡片效果为MHP+100，对或错？";
+
+	break;
+case 137:
+	if (.@QZnum == 0)set $@GameQz$,"狼卡片效果为ATK+15 CRI+1，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"浮勒盗虫卡片效果为AGI+1 FREE+5，对或错？";
+
+	break;
+case 138:
+	if (.@QZnum == 0)set $@GameQz$,"小野猪卡片效果为攻击敌人时，有5%的机率使敌人陷入昏迷状态 ATK+5，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"青蛇卡片效果为攻击敌人时，可使用二刀连击技能Lv1(所有武器皆适用)，对或错？";
+
+	break;
+case 139:
+	if (.@QZnum == 0)set $@GameQz$,"绿绵虫卡片效果和蛋壳小鸡卡片一样，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"巴风特卡片效果为攻击范围可以达到九格内，对或错？";
+
+	break;
+case 140:
+	if (.@QZnum == 0)set $@GameQz$,"草精卡片效果为受到鱼贝系魔物攻击时，可减少30%的伤害度，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"犬妖卡片效果为CRI+4，对或错？";
+
+	break;
+case 141:
+	if (.@QZnum == 0)set $@GameQz$,"邪骸战士卡片的效果是攻击敌人时，有2%的机率使敌人陷入昏迷状态，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"邪骸战士卡片的效果是攻击敌人时，有2%的机率使敌人陷入混乱状态，对或错？";
+
+	break;
+case 142:
+	if (.@QZnum == 0)set $@GameQz$,"中和剂的叙述：Detrimindexta的缩写。是无法轻易得到的液体，有着无法与水混合的特性，非常的稀少，常常被用来制成中和剂，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"中和剂的重量5，对或错？";
+
+	break;
+case 143:
+	if (.@QZnum == 0)set $@GameQz$,"黄河的英文叫the Huanghe River，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"长江的英文叫the Changjiang River，对或错？";
+
+case 144:
+	if (.@QZnum == 0)set $@GameQz$,"小明今年17岁了，他饶行太阳17圈，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"小明今年17岁了，他饶行太阳16圈，对或错？";
+
+	break;
+case 145:
+	if (.@QZnum == 1) set $@GameQz$,"土星是太陽系九大行星中的第六個行星，对或错？？";
+	if (.@QZnum == 0) set $@GameQz$,"物体的速度不会超过光速，对或错？？";
+
+	break;
+case 146:
+	if (.@QZnum == 1) set $@GameQz$,"司马迁是我国有名的政治家对吗？，对或错？";
+	if (.@QZnum == 0) set $@GameQz$,"海王星是太阳系最外的一颗行星，对或错？";
+	set $@GameAns,1;
+	break;
+case 147:
+	if (.@QZnum == 0) set $@GameQz$,"冬半年就是每年9月23日到3月21日这一段时间，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"一枚一元人民币向上丢，掉下来后是正面的概率为1/2吗？，对或错？";
+
+	break;
+case 148:
+	if (.@QZnum == 0) set $@GameQz$,"用蓝笔能写出红字，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"天天熬夜的动物是熊猫，对或错？";
+
+	break;
+case 149:
+	if (.@QZnum == 0) set $@GameQz$,"夫妻离婚的主要起因是结婚，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"太平洋的中间是海，对或错？";
+
+	break;
+case 150:
+	if (.@QZnum == 0) set $@GameQz$,"一个长宽各一公尺，深二公尺的土坑，坑中并没有水，但却可以让人窒息，对或错？";
+	if (.@QZnum == 1) set $@GameQz$,"监狱里关着两名犯人，一天晚上犯人全都逃跑了，这时监狱还剩一个犯人，对或错";
+
+	break;
+case 151:
+	if (.@QZnum == 0)set $@GameQz$,"和二硫碘化钾说再见是张学友的老歌，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"所有的书都能在书店报摊等卖书的地方买到，对或错？";
+
+	break;
+case 152:
+	if (.@QZnum == 0)set $@GameQz$,"卫斯理认为所与神仙都是外星人，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"水蒸气比冰更加容易变成水，对或错？";
+
+	break;
+case 153:
+	if (.@QZnum == 0)set $@GameQz$,"二氧化硫有臭鸡蛋气味，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"二个孩子同时出生，男在东十一区生出来，女在西十一区生出来，女的要叫男孩哥哥，对或错？";
+
+	break;
+case 154:
+	if (.@QZnum == 0)set $@GameQz$,"B元2A分钱有可能是A元B分钱的两倍，对或错？  ";
+	if (.@QZnum == 1)set $@GameQz$,"3种水果排序，最多能排5种顺序，对或错？";
+
+	break;
+case 155:
+	if (.@QZnum == 0)set $@GameQz$,"有一种官不仅不领工资,反而要掏腰包，对或错？ ";
+	if (.@QZnum == 1)set $@GameQz$,"如果你有两片水果和3只碗，有6种不同的方法端上两片水果，对或错？";
+
+	break;
+case 156:
+	if (.@QZnum == 0)set $@GameQz$,"无论多大的纸,仅靠一个人最多只能被对折9次，对或错？ ";
+	if (.@QZnum == 1)set $@GameQz$,"至少两刀才能剪出一个五角星，对或错？";
+
+	break;
+case 157:
+	if (.@QZnum == 0)set $@GameQz$,"6条直线最多能将一副画中的月牙分成15份，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"加热一个圆环,直到其膨胀,圆环的孔将会变小，对或错？ ";
+
+	break;
+case 158:
+	if (.@QZnum == 0)set $@GameQz$,"高尔夫球表面坑坑洼洼是为了能飞的更加远，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"当你驾车前行时,车的反光镜是向后运动的，对或错？";
+
+	break;
+case 159:
+	if (.@QZnum == 0)set $@GameQz$,"大的雨滴和小的雨滴下落的速度一样快，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"一个掷向空中的球,他向上飞行的时间比向下飞行的时间长，对或错？";
+
+	break;
+case 160:
+	if (.@QZnum == 0)set $@GameQz$,"一个骰子掷6次,它呈现6种不同点数的概率大于1%，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"小明有6只狗,如果他每次遛2只,那么总共有12种配对情况，对或错？";
+
+	break;
+case 161:
+	if (.@QZnum == 0)set $@GameQz$,"一只乒乓球在静止的水中,从杯底上升到水面,比在旋涡流动的水中快，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"好马不吃回头草是因为他的要求太高，对或错？";
+
+	break;
+case 162:
+	if (.@QZnum == 0)set $@GameQz$,"放大镜把物体的维度放大三倍.但是用它观察一个15度的角,看见的还是15度角，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"暑假不一定比寒假长，对或错？";
+
+	break;
+case 163:
+	if (.@QZnum == 0)set $@GameQz$,"大雁秋天要飞到南方去为了过冬，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"大部分佛教徒都住在南半球，对或错？";
+
+	break;
+case 164:
+	if (.@QZnum == 0)set $@GameQz$,"阿特罗斯是一只狼，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"自由女神像是德国送给美国的，对或错？";
+
+	break;
+case 165:
+	if (.@QZnum == 0)set $@GameQz$,"虎王会扔火烟瓶，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"虎王会扔盐酸瓶，对或错？";
+
+	break;
+case 166:
+	if (.@QZnum == 0)set $@GameQz$,"一个人，在松软的沙滩上走，一切都正常，但你发现她身后没有脚印只是因为她倒着走，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"一只凶猛的饿猫，看到老鼠，拔腿就跑是因为它是家养的，害怕老鼠，对或错？";
+
+	break;
+case 167:
+	if (.@QZnum == 0)set $@GameQz$,"布怕一万，纸怕万一，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"邻居老李家的屋顶有时漏雨，有时不漏雨是因为碰巧雨没打到，对或错？";
+
+	break;
+case 168:
+	if (.@QZnum == 0)set $@GameQz$,"中国的内地产玉，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"狼外婆吃了小红帽的外婆，对或错？";
+
+	break;
+case 169:
+	if (.@QZnum == 0)set $@GameQz$,"医学书中毛病最多，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"小陈周末去看电影，到了电影院，却看不到半个人，是因为电影院快倒闭了，对或错？";
+
+	break;
+case 170:
+	if (.@QZnum == 0)set $@GameQz$,"打瞌睡最不花力气又很舒服，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"猴子没有尾巴，对或错？";
+
+	break;
+case 171:
+	if (.@QZnum == 0)set $@GameQz$,"猪的全身是宝，用处很大，猪对人类还有的用处是被人骂，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"用吸铁石立刻可以找到遗失的图钉，对或错？";
+
+	break;
+case 172:
+	if (.@QZnum == 0)set $@GameQz$,"山鸡有翅膀，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"米的爸爸是水稻，对或错？";
+
+	break;
+case 173:
+	if (.@QZnum == 0)set $@GameQz$,"只有爆竹这种竹子不长在土里，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"骑鸟拿枪对小型怪伤害不会减少，对或错？";
+
+	break;
+case 174:
+	if (.@QZnum == 0)set $@GameQz$,"风车可以用来发电，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"世界上，除了百慕三角洲的海都产鱼，对或错？";
+
+	break;
+case 175:
+	if (.@QZnum == 0)set $@GameQz$,"满满一瓶牛奶，只有用吸管才能先喝到瓶底的部分，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"每人每天都必须认真的做的事是吃饭，对或错？";
+
+	break;
+case 176:
+	if (.@QZnum == 0)set $@GameQz$,"用三根筷子能搭成比三大比四小的数，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"生米不小心煮成熟饭就没办法了，对或错？";
+
+	break;
+case 177:
+	if (.@QZnum == 0)set $@GameQz$,"麋鹿这种动物没有方向感，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"黑人和白人生下的婴儿牙齿是白色的，对或错？";
+
+	break;
+case 178:
+	if (.@QZnum == 0)set $@GameQz$,"红红有8本书，烂了一本，又买了2本，借走了1本。红红还有9本书，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"钟敲响十三下,请问现在该睡午觉了，对或错？";
+
+	break;
+case 179:
+	if (.@QZnum == 0)set $@GameQz$,"爱因斯坦说光是由光子组成的，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"一对健康的夫妇,却生出一个不健康的后代是因为基因变异，对或错？";
+
+	break;
+case 180:
+	if (.@QZnum == 0)set $@GameQz$,"100个苹果分给10个小朋友能分1次，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"1个马好心把受伤的主人送到医院，但主人不夸奖它，反而骂它是因为马没办法帮他挂号，对或错？";
+
+	break;
+case 181:
+	if (.@QZnum == 0)set $@GameQz$,"星星、月亮、太阳是林夕的作品，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"士多啤梨是一种梨，对或错？ ";
+
+	break;
+case 182:
+	if (.@QZnum == 0)set $@GameQz$,"煤气泄漏的时候不应该打电话，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"煤气泄漏的时候不应该开窗，对或错？";
+
+	break;
+case 183:
+	if (.@QZnum == 0)set $@GameQz$,"李紫烟的爸爸是李白，对或错？ ";
+	if (.@QZnum == 1)set $@GameQz$,"日照香炉生紫烟,江枫渔火对愁眠，对或错？";
+
+	break;
+case 184:
+	if (.@QZnum == 0)set $@GameQz$,"白鹭鸶总是缩着一只脚睡觉，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"蝙蝠总是缩着一只脚睡觉，对或错？";
+
+	break;
+case 185:
+	if (.@QZnum == 0)set $@GameQz$,"蝴蝶、蚂蚁、蜘蛛、蜈蚣中，只有蜈蚣没有领到酬劳，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"汽车在右转弯时，左轮胎不转，对或错？";
+
+	break;
+case 186:
+	if (.@QZnum == 0)set $@GameQz$,"新买的袜子有一个洞是因为质量不合格，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"为了怕身材走样，结婚后不生孩子的美女应称为丁克家族，对或错？";
+
+	break;
+case 187:
+	if (.@QZnum == 0)set $@GameQz$,"一个数字去掉前面第一个数字是13，去掉最后一个数字是401，原数是4013，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"铁放在外面要生锈，那金子放在外面会暗淡，对或错？ ";
+
+	break;
+case 188:
+	if (.@QZnum == 0)set $@GameQz$,"孔子有三位徒弟子贡、子路和子游，子路不是人，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"一群女子在河边洗澡，突然一陌生男子闯入，她们最想遮住自己的胸部，对或错？";
+
+	break;
+case 189:
+	if (.@QZnum == 0)set $@GameQz$,"小明的肚子明明是已经胀得受不了，但他还要不停的猛喝水是因为他噎着了，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"冬天，宝宝怕冷，到了屋里也不肯脱帽，但他见了一个人乖乖地脱下帽，那个人是魔法师，对或错？";
+
+	break;
+case 190:
+	if (.@QZnum == 0)set $@GameQz$,"盆里有六只馒头，六个小朋友每人分到一只，但盆里还留着一只，是因为一个小朋友拿着盆子，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有一种东西，买的人知道，卖的人也知道，只有用的人不知道，这种东西是魔术，对或错？";
+
+	break;
+case 191:
+	if (.@QZnum == 0)set $@GameQz$,"小明带100元去买一件75元的东西，但老板却只找了一张5块钱给他，不一定是因为老板贪，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"火车由北京到上海需要6小时，行驶了3小时，火车在石家庄，对或错？";
+
+	break;
+case 192:
+	if (.@QZnum == 1)set $@GameQz$,"米的妈妈是水稻，对或错？";
+	if (.@QZnum == 0)set $@GameQz$,"一个圆孔的直径只有1厘米，而有体积达100立方米的物体能顺利通过这个孔，它是液体，对或错？";
+
+	break;
+case 193:
+	if (.@QZnum == 0)set $@GameQz$,"红豆的小孩不是红豆，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"1=5，2=25，3=125，4=625，那么5=15625，对或错？";
+
+	break;
+case 194:
+	if (.@QZnum == 0)set $@GameQz$,"病毒没有细胞核，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"细菌没有细胞核，对或错？";
+
+	break;
+case 195:
+	if (.@QZnum == 0)set $@GameQz$,"有一种水果，没吃之前是绿色的，吃下去是红色的，吐出时却是黑色的，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"小猫，小狗，还有小猪直线跑步，突然前面有一堵墙。小狗往右转，小猫往左转，只有小猪碰了墙是因为猪没脑子，对或错？";
+
+	break;
+case 196:
+	if (.@QZnum == 0)set $@GameQz$,"一个学生住在学校里，上学还经常迟到是因为所住的学校不是他住的学校，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有两个小孩长得一模一样，生日也完全相同，问她们是姐妹吗，她们说是，问她们是双胞胎吗，她们又说不是，是因为巧合，对或错";
+
+	break;
+case 197:
+	if (.@QZnum == 0)set $@GameQz$,"市里新开张了一家医院，设备先进，服务周到。但令人奇怪的是：这儿竟一位病人都不收，这是因为这是兽的医院，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"四减一等于五可能对，对或错？";
+
+	break;
+case 198:
+	if (.@QZnum == 0)set $@GameQz$,"公共汽车来了，一位穿常裙的小姐投了4 元，司机让她上车；第二位穿迷你裙的小姐，投了2元，司机也让她上车；第三位小姐沒给钱，司机也照样让她上车，因为她使用了FRO会员卡，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"XO酒价格最贵，对或错？";
+
+	break;
+case 199:
+	if (.@QZnum == 0)set $@GameQz$,"一个人从一个五十米高的大厦上跳楼自杀，重重的摔在了地上，却没被摔死有可能是真的，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"相同内容的书，小高却要同时买两本是因为那书的作者是自己，对或错？";
+
+	break;
+case 200:
+	if (.@QZnum == 0)set $@GameQz$,"第一次世界战发生在1914年，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有一个专门教坏人的地方，但警察却从来不管，这是因为他们的实力很强，有政府作后台，对或错？";
+
+	break;
+case 201:
+	if (.@QZnum == 0)set $@GameQz$,"人在有地位的情况下会变得目中无人，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"拥有很多牙齿,能咬住人的头发的东西是狗，对或错？";
+
+	break;
+case 202:
+	if (.@QZnum == 0)set $@GameQz$,"胖妞生病了，最怕别人来探病时说你要保重，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有一种药你不用上药店买就能吃到，是后悔药，对或错？";
+
+	break;
+case 203:
+	if (.@QZnum == 0)set $@GameQz$,"如果明天就是世界末日，今天就有人想自杀是因为他不知道明天世界末日，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"你站在南半球的时候太阳会从西边出来，对或错？";
+
+	break;
+case 204:
+	if (.@QZnum == 0)set $@GameQz$,"亚当和夏娃结婚后最大的遗憾是没有婚纱和西装，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"相同的物品买一个交60元，买两个交20元的东西没有，对或错？";
+
+	break;
+case 205:
+	if (.@QZnum == 0)set $@GameQz$,"你要去看电影，在路上你的电影票掉了，这时应该捡起来，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"有一位大师武功了得，他在下雨天不带任何防雨物品出门，全身都被淋湿了，可是头发一点没湿，是因为他会铁头功，对或错？";
+
+	break;
+case 206:
+	if (.@QZnum == 0)set $@GameQz$,"有个刚生下的婴儿，有两个小孩和他是同年同月同日生的，而且是同一对父母生的，但他们不是双胞胎，这有可能，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"提早放工回家的小李，一进卧室，看見隔壁的小刘与自己老婆睡在床上，但小李却毫不动怒，是因为小李自己也有婚外情，对或错？";
+
+	break;
+case 207:
+	if (.@QZnum == 0)set $@GameQz$,"有一种布很长很宽很好看，就是没有人用它来作衣服也不可能作成衣服，是因为那布是瀑布，对或错？";
+	if (.@QZnum == 1)set $@GameQz$,"身子里面空空洞洞而却拥有一双手的是鬼，对或错？";
+
+	break;
+}
+	set $@GameAns,.@QZnum;
+	return;
+}

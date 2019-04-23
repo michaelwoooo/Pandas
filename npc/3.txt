@@ -1,0 +1,233 @@
+//===== rAthena Script =======================================
+//= 全服BOSS控制
+//===== By: ==================================================
+//= 程序：聽風
+//===== 當前版本: ============================================
+//= 1.0
+//===== 這合: ================================================
+//= Athena
+//===== 描述: ================================================
+//= 龙雅定制脚本
+//===== 備註: ================================================
+//= 1.0 初步完成腳本	2019-04-22
+//============================================================
+
+prontera,0,0,4	script	全服BOSS控制	74,{
+	end;
+OnClock2000:
+	monster "prontera",155,100,"传说中的BOSS",1002,1,"全服BOSS控制::OnKilled";
+	announce "BOSS出现了.",0;
+	end;
+	
+OnClock2200:
+	killmonster "prontera","全服BOSS控制::OnKilled";
+	end;
+	
+OnKilled:
+	getmapxy(.@mapname$,.@mapx,.@mapy,1);
+	announce "BOSS死了.",0;
+	for ( .@i = 1; .@i <= 20; .@i++ ) {
+		setd "$@BOSSBOXLCHECK"+.@i,1;
+		enablenpc "BOSS宝箱#BoxL_"+.@i;
+		.@x = .@mapx+rand(-10,10);
+		.@y = .@mapy+rand(-10,10);
+		unitwarp getd("$@BOSSBOXLID"+.@i),.@mapname$,.@x,.@y;
+		specialeffect 12,AREA,"BOSS宝箱#BoxL_"+.@i;
+	}
+	end;
+	
+OnInit:
+	setarray $@BOSS_BOXItemID1[0],501,502,503,504,505;
+	setarray $@BOSS_BOXItemNN1[0],1,1,1,1,1;
+	setarray $@BOSS_BOXItemID2[0],501,502,503,504,505;
+	setarray $@BOSS_BOXItemNN2[0],1,1,1,1,1;
+	setarray $@BOSS_BOXItemID3[0],501,502,503,504,505;
+	setarray $@BOSS_BOXItemNN3[0],1,1,1,1,1;
+	end;
+}
+
+function	script	BOSS_BOXITEMC	{
+	showscript strcharinfo(0)+" 正在开宝箱",getd("$@BOSSBOXLID"+getarg(0));
+	progressbar "FF00FF",5;	//开宝箱时间，默认5秒
+	if ( getd("$@BOSSBOXLCHECK"+getarg(0)) ) {
+		.@r = rand(1,100);
+		.@i1n = rand(getarraysize($@BOSS_BOXItemID1));
+		.@i2n = rand(getarraysize($@BOSS_BOXItemID2));
+		.@i3n = rand(getarraysize($@BOSS_BOXItemID3));
+		if ( .@r >= 50 ) .@item1 = $@BOSS_BOXItemID1[.@i1n];	//物品1 50%几率
+		if ( .@r >= 70 ) .@item2 = $@BOSS_BOXItemID2[.@i2n];	//物品2 30%几率
+		if ( .@r >= 60 ) .@item3 = $@BOSS_BOXItemID3[.@i3n];	//物品3 40%几率
+		.@Zeny = rand(5,50)*10000;	//随机5~50万ROZ
+		if ( .@item1 ) getitem .@item1,$@BOSS_BOXItemNN1[.@i1n];
+		if ( .@item2 ) getitem .@item2,$@BOSS_BOXItemNN2[.@i2n];
+		if ( .@item3 ) getitem .@item3,$@BOSS_BOXItemNN3[.@i3n];
+		Zeny += .@Zeny;
+		
+		announce strcharinfo(0)+" 打开BOSS宝箱获得了 "+(.@item1?getitemname(.@item1)+" "+$@BOSS_BOXItemNN1[.@i1n]+"个。":"")+""+(.@item2?getitemname(.@item2)+" "+$@BOSS_BOXItemNN1[.@i2n]+"个。":"")+""+(.@item3?getitemname(.@item3)+" "+$@BOSS_BOXItemNN1[.@i3n]+"个。":"")+""+.@Zeny+"Roz",0;
+		setd "$@BOSSBOXLCHECK"+getarg(0),0;
+		specialeffect 10;
+	}
+	disablenpc getarg(1);
+	end;
+}
+
+prontera,0,0,4	script	BOSS宝箱#BoxL_1	10005,{
+	callfunc "BOSS_BOXITEMC",1,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID1 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_2	10005,{
+	callfunc "BOSS_BOXITEMC",2,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID2 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_3	10005,{
+	callfunc "BOSS_BOXITEMC",3,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID3 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_4	10005,{
+	callfunc "BOSS_BOXITEMC",4,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID4 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_5	10005,{
+	callfunc "BOSS_BOXITEMC",5,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID5 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_6	10005,{
+	callfunc "BOSS_BOXITEMC",6,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID6 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_7	10005,{
+	callfunc "BOSS_BOXITEMC",7,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID7 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_8	10005,{
+	callfunc "BOSS_BOXITEMC",8,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID8 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_9	10005,{
+	callfunc "BOSS_BOXITEMC",9,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID9 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_10	10005,{
+	callfunc "BOSS_BOXITEMC",10,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID10 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_11	10005,{
+	callfunc "BOSS_BOXITEMC",11,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID11 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_12	10005,{
+	callfunc "BOSS_BOXITEMC",12,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID12 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_13	10005,{
+	callfunc "BOSS_BOXITEMC",13,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID13 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_14	10005,{
+	callfunc "BOSS_BOXITEMC",14,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID14 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_15	10005,{
+	callfunc "BOSS_BOXITEMC",15,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID15 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_16	10005,{
+	callfunc "BOSS_BOXITEMC",16,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID16 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_17	10005,{
+	callfunc "BOSS_BOXITEMC",17,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID17 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_18	10005,{
+	callfunc "BOSS_BOXITEMC",18,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID18 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_19	10005,{
+	callfunc "BOSS_BOXITEMC",19,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID19 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
+prontera,0,0,4	script	BOSS宝箱#BoxL_20	10005,{
+	callfunc "BOSS_BOXITEMC",20,strnpcinfo(0);
+	end;
+OnInit:
+	$@BOSSBOXLID20 = getnpcid(0);
+	disablenpc strnpcinfo(0);
+	end;
+}
