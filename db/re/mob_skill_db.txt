@@ -1,4 +1,4 @@
-// Mob Skill Database
+﻿// Mob Skill Database
 // Based on Aegis Episode 11.3
 //
 // Structure of Database:
