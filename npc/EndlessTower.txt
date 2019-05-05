@@ -204,6 +204,7 @@ prontera,163,110,6	script	扬森船长	709,{
 
 function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 	set .@ET_List,getarg(0)-1;
+	dispbottom "[调试]通关第"+.@ET_List+"关";
 	switch(.@ET_List) {
 		case 10:
 			setarray .@ET_List_Item_ID[0],0;	//奖励物品id列表(10层)
@@ -271,19 +272,19 @@ function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 			set .@ET_List_Check,1;
 			break;
 		case 90:
-			setarray .@ET_List_Item_ID[0],18131;	//奖励物品id列表(90层)
-			setarray .@ET_List_Item_Num[0],2;	//奖励物品数量(90层)
+			setarray .@ET_List_Item_ID[0],12103;	//奖励物品id列表(90层)
+			setarray .@ET_List_Item_Num[0],1;	//奖励物品数量(90层)
 			set .@ET_List_BaseExp,0;	//奖励经验(90层)
 			set .@ET_List_JobExp,0;	//奖励职业经验(90层)
-			set .@ET_List_Zeny,1500000;	//奖励Zeny(90层)
+			set .@ET_List_Zeny,2000000;	//奖励Zeny(90层)
 			set .@ET_List_Check,1;
 			break;
 		case 100:
-			setarray .@ET_List_Item_ID[0],0;	//奖励物品id列表(100层)
-			setarray .@ET_List_Item_Num[0],0;	//奖励物品数量(100层)
+			setarray .@ET_List_Item_ID[0],18128,18131,18116,18117;	//奖励物品id列表(100层)
+			setarray .@ET_List_Item_Num[0],1,2,1,1;	//奖励物品数量(100层)
 			set .@ET_List_BaseExp,0;	//奖励经验(100层)
 			set .@ET_List_JobExp,0;	//奖励职业经验(100层)
-			set .@ET_List_Zeny,0;	//奖励Zeny(10层)
+			set .@ET_List_Zeny,3000000;	//奖励Zeny(10层)
 			set .@ET_List_Check,1;
 			set MyET_List_ReOK,1;
 			break;
@@ -309,20 +310,20 @@ function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 			dispbottom "通关第"+.@ET_List+"关，获得 "+.@ET_List_BaseExp+" BaseExp, "+.@ET_List_JobExp+" JobExp, "+.@ET_List_Zeny+" Zeny";	//公告
 		}
 		if ( .@ET_List == 90 ) {
-			setarray $@WXT_BOXItemID1[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN1[0],1,1,1,1,1;
-			setarray $@WXT_BOXItemID2[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN2[0],1,1,1,1,1;
-			setarray $@WXT_BOXItemID3[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN3[0],1,1,1,1,1;
+			setarray $@WXT_BOXItemID1[0],18131,18131,18131;
+			setarray $@WXT_BOXItemNN1[0],1,1,2;
+			setarray $@WXT_BOXItemID2[0],18116,18116,18116;
+			setarray $@WXT_BOXItemNN2[0],1,1,2;
+			setarray $@WXT_BOXItemID3[0],18117,18117,18117;
+			setarray $@WXT_BOXItemNN3[0],1,1,2;
 			.@r = rand(1,100);
 			.@i1n = rand(getarraysize($@WXT_BOXItemID1));
 			.@i2n = rand(getarraysize($@WXT_BOXItemID2));
 			.@i3n = rand(getarraysize($@WXT_BOXItemID3));
 			if ( .@r >= 50 ) .@item1 = $@WXT_BOXItemID1[.@i1n];	//物品1 50%几率
 			if ( .@r >= 70 ) .@item2 = $@WXT_BOXItemID2[.@i2n];	//物品2 30%几率
-			if ( .@r >= 60 ) .@item3 = $@WXT_BOXItemID3[.@i3n];	//物品3 40%几率
-			.@Zeny = rand(5,50)*10000;	//随机5~50万ROZ
+			if ( .@r >= 80 ) .@item3 = $@WXT_BOXItemID3[.@i3n];	//物品3 40%几率
+			.@Zeny = rand(100,300)*10000;	//随机5~50万ROZ
 			if ( .@item1 ) getitem .@item1,$@WXT_BOXItemNN1[.@i1n];
 			if ( .@item2 ) getitem .@item2,$@WXT_BOXItemNN2[.@i2n];
 			if ( .@item3 ) getitem .@item3,$@WXT_BOXItemNN3[.@i3n];
@@ -332,12 +333,12 @@ function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 			
 		}
 		if ( .@ET_List == 100 ) {
-			setarray $@WXT_BOXItemID1[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN1[0],1,1,1,1,1;
-			setarray $@WXT_BOXItemID2[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN2[0],1,1,1,1,1;
-			setarray $@WXT_BOXItemID3[0],501,502,503,504,505;
-			setarray $@WXT_BOXItemNN3[0],1,1,1,1,1;
+			setarray $@WXT_BOXItemID1[0],18131,18131,18131;
+			setarray $@WXT_BOXItemNN1[0],1,2,3;
+			setarray $@WXT_BOXItemID2[0],18116,18116,18116;
+			setarray $@WXT_BOXItemNN2[0],1,1,3;
+			setarray $@WXT_BOXItemID3[0],18117,1817,18117;
+			setarray $@WXT_BOXItemNN3[0],1,1,2;
 			.@r = rand(1,100);
 			.@i1n = rand(getarraysize($@WXT_BOXItemID1));
 			.@i2n = rand(getarraysize($@WXT_BOXItemID2));
@@ -345,7 +346,7 @@ function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 			if ( .@r >= 50 ) .@item1 = $@WXT_BOXItemID1[.@i1n];	//物品1 50%几率
 			if ( .@r >= 70 ) .@item2 = $@WXT_BOXItemID2[.@i2n];	//物品2 30%几率
 			if ( .@r >= 60 ) .@item3 = $@WXT_BOXItemID3[.@i3n];	//物品3 40%几率
-			.@Zeny = rand(5,50)*10000;	//随机5~50万ROZ
+			.@Zeny = rand(100,500)*10000;	//随机5~50万ROZ
 			if ( .@item1 ) getitem .@item1,$@WXT_BOXItemNN1[.@i1n];
 			if ( .@item2 ) getitem .@item2,$@WXT_BOXItemNN2[.@i2n];
 			if ( .@item3 ) getitem .@item3,$@WXT_BOXItemNN3[.@i3n];
@@ -354,6 +355,7 @@ function	script	ET_Reward_List	{	//聽風20180904添加层数奖励调用函数
 			dispbottom "通关无限塔副本，获得了 "+(.@item1?getitemname(.@item1)+" "+$@WXT_BOXItemNN1[.@i1n]+"个。":"")+""+(.@item2?getitemname(.@item2)+" "+$@WXT_BOXItemNN1[.@i2n]+"个。":"")+""+(.@item3?getitemname(.@item3)+" "+$@WXT_BOXItemNN1[.@i3n]+"个。":"")+""+.@Zeny+"Roz";
 			
 		}
+		
 
 	}
 
@@ -1148,15 +1150,88 @@ function	script	F_Tower_Monster	{
 		areamonster .@map$,352,96,362,132,"苍蝇",1011,5,.@label$;
 		break;
 	case 96:
-
+		areamonster .@map$,9,9,19,45,"巴基力 兰特克力斯",1765,5,.@label$;
+		areamonster .@map$,9,9,19,45,"黑方体恶魔",1755,10,.@label$;
+		areamonster .@map$,9,9,19,45,"褐方体恶魔",1754,10,.@label$;
 		break;
 	case 97:
-
+		areamonster .@map$,93,9,103,45,"梦罗克分身",1918,5,.@label$;
+		areamonster .@map$,93,9,103,45,"梦罗克分身",1919,5,.@label$;
+		areamonster .@map$,93,9,103,45,"梦罗克分身",1920,5,.@label$;
+		areamonster .@map$,93,9,103,45,"梦罗克分身",1921,5,.@label$;
 		break;
 	case 98:
+		areamonster .@map$,181,9,191,45,"闇●超魔导师",1639,2,.@label$;
+		areamonster .@map$,181,9,191,45,"闇●骑士领主",1634,2,.@label$;
+		areamonster .@map$,181,9,191,45,"闇●神官",1637,2,.@label$;
+		areamonster .@map$,181,9,191,45,"闇●十字刺客",1635,2,.@label$;
+		areamonster .@map$,181,9,191,45,"闇●神工匠",1636,2,.@label$;
+		areamonster .@map$,181,9,191,45,"闇●神射手",1638,2,.@label$;
 		break;
 	case 99:
-		
+		for(set .@i,1; .@i<=7; set .@i,.@i+1) {
+			set .@mob_ran,rand(1,30);
+			if (.@mob_ran == 1) 
+				areamonster .@map$,267,9,277,45,"闇●超魔导师",1639,2,.@label$;
+			else if (.@mob_ran == 2) 
+				areamonster .@map$,267,9,277,45,"闇●骑士领主",1634,2,.@label$;
+			else if (.@mob_ran == 3) 
+				areamonster .@map$,267,9,277,45,"闇●神官",1637,2,.@label$;
+			else if (.@mob_ran == 4) 
+				areamonster .@map$,267,9,277,45,"闇●十字刺客",1635,2,.@label$;
+			else if (.@mob_ran == 5) 
+				areamonster .@map$,267,9,277,45,"闇●神工匠",1636,2,.@label$;
+			else if (.@mob_ran == 6) 
+				areamonster .@map$,267,9,277,45,"闇●神射手",1638,2,.@label$;
+			else if (.@mob_ran == 7) 
+				areamonster .@map$,267,9,277,45,"梦罗克分身",1918,5,.@label$;
+			else if (.@mob_ran == 8) 
+				areamonster .@map$,267,9,277,45,"梦罗克分身",1919,5,.@label$;
+			else if (.@mob_ran == 9) 
+				areamonster .@map$,267,9,277,45,"梦罗克分身",1920,5,.@label$;
+			else if (.@mob_ran == 10) 
+				areamonster .@map$,267,9,277,45,"梦罗克分身",1921,5,.@label$;
+			else if (.@mob_ran == 11) 
+				areamonster .@map$,267,9,277,45,"巴基力 兰特克力斯",1765,5,.@label$;
+			else if (.@mob_ran == 12) 
+				areamonster .@map$,267,9,277,45,"黑方体恶魔",1755,10,.@label$;
+			else if (.@mob_ran == 13) 
+				areamonster .@map$,267,9,277,45,"褐方体恶魔",1754,10,.@label$;
+			else if (.@mob_ran == 14) 
+				areamonster .@map$,267,9,277,45,"闇●骑士领主",1634,15,.@label$;
+			else if (.@mob_ran == 15) 
+				areamonster .@map$,267,9,277,45,"血腥骑士",1268,10,.@label$;
+			else if (.@mob_ran == 16) 
+				areamonster .@map$,267,9,277,45,"深渊骑士",1219,10,.@label$;
+			else if (.@mob_ran == 17) 
+				areamonster .@map$,267,9,277,45,"邪骸浪人",1208,10,.@label$;
+			else if (.@mob_ran == 18) 
+				areamonster .@map$,267,9,277,45,"机械剑士",1829,15,.@label$;
+			else if (.@mob_ran == 19) 
+				areamonster .@map$,267,9,277,45,"机械狙击手",1830,15,.@label$;
+			else if (.@mob_ran == 20) 
+				areamonster .@map$,267,9,277,45,"闇●超魔导师",1639,15,.@label$;
+			else if (.@mob_ran == 21) 
+				areamonster .@map$,267,9,277,45,"邪灵魔导士",1377,10,.@label$;
+			else if (.@mob_ran == 22) 
+				areamonster .@map$,267,9,277,45,"闇●魔法师",1657,10,.@label$;
+			else if (.@mob_ran == 23) 
+				areamonster .@map$,267,9,277,45,"风魔巫师",1263,10,.@label$;
+			else if (.@mob_ran == 24) 
+				areamonster .@map$,267,9,277,45,"马尔杜克",1140,10,.@label$;
+			else if (.@mob_ran == 25) 
+				areamonster .@map$,267,9,277,45,"闇●神射手",1638,10,.@label$;
+			else if (.@mob_ran == 26) 
+				areamonster .@map$,267,9,277,45,"机械狙击手",1830,10,.@label$;
+			else if (.@mob_ran == 27) 
+				areamonster .@map$,267,9,277,45,"闇●弓箭手",1656,30,.@label$;
+			else if (.@mob_ran == 28) 
+				areamonster .@map$,267,9,277,45,"代行刑者",1702,10,.@label$;
+			else if (.@mob_ran == 29) 
+				areamonster .@map$,267,9,277,45,"慰劳者",1703,10,.@label$;
+			else 
+				areamonster .@map$,267,9,277,45,"伪天使",1371,10,.@label$;
+		}
 		break;
 	}
 	return;
@@ -2350,3 +2425,9 @@ OnTimer1000:
 	donpcevent instance_npcname("#Effect30")+"::OnEnable";
 	end;
 }
+1@tower	mapflag	nomobloot	-10
+2@tower	mapflag	nomobloot	-10
+3@tower	mapflag	nomobloot	-10
+4@tower	mapflag	nomobloot	-10
+5@tower	mapflag	nomobloot	-10
+6@tower	mapflag	nomobloot	-10

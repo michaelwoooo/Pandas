@@ -1,0 +1,149 @@
+//===== rAthena Script =======================================
+//= BOSS区
+//===== By: ==================================================
+//= 程序：聽風
+//===== 當前版本: ============================================
+//= 1.0
+//===== 這合: ================================================
+//= Athena
+//===== 描述: ================================================
+//= 龙雅定制脚本
+//===== 備註: ================================================
+//= 1.0 初步完成腳本	2019-04-25
+//============================================================
+
+prontera,157,176,4	script	BOSS区入口儿	10194,{
+	mes "[BOSS区入口儿]";
+	mes "BOSS分为三个区";
+	mes "每个区刷新时间为10分钟";
+	mes "每次每个区刷新怪物数量 5只";
+	mes "收费时间，一张门票1000万，可以使用1个小时";
+	next;
+	switch(select("进去1区撒野:进去2区撒野:进去3区撒野:取消")) {
+		case 1:
+			.@Ticket = 1;
+			break;
+		case 2:
+			.@Ticket = 2;
+			break;
+		case 3:
+			.@Ticket = 3;
+			break;
+		case 4:
+			mes "去你妹儿的";
+			close;
+	}
+	if ( countitem(getd("$@BossQTicket"+.@Ticket)) < 1 ) {
+		mes "[BOSS区入口儿]";
+		mes "你没 "+getitemname(.@Ticket);
+		close;
+	}
+	
+	delitem getd("$@BossQTicket"+.@Ticket),1;
+	mes "[BOSS区入口儿]";
+	mes "坐稳啦";
+	close2;
+	warp getd("$@BossQMapName"+.@Ticket+"$"),0,0;
+	deltimer strnpcinfo(3) + "::OnTimers";
+	addtimer 30000, strnpcinfo(3) + "::OnTimers";	//门票到期时间。调试 30秒。1000=1秒
+	end;
+
+OnTimers:
+	getmapxy(.@mapname$, .@mapx, .@mapy, 0);
+	if ( .@mapname$ == "$@BossQMapName1$" || .@mapname$ == "$@BossQMapName2$" || .@mapname$ == "$@BossQMapName3$" ) {
+		warp "SavePoint",0,0;
+		dispbottom "门票已到期!";
+	}
+	end;
+
+OnInit:
+	$@BossQNum1 = 3;	//1区BOSS每次刷几只
+	$@BossQNum2 = 3;	//1区BOSS每次刷几只
+	$@BossQNum3 = 3;	//1区BOSS每次刷几只
+	$@BossQMapName1$ = "prontera";	//1区地图
+	$@BossQMapName2$ = "prontera";	//2区地图
+	$@BossQMapName3$ = "prontera";	//3区地图
+	$@BossQTicket1 = 501;	//1区门票
+	$@BossQTicket2 = 501;	//2区门票
+	$@BossQTicket3 = 501;	//3区门票
+	setarray $@BossQId1[0],1115,1115,1005,1006,1007;	//1区BOSSID列表
+	setarray $@BossQId2[0],1002,1004,1005,1006,1007;	//2区BOSSID列表
+	setarray $@BossQId3[0],1002,1004,1005,1006,1007;	//3区BOSSID列表
+	end;
+}
+
+-	script	BOSS区1区控制	-1,{
+	end;
+
+OnTimer600000:	//多少轮回一次， 1000 = 1秒	服务器重新启动也是要等这个时间才会刷新
+	if ( $@BossQSET1 != 1 ) {	//用来临时关闭刷新的开关， @set $@BossQSET1 1 为关闭BOSS刷新，@set $@BossQSET1 0 为开启BOSS刷新，默认开启
+		for ( .@i=0; .@i < $@BossQNum1; .@i++ ) {
+			killmonster $@BossQMapName1$,"BOSS区1区控制::OnKilled",1;
+		}
+		for ( .@i=0; .@i < $@BossQNum1; .@i++ ) {
+			monster $@BossQMapName1$,0,0,"--ja--",$@BossQId1[rand(getarraysize($@BossQId1))],1,"BOSS区1区控制::OnKilled";
+		}
+	}
+	mapannounce $@BossQMapName1$,"啊啊啊啊~BOSS刷新啦",bc_map;
+	stopnpctimer;
+	initnpctimer;
+	end;
+	
+OnKilled:
+	end;
+	
+OnInit:
+	initnpctimer;
+	end;
+}
+
+-	script	BOSS区2区控制	-1,{
+	end;
+
+OnTimer600000:	//多少轮回一次， 1000 = 1秒	服务器重新启动也是要等这个时间才会刷新
+	if ( $@BossQSET2 != 1 ) {	//用来临时关闭刷新的开关， @set $@BossQSET2 1 为关闭BOSS刷新，@set $@BossQSET2 0 为开启BOSS刷新，默认开启
+		for ( .@i=0; .@i < $@BossQNum2; .@i++ ) {
+			killmonster $@BossQMapName2$,"BOSS区2区控制::OnKilled",1;
+		}
+		for ( .@i=0; .@i < $@BossQNum2; .@i++ ) {
+			monster $@BossQMapName2$,0,0,"--ja--",$@BossQId2[rand(getarraysize($@BossQId2))],1,"BOSS区2区控制::OnKilled";
+		}
+	}
+	mapannounce $@BossQMapName2$,"啊啊啊啊~BOSS刷新啦",bc_map;
+	stopnpctimer;
+	initnpctimer;
+	end;
+	
+OnKilled:
+	end;
+	
+OnInit:
+	initnpctimer;
+	end;
+}
+
+-	script	BOSS区3区控制	-1,{
+	end;
+
+OnTimer600000:	//多少轮回一次， 1000 = 1秒	服务器重新启动也是要等这个时间才会刷新
+	if ( $@BossQSET3 != 1 ) {	//用来临时关闭刷新的开关， @set $@BossQSET3 1 为关闭BOSS刷新，@set $@BossQSET3 0 为开启BOSS刷新，默认开启
+		for ( .@i=0; .@i < $@BossQNum3; .@i++ ) {
+			killmonster $@BossQMapName3$,"BOSS区3区控制::OnKilled",1;
+		}
+		for ( .@i=0; .@i < $@BossQNum3; .@i++ ) {
+			monster $@BossQMapName3$,0,0,"--ja--",$@BossQId3[rand(getarraysize($@BossQId3))],1,"BOSS区3区控制::OnKilled";
+		}
+	}
+	mapannounce $@BossQMapName3$,"啊啊啊啊~BOSS刷新啦",bc_map;
+	stopnpctimer;
+	initnpctimer;
+	end;
+	
+OnKilled:
+	end;
+	
+OnInit:
+	initnpctimer;
+	end;
+}
+

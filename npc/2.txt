@@ -1,0 +1,188 @@
+-	script	梅尔蒂鉴定处理	-1,{
+	end;
+
+Oninit:
+	setarray $@ExcludeItem[0],1400,1450,1800,1900,1996,13128,13455,18121,21016,28008,16041,28107,28706,28605,13328,1600,2026;	//排除
+	setarray $@XieNianItemId1[0],1400,1450,1800,1900,1996,13128,13455,18121,21016,28008,16041,28107,28706,28605,13328;	//物理类武器ID
+	setarray $@XieNianItemId2[0],1600,2026;	//魔法类武器ID
+	setarray $@XieNianItemId3[0],16041,28107;	//法杖 锤子 斧子ID 再怎么附魔也不会碰到武器不可破坏
+	setarray $@XieNianItemId4[0],28706,28605,13328;	//短剑、书、手里剑ID 可能会在第三条附到部分魔法类附魔
+	end;
+
+
+OnPCIdentifyEvent:
+	.@idx = @identify_idx;
+	.@nameid = getinventoryinfo(.@idx,0);
+	
+	for ( set .@j,0; .@j < getarraysize($@ExcludeItem); .@j++ ) {
+		if ( .@nameid == $@ExcludeItem[.@i] ) {
+			announce "1.",0;
+			goto L_Play;
+		}
+	}
+	end;
+	
+L_Play:
+	delinventory .@idx,1;
+	for ( set .@i,0; .@i < getarraysize($@XieNianItemId1); .@i++ ) {
+		if ( .@nameid == $@XieNianItemId1[.@i] ) {
+			set .@Check,1;	//判断是物理类武器
+			break;
+		}
+		
+	}
+	for ( set .@i,0; .@i < getarraysize($@XieNianItemId2); .@i++ ) {
+		if ( .@nameid == $@XieNianItemId2[.@i] ) {
+			set .@Check,2;	//判断是魔法类武器
+			break;
+		}
+		
+	}
+	if ( .@Check == 1 ) {	//物理类武器处理
+		//==============第一条附魔处理开始================
+		
+		for ( set .@i,0; .@i < getarraysize($@XieNianItemId3); .@i++ ) {//法杖 锤子 斧子 在怎么附魔也不会碰到武器不可破坏
+			if ( .@nameid == $@XieNianItemId3[.@i] ) {
+				set .@Checkid,1;	//法杖 锤子 斧子
+				break;
+			}
+		}
+		if ( .@Checkid == 1 ) {
+			setarray .@OptIDList1[0],RDMOPT_WEAPON_ATTR_NOTHING,RDMOPT_WEAPON_ATTR_WATER,RDMOPT_WEAPON_ATTR_GROUND,RDMOPT_WEAPON_ATTR_FIRE,RDMOPT_WEAPON_ATTR_WIND,RDMOPT_WEAPON_ATTR_SAINT,
+									RDMOPT_WEAPON_ATTR_DARKNESS,RDMOPT_DAMAGE_PROPERTY_NOTHING_TARGET,RDMOPT_DAMAGE_PROPERTY_WATER_TARGET,RDMOPT_DAMAGE_PROPERTY_GROUND_TARGET,RDMOPT_DAMAGE_PROPERTY_FIRE_TARGET,
+									RDMOPT_DAMAGE_PROPERTY_WIND_TARGET,RDMOPT_DAMAGE_PROPERTY_POISON_TARGET,RDMOPT_DAMAGE_PROPERTY_SAINT_TARGET,RDMOPT_DAMAGE_PROPERTY_DARKNESS_TARGET,
+									RDMOPT_DAMAGE_PROPERTY_TELEKINESIS_TARGET,RDMOPT_DAMAGE_PROPERTY_UNDEAD_TARGET,RDMOPT_DAMAGE_SIZE_PERFECT,
+									RDMOPT_RACE_DAMAGE_NOTHING,RDMOPT_RACE_DAMAGE_UNDEAD,RDMOPT_RACE_DAMAGE_ANIMAL,RDMOPT_RACE_DAMAGE_PLANT,RDMOPT_RACE_DAMAGE_INSECT,RDMOPT_RACE_DAMAGE_FISHS,
+									RDMOPT_RACE_DAMAGE_DEVIL,RDMOPT_RACE_DAMAGE_HUMAN,RDMOPT_RACE_DAMAGE_ANGEL,RDMOPT_RACE_DAMAGE_DRAGON;	//这里没有武器不可破坏
+		} else {
+			setarray .@OptIDList1[0],RDMOPT_WEAPON_ATTR_NOTHING,RDMOPT_WEAPON_ATTR_WATER,RDMOPT_WEAPON_ATTR_GROUND,RDMOPT_WEAPON_ATTR_FIRE,RDMOPT_WEAPON_ATTR_WIND,RDMOPT_WEAPON_ATTR_SAINT,
+									RDMOPT_WEAPON_ATTR_DARKNESS,RDMOPT_DAMAGE_PROPERTY_NOTHING_TARGET,RDMOPT_DAMAGE_PROPERTY_WATER_TARGET,RDMOPT_DAMAGE_PROPERTY_GROUND_TARGET,RDMOPT_DAMAGE_PROPERTY_FIRE_TARGET,
+									RDMOPT_DAMAGE_PROPERTY_WIND_TARGET,RDMOPT_DAMAGE_PROPERTY_POISON_TARGET,RDMOPT_DAMAGE_PROPERTY_SAINT_TARGET,RDMOPT_DAMAGE_PROPERTY_DARKNESS_TARGET,
+									RDMOPT_DAMAGE_PROPERTY_TELEKINESIS_TARGET,RDMOPT_DAMAGE_PROPERTY_UNDEAD_TARGET,RDMOPT_DAMAGE_SIZE_PERFECT,
+									RDMOPT_RACE_DAMAGE_NOTHING,RDMOPT_RACE_DAMAGE_UNDEAD,RDMOPT_RACE_DAMAGE_ANIMAL,RDMOPT_RACE_DAMAGE_PLANT,RDMOPT_RACE_DAMAGE_INSECT,RDMOPT_RACE_DAMAGE_FISHS,
+									RDMOPT_RACE_DAMAGE_DEVIL,RDMOPT_RACE_DAMAGE_HUMAN,RDMOPT_RACE_DAMAGE_ANGEL,RDMOPT_RACE_DAMAGE_DRAGON,RDMOPT_WEAPON_INDESTRUCTIBLE;	//这里有武器不可破坏
+		}
+		setarray .@OptValList1[0],0,0,0,0,0,0,0,20,20,20,20,20,20,20,20,20,20,0,20,20,20,20,20,20,20,20,20,20;	//对应的最大值，0为默认。例如一些转换属性的
+		set .@OptIDListNum1,rand(getarraysize(.@OptIDList1));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[0],.@OptIDList1[.@OptIDListNum1];	//设置附魔
+		if ( .@OptValList1[.@OptIDListNum1] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[0],rand(1,.@OptValList1[.@OptIDListNum1]);
+		} else {	//否则设置值为0
+			set .@VALUE[0],0;
+		}
+		set .@Param[0],0;
+		//==============第一条附魔处理结束================
+		
+		//==============第二条附魔处理开始================
+		setarray .@OptIDList2[0],RDMOPT_CLASS_DAMAGE_NORMAL_TARGET,RDMOPT_CLASS_DAMAGE_BOSS_TARGET,RDMOPT_RACE_IGNORE_DEF_PERCENT_NOTHING,RDMOPT_RACE_IGNORE_DEF_PERCENT_UNDEAD,
+								RDMOPT_RACE_IGNORE_DEF_PERCENT_ANIMAL,RDMOPT_RACE_IGNORE_DEF_PERCENT_PLANT,RDMOPT_RACE_IGNORE_DEF_PERCENT_INSECT,RDMOPT_RACE_IGNORE_DEF_PERCENT_FISHS,
+								RDMOPT_RACE_IGNORE_DEF_PERCENT_DEVIL,RDMOPT_RACE_IGNORE_DEF_PERCENT_HUMAN,RDMOPT_RACE_IGNORE_DEF_PERCENT_ANGEL,RDMOPT_RACE_IGNORE_DEF_PERCENT_DRAGON,
+								RDMOPT_CLASS_IGNORE_DEF_PERCENT_NORMAL,RDMOPT_CLASS_IGNORE_DEF_PERCENT_BOSS;	//可能附魔的属性
+		setarray .@OptValList2[0],20,20,30,30,30,30,30,30,30,30,30,30,30,30;	//对应的最大值，0为默认。例如一些转换属性的
+		set .@OptIDListNum2,rand(getarraysize(.@OptIDList2));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[1],.@OptIDList2[.@OptIDListNum2];	//设置附魔
+		if ( .@OptValList2[.@OptIDListNum2] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[1],rand(1,.@OptValList2[.@OptIDListNum2]);
+		} else {	//否则设置值为0
+			set .@VALUE[1],0;
+		}
+		set .@Param[1],0;
+		//==============第二条附魔处理结束================
+		
+		//==============第三条附魔处理开始================
+		for ( set .@i,0; .@i < getarraysize($@XieNianItemId4); .@i++ ) {//短剑、书、手里剑ID 可能会在第三条附到部分魔法类附魔
+			if ( .@nameid == $@XieNianItemId4[.@i] ) {
+				set .@Checkid,3;	//短剑、书、手里剑
+				break;
+			}
+		}
+		if ( .@Checkid == 3 ) {
+			setarray .@OptIDList3[0],RDMOPT_VAR_STRAMOUNT,RDMOPT_VAR_AGIAMOUNT,RDMOPT_VAR_VITAMOUNT,RDMOPT_VAR_INTAMOUNT,RDMOPT_VAR_DEXAMOUNT,RDMOPT_VAR_LUKAMOUNT,RDMOPT_VAR_ATTPOWER,RDMOPT_DAMAGE_CRI_TARGET,RDMOPT_VAR_PLUSASPDPERCENT,RDMOPT_VAR_PLUSASPD,RDMOPT_RANGE_ATTACK_DAMAGE_TARGET,RDMOPT_VAR_ATTMPOWER,RDMOPT_DEC_SP_CONSUMPTION,RDMOPT_DEC_SPELL_CAST_TIME,RDMOPT_DEC_SPELL_DELAY_TIME;	//这里有部分魔法类附魔
+			setarray .@OptValList3[0],10,10,10,10,10,10,50,20,20,5,20,50,10,20,15;	//对应的最大值，0为默认。例如一些转换属性的
+		} else {
+			setarray .@OptIDList3[0],RDMOPT_VAR_STRAMOUNT,RDMOPT_VAR_AGIAMOUNT,RDMOPT_VAR_VITAMOUNT,RDMOPT_VAR_INTAMOUNT,RDMOPT_VAR_DEXAMOUNT,RDMOPT_VAR_LUKAMOUNT,RDMOPT_VAR_ATTPOWER,RDMOPT_DAMAGE_CRI_TARGET,RDMOPT_VAR_PLUSASPDPERCENT,RDMOPT_VAR_PLUSASPD,RDMOPT_RANGE_ATTACK_DAMAGE_TARGET;	//这里没有部分魔法类附魔
+			setarray .@OptValList3[0],10,10,10,10,10,10,50,20,20,5,20;	//对应的最大值，0为默认。例如一些转换属性的
+		}
+		set .@OptIDListNum3,rand(getarraysize(.@OptIDList3));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[2],.@OptIDList3[.@OptIDListNum3];	//设置附魔
+		if ( .@OptValList3[.@OptIDListNum3] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[2],rand(1,.@OptValList3[.@OptIDListNum3]);
+		} else {	//否则设置值为0
+			set .@VALUE[2],0;
+		}
+		set .@Param[2],0;
+		//==============第三条附魔处理结束================
+		
+		//附魔处理完毕，给予物品
+		
+		//.@r = rand(1,100);
+		//if ( .@r <= 85 ) .@refine = rand(1,4);
+		//if ( .@r > 85 && .@r <= 95 ) .@refine = 5;
+		//if ( .@r > 95 && .@r <= 98 ) .@refine = 6;
+		//if ( .@r > 98 ) .@refine = 7;
+		getitem3 .@nameid,1,1,0,0,0,0,0,0,.@RDMOPT,.@VALUE,.@Param;
+		end;	//给完记得结束
+	}
+	if ( .@Check == 2 ) {	//魔法类武器处理
+		setarray .@OptIDList1[0],RDMOPT_HEAL_VALUE,RDMOPT_MDAMAGE_PROPERTY_NOTHING_TARGET,RDMOPT_MDAMAGE_PROPERTY_WATER_TARGET,RDMOPT_MDAMAGE_PROPERTY_GROUND_TARGET,
+								RDMOPT_MDAMAGE_PROPERTY_FIRE_TARGET,RDMOPT_MDAMAGE_PROPERTY_WIND_TARGET,RDMOPT_MDAMAGE_PROPERTY_POISON_TARGET,RDMOPT_MDAMAGE_PROPERTY_SAINT_TARGET,
+								RDMOPT_MDAMAGE_PROPERTY_DARKNESS_TARGET,RDMOPT_MDAMAGE_PROPERTY_TELEKINESIS_TARGET,RDMOPT_MDAMAGE_PROPERTY_UNDEAD_TARGET,RDMOPT_VAR_MAGICATKPERCENT;
+		setarray .@OptValList1[0],20,20,20,20,20,20,20,20,20,20,20,10;	//对应的最大值，0为默认。例如一些转换属性的
+		set .@OptIDListNum1,rand(getarraysize(.@OptIDList1));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[0],.@OptIDList1[.@OptIDListNum1];	//设置附魔
+		if ( .@OptValList1[.@OptIDListNum1] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[0],rand(1,.@OptValList1[.@OptIDListNum1]);
+		} else {	//否则设置值为0
+			set .@VALUE[0],0;
+		}
+		set .@Param[0],0;
+		//==============第一条附魔处理结束================
+		
+		//==============第二条附魔处理开始================
+		setarray .@OptIDList2[0],RDMOPT_RACE_MDAMAGE_NOTHING,RDMOPT_RACE_MDAMAGE_UNDEAD,RDMOPT_RACE_MDAMAGE_ANIMAL,RDMOPT_RACE_MDAMAGE_PLANT,RDMOPT_RACE_MDAMAGE_INSECT,
+								RDMOPT_RACE_MDAMAGE_FISHS,RDMOPT_RACE_MDAMAGE_DEVIL,RDMOPT_RACE_MDAMAGE_HUMAN,RDMOPT_RACE_MDAMAGE_ANGEL,RDMOPT_RACE_MDAMAGE_DRAGON,
+								RDMOPT_CLASS_MDAMAGE_NORMAL,RDMOPT_CLASS_MDAMAGE_BOSS,RDMOPT_RACE_IGNORE_MDEF_PERCENT_NOTHING,RDMOPT_RACE_IGNORE_MDEF_PERCENT_UNDEAD,
+								RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANIMAL,RDMOPT_RACE_IGNORE_MDEF_PERCENT_PLANT,RDMOPT_RACE_IGNORE_MDEF_PERCENT_INSECT,
+								RDMOPT_RACE_IGNORE_MDEF_PERCENT_FISHS,RDMOPT_RACE_IGNORE_MDEF_PERCENT_DEVIL,RDMOPT_RACE_IGNORE_MDEF_PERCENT_HUMAN,
+								RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANGEL,RDMOPT_RACE_IGNORE_MDEF_PERCENT_DRAGON,RDMOPT_CLASS_IGNORE_MDEF_PERCENT_NORMAL,
+								RDMOPT_CLASS_IGNORE_MDEF_PERCENT_BOSS;	//可能附魔的属性
+		setarray .@OptValList2[0],20,20,20,20,20,20,20,20,20,20,20,20,30,30,30,30,30,30,30,30,30,30,30,30;	//对应的最大值，0为默认。例如一些转换属性的
+		set .@OptIDListNum2,rand(getarraysize(.@OptIDList2));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[1],.@OptIDList2[.@OptIDListNum2];	//设置附魔
+		if ( .@OptValList2[.@OptIDListNum2] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[1],rand(1,.@OptValList2[.@OptIDListNum2]);
+		} else {	//否则设置值为0
+			set .@VALUE[1],0;
+		}
+		set .@Param[1],0;
+		//==============第二条附魔处理结束================
+		
+		//==============第三条附魔处理开始================
+		
+		setarray .@OptIDList3[0],RDMOPT_VAR_STRAMOUNT,RDMOPT_VAR_AGIAMOUNT,RDMOPT_VAR_VITAMOUNT,RDMOPT_VAR_INTAMOUNT,RDMOPT_VAR_DEXAMOUNT,RDMOPT_VAR_LUKAMOUNT,RDMOPT_VAR_ATTMPOWER,RDMOPT_DEC_SP_CONSUMPTION,RDMOPT_DEC_SPELL_CAST_TIME,RDMOPT_DEC_SPELL_DELAY_TIME;
+		setarray .@OptValList3[0],10,10,10,10,10,10,50,10,20,15;	//对应的最大值，0为默认。例如一些转换属性的
+		
+		set .@OptIDListNum3,rand(getarraysize(.@OptIDList3));	//随机从可能附魔的属性抽取一个
+		set .@RDMOPT[2],.@OptIDList3[.@OptIDListNum3];	//设置附魔
+		if ( .@OptValList3[.@OptIDListNum3] != 0 ) {	//当最大值不为0的时候，开始随机取值
+			set .@VALUE[2],rand(1,.@OptValList3[.@OptIDListNum3]);
+		} else {	//否则设置值为0
+			set .@VALUE[2],0;
+		}
+		set .@Param[2],0;
+		//==============第三条附魔处理结束================
+		
+		//附魔处理完毕，给予物品
+		
+		//.@r = rand(1,100);
+		//if ( .@r <= 85 ) .@refine = rand(1,4);
+		//if ( .@r > 85 && .@r <= 95 ) .@refine = 5;
+		//if ( .@r > 95 && .@r <= 98 ) .@refine = 6;
+		//if ( .@r > 98 ) .@refine = 7;
+		getitem3 .@nameid,1,1,0,0,0,0,0,0,.@RDMOPT,.@VALUE,.@Param;
+		end;	//给完记得结束
+	}
+	announce "2.",0;
+	//getitem .@nameid,1;	//其他装备直接鉴定完毕
+	end;
+}

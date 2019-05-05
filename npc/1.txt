@@ -1,1 +1,233 @@
-prt_fild08,171,139,171,369	boss_monster	梦魇死灵	1658,1,7800000,2400000,0
+//===== Athena Script =======================================
+//= 道场
+//===== By: ==================================================
+//= 程序：聽風
+//===== 當前版本: ============================================
+//= 1.0
+//===== 這合: ================================================
+//= rAthenaCN & 99Max
+//===== 描述: ================================================
+//= 泡沫奶瓶定制 道场腳本
+//===== 備註: ================================================
+//= 1.0 初步完成腳本	2018-09-25
+//============================================================
+
+prontera,155,94,4	script	初级道场CD清除	72,{
+	set CJDC_timer,0;
+	mes "CD已清除";
+	close;
+}
+
+prontera,155,92,4	script	初级道场	72,{
+	set .@party_id,getcharid(1);
+	set .@md_name$,"初级道场";
+	if (!instance_check_party(.@party_id,$@CJDC_Player)) {
+		mes "[初级道场]";
+		mes "请加入或组建一个不少于 "+$@CJDC_Player+" 人的队伍, 然后再来试试看.";
+		mes "注意: 已经离线队友不算在人数内.";
+		close;
+	}
+	if ( BaseLevel < $@CJDC_Level ) {
+		mes "[初级道场]";
+		mes "进入道场最低等级 Lv."+$@CJDC_Level;
+		close;
+	}
+	if ( $@CJDC_one == 1 ) {
+		if ( CJDC_timer - gettimetick(2) > 0 && $@CJDC_one == 1 ) {
+			set .@dun_lim_time,CJDC_timer;
+			set .@dun_cur_time,gettimetick(2);
+			set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+			set .@dun_h,(.@dun_ent_t / 3600);
+			set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+			set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+			mes "由于初级道场的CD现在无法进入副本, 请等 " + .@dun_h + "小时" + .@dun_m + "分" + .@dun_s + "秒 后才能重新进入.";
+			close;
+		} else {
+			set CJDC_partyid,0;
+		}
+	} else {
+		if ( CJDC_timer - gettimetick(2) > 0 ) {
+			set .@dun_lim_time,CJDC_timer;
+			set .@dun_cur_time,gettimetick(2);
+			set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+			set .@dun_h,(.@dun_ent_t / 3600);
+			set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+			set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+			mes "由于初级道场的CD现在无法进入副本, 请等 " + .@dun_h + "小时" + .@dun_m + "分" + .@dun_s + "秒 后才能重新进入.";
+			close;
+		}
+	}
+	if (getcharid(0) == getpartyleader(.@party_id,2)) {
+		mes "[初级道场]";
+		mes "你的队伍符合进入副本的标准, 现在就预约进入“初级道场”吗?";
+		next;
+		switch(select("预约创建 "+.@md_name$+":进入副本:结束对话")) {
+		case 1:
+			if ( Zeny < $@CJDC_OpenZeny ) {
+				mes "[初级道场]";
+				mes "初级道场 开启需要"+$@CJDC_OpenZeny+"z";
+				mes "很明显你没那么多钱";
+				close;
+			}
+			if (instance_create(.@md_name$) < 0) {
+				mes "[初级道场]";
+				mes "队伍名称: "+getpartyname(.@party_id);
+				mes "队长名称: "+strcharinfo(0);
+				mes "^0000ff"+.@md_name$+" ^000000- 预约失败!";
+				close;
+			}
+			Zeny -= $@CJDC_OpenZeny;
+			mes "[初级道场]";
+			mes "^0000ff"+.@md_name$+"^000000 - 正在尝试预约";
+			mes "在开放进场之后再次与我对话, 选择“进入副本”即可..";
+			close;
+		case 2:
+			callsub L_Enter,0,1;
+		case 3:
+			close;
+		}
+	}
+	switch(select("进入 "+.@md_name$+":结束对话")) {
+	case 1:
+		callsub L_Enter,1,1;
+	case 2:
+		end;
+	}
+
+L_Enter:
+	switch(instance_enter("初级道场")) {
+	case IE_OTHER:
+		mes "[初级道场]";
+		mes "发生不明错误.";
+		mes "可能是副本名称设定错误, 请联系管理员.";
+		close;
+	case IE_NOINSTANCE:
+		mes "[初级道场]";
+		mes "初级道场副本不存在.";
+		mes "队长尚未创建副本, 你无法进入.";
+		close;
+	case IE_NOMEMBER:
+		mes "[初级道场]";
+		mes "加入或组建一个队伍后, 就能进入副本.";
+		close;
+	case IE_OK:
+		if ( $@CJDC_one == 1 ) {
+			set CJDC_partyid,1;
+			if ( $@CJDC_CD > 0 ) set CJDC_timer,gettimetick(2)+$@CJDC_CD;
+		}
+		if (getarg(0) == 0) close;
+		else end;
+	}
+
+OnInit:
+	set $@CJDC_OpenZeny,1000000; //开启副本金额
+	setarray $@CJDC_mobkid[1],1002,1002; // 魔物ID
+	setarray $@CJDC_mobknum[1],1,1,1,1,1,1,1,1,1,1; //每关几隻(关卡回合数这里设定)
+	setarray $@CJDC_round[1],9; // 休息关数，如果设置 4,9的话，那就是第4，第9关暂停
+	setarray $@CJDC_Itemid[1],505,506;	//道场奖励道具ID，随机选择一个ID
+	setarray $@CJDC_Num[1],2,1;	//对应上面数量
+	set $@CJDC_Player,1;	// 组队进入人数
+	set $@CJDC_Level,70;	// 进入道场的最低等级
+	set $@CJDC_CD,14400;	// CD等待时间 默认：14400秒(4小时) 。设置 0 为关闭
+	set $@CJDC_Sleep,5000;	// 每关刷怪等待时间 默认：5000毫秒
+	set $@CJDC_minzeny,70; // 最少给 70 * 10000 Zeny
+	set $@CJDC_maxzeny,90; // 最多给 90 * 10000 Zeny
+	set $@CJDC_one,1; // 出去后是否还能再次进入。 1为不可，0为可以
+  waitingroom "初级道场",0;
+	end;
+}
+
+guild_vs2,50,50,5	script	初级道场裁判#CJDC1	758,{
+	if (getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "[初级道场裁判]";
+		mes "只有队长有权力开起挑战";
+		close;
+	}
+	mes "[初级道场裁判]";
+	mes "请问要开始挑战了吗？";
+	next;
+	switch(select("开始挑战！","不小心点到！")){
+		case 1:
+			doevent instance_npcname("#CJDCMob1")+"::OnMobstart";
+			disablenpc  instance_npcname(strnpcinfo(0));
+			close;
+		case 2:
+			mes "[初级道场裁判]";
+			mes "那您以后别再那么不小心哩！";
+			close;
+	}
+}
+
+guild_vs2,0,0,0	script	#CJDCMob1	-1,{
+OnMobstart:
+	'Checkpoint++;
+	for(.@n=1;.@n<=$@CJDC_mobknum['Checkpoint];.@n++) {
+		areamonster strnpcinfo(4),45,45,55,55,"--ja--",$@CJDC_mobkid[rand(1,getarraysize($@CJDC_mobkid)-1)],1,instance_npcname(strnpcinfo(0))+"::OnMobDead";
+	}
+	end;
+OnMobDead:
+	set .@mobcount,mobcount(strnpcinfo(4),instance_npcname(strnpcinfo(0))+"::OnMobDead");
+	if(.@mobcount > 0) {
+		announce "初级道场裁判 : 还剩下 ["+.@mobcount+"] 隻怪物",17; end;
+	}
+	if ('Checkpoint ==  getarraysize($@CJDC_mobknum)-1){
+		announce "恭喜队伍 "+getpartyname(getcharid(1))+" 挑战 初级道场 成功",0;
+		sleep2 2000;
+		set 'win,1;
+		enablenpc instance_npcname("初级道场奖励员#CJDC1");
+		enablenpc instance_npcname("初级道场发钱员#CJDC1");
+		end;
+	}
+	if ('Checkpoint ==  getarraysize($@CJDC_mobknum)-2 ){
+		announce "初级道场裁判 : 恭喜第 ["+'Checkpoint+"] 关挑战成功，最后一关挑战将开始，请继续努力！",17;
+	}else{
+		announce "初级道场裁判 : 恭喜第 ["+'Checkpoint+"] 关挑战成功！",17;
+	}
+	for(.@n=1;.@n<getarraysize($@CJDC_round);.@n++){
+		if ('Checkpoint ==  $@CJDC_round[.@n]){
+			enablenpc  instance_npcname("初级道场裁判#CJDC1"); end;
+		}
+	}
+	sleep2 $@CJDC_Sleep;
+	doevent instance_npcname("#CJDCMob1")+"::OnMobstart";
+	end;
+}
+
+guild_vs2,46,49,4	script	初级道场奖励员#CJDC1	935,{
+	if('win==0) {
+OnInstanceInit:
+		disablenpc instance_npcname(strnpcinfo(0));
+		end;
+	}
+	mes "[初级道场奖励员]";
+	mes "您好厉害！竟然能击倒MVP怪物，";
+	mes "并且挑战成功，给您一些奖励吧！";
+	next;
+	if (select("领取奖励","取消")==2) {
+		close;
+	}
+	set .@rand,rand(1,(getarraysize($@CJDC_Itemid)-1) );
+	getitem $@CJDC_Itemid[.@rand],$@CJDC_Num[.@rand];
+	if ( $@CJDC_CD > 0 ) set CJDC_timer,gettimetick(2)+$@CJDC_CD;
+	warp "morocc",156,93;
+	end;
+	}
+
+guild_vs2,53,49,6	script	初级道场发钱员#CJDC1	935,{
+	if('win==0) {
+OnInstanceInit:
+		disablenpc instance_npcname(strnpcinfo(0));
+		end;
+	}
+	mes "[初级道场发钱员]";
+	mes "您好厉害！竟然能击倒MVP怪物，";
+	mes "并且挑战成功，给您一些奖励吧！";
+	next;
+	if (select("领取金钱","取消")==2) {
+		close;
+	}
+	Zeny += rand($@CJDC_minzeny,$@CJDC_maxzeny)*10000;
+	if ( $@CJDC_CD > 0 ) set CJDC_timer,gettimetick(2)+$@CJDC_CD;
+	warp "morocc",156,93;
+	end;
+}

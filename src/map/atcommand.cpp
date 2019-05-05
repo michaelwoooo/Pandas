@@ -6058,7 +6058,7 @@ ACMD_FUNC(offline) {
 	}
 
 	sd->state.autotrade = 1;
-
+	sd->state.offline = 1;
 	channel_pcquit(sd, 0xF); //开始离线
 	clif_authfail_fd(sd->fd, 15);
 

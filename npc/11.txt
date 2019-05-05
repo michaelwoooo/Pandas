@@ -1,0 +1,253 @@
+1@zjdc	mapflag	nomemo
+1@zjdc	mapflag	noteleport
+1@zjdc	mapflag	monster_noteleport
+1@zjdc	mapflag	nosave
+1@zjdc	mapflag	nobranch
+1@zjdc	mapflag	noicewall
+1@zjdc	mapflag	nowarp
+1@zjdc	mapflag	restricted	8
+
+prontera,159,96,4	pointshop	道场商店	72,DoJoPoints:0,501:10
+
+prontera,159,94,4	script	中级道场CD清除	72,{
+	set ZJDC_timer,0;
+	mes "CD已清除";
+	close;
+}
+
+prontera,159,92,4	script	中级道场	72,{
+	set .@party_id,getcharid(1);
+	set .@md_name$,"中级道场";
+	if (!instance_check_party(.@party_id,$@ZJDC_Player)) {
+		mes "[中级道场]";
+		mes "请加入或组建一个不少于 "+$@ZJDC_Player+" 人的队伍, 然后再来试试看.";
+		mes "注意: 已经离线队友不算在人数内.";
+		close;
+	}
+	if ( BaseLevel < $@ZJDC_Level ) {
+		mes "[中级道场]";
+		mes "进入道场最低等级 Lv."+$@ZJDC_Level;
+		close;
+	}
+	if ( $@ZJDC_one == 1 ) {
+		if ( ZJDC_timer - gettimetick(2) > 0 && $@ZJDC_one == 1 ) {
+			set .@dun_lim_time,ZJDC_timer;
+			set .@dun_cur_time,gettimetick(2);
+			set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+			set .@dun_h,(.@dun_ent_t / 3600);
+			set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+			set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+			mes "由于中级道场的CD现在无法进入副本, 请等 " + .@dun_h + "小时" + .@dun_m + "分" + .@dun_s + "秒 后才能重新进入.";
+			close;
+		} else {
+			set ZJDC_partyid,0;
+		}
+	} else {
+		if ( ZJDC_timer - gettimetick(2) > 0 ) {
+			set .@dun_lim_time,ZJDC_timer;
+			set .@dun_cur_time,gettimetick(2);
+			set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+			set .@dun_h,(.@dun_ent_t / 3600);
+			set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+			set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+			mes "由于中级道场的CD现在无法进入副本, 请等 " + .@dun_h + "小时" + .@dun_m + "分" + .@dun_s + "秒 后才能重新进入.";
+			close;
+		}
+	}
+	if (getcharid(0) == getpartyleader(.@party_id,2)) {
+		mes "[中级道场]";
+		mes "你的队伍符合进入副本的标准, 现在就预约进入“中级道场”吗?";
+		next;
+		switch(select("预约创建 "+.@md_name$+":进入副本:结束对话")) {
+		case 1:
+			if ( Zeny < $@ZJDC_OpenZeny ) {
+				mes "[中级道场]";
+				mes "中级道场 开启需要"+$@ZJDC_OpenZeny+"z";
+				mes "很明显你没那么多钱";
+				close;
+			}
+			if (instance_create(.@md_name$) < 0) {
+				mes "[中级道场]";
+				mes "队伍名称: "+getpartyname(.@party_id);
+				mes "队长名称: "+strcharinfo(0);
+				mes "^0000ff"+.@md_name$+" ^000000- 预约失败!";
+				close;
+			}
+			Zeny -= $@ZJDC_OpenZeny;
+			mes "[中级道场]";
+			mes "^0000ff"+.@md_name$+"^000000 - 正在尝试预约";
+			mes "在开放进场之后再次与我对话, 选择“进入副本”即可..";
+			close;
+		case 2:
+			callsub L_Enter,0,1;
+		case 3:
+			close;
+		}
+	}
+	switch(select("进入 "+.@md_name$+":结束对话")) {
+	case 1:
+		callsub L_Enter,1,1;
+	case 2:
+		end;
+	}
+
+L_Enter:
+	switch(instance_enter("中级道场")) {
+	case IE_OTHER:
+		mes "[中级道场]";
+		mes "发生不明错误.";
+		mes "可能是副本名称设定错误, 请联系管理员.";
+		close;
+	case IE_NOINSTANCE:
+		mes "[中级道场]";
+		mes "中级道场副本不存在.";
+		mes "队长尚未创建副本, 你无法进入.";
+		close;
+	case IE_NOMEMBER:
+		mes "[中级道场]";
+		mes "加入或组建一个队伍后, 就能进入副本.";
+		close;
+	case IE_OK:
+		if ( $@ZJDC_one == 1 ) {
+			set ZJDC_partyid,1;
+			if ( $@ZJDC_CD > 0 ) set ZJDC_timer,gettimetick(2)+$@ZJDC_CD;
+		}
+		if (getarg(0) == 0) close;
+		else end;
+	}
+
+OnInit:
+	set $@ZJDC_OpenZeny,1000000; //开启副本金额
+	setarray $@ZJDC_mobkid[1],1002,1002; // 魔物ID
+	setarray $@ZJDC_mobknum[1],1,1,1,1,1; //每关几隻(关卡回合数这里设定)
+	setarray $@ZJDC_round[1],0; // 休息关数，如果设置 4,9的话，那就是第4，第9关暂停
+	set $@ZJDC_Player,1;	// 组队进入人数
+	set $@ZJDC_Level,70;	// 进入道场的最低等级
+	set $@ZJDC_CD,72000;	// CD等待时间 默认：14400秒(4小时) 。设置 0 为关闭
+	set $@ZJDC_Sleep,5000;	// 每关刷怪等待时间 默认：5000毫秒
+	set $@ZJDC_Item,501;	//奖励ID
+	set $@ZJDC_Num,10;
+	set $@ZJDC_JiFen,15; // 通关给予多少积分
+	set $@ZJDC_one,1; // 出去后是否还能再次进入。 1为不可，0为可以
+	waitingroom "中级道场",0;
+	end;
+}
+
+1@zjdc,50,50,5	script	中级道场裁判#ZJDC1	758,{
+	if (getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "[中级道场裁判]";
+		mes "只有队长有权力开起挑战";
+		close;
+	}
+	mes "[中级道场裁判]";
+	mes "请问要开始挑战了吗？";
+	next;
+	switch(select("开始挑战！","不小心点到！")){
+		case 1:
+			disablenpc instance_npcname(strnpcinfo(0));
+			doevent instance_npcname("#ZJDCMob1")+"::OnMobstart";
+			close;
+		case 2:
+			mes "[中级道场裁判]";
+			mes "那您以后别再那么不小心哩！";
+			close;
+	}
+}
+
+1@zjdc,0,0,0	script	#ZJDCMob1	-1,{
+OnMobstart:
+	'Checkpoint++;
+	for(.@n=1;.@n<=$@ZJDC_mobknum['Checkpoint];.@n++) {
+		areamonster strnpcinfo(4),45,45,55,55,"--ja--",$@ZJDC_mobkid[rand(1,getarraysize($@ZJDC_mobkid)-1)],1,instance_npcname(strnpcinfo(0))+"::OnMobDead";
+		'GID = $@mobid[0];
+	}
+	end;
+OnMobDead:
+	set .@mobcount,mobcount(strnpcinfo(4),instance_npcname(strnpcinfo(0))+"::OnMobDead");
+	if(.@mobcount > 0) {
+		announce "中级道场裁判 : 还剩下 ["+.@mobcount+"] 隻怪物",17; end;
+	}
+	for ( .@i = 0; .@i < 9; .@i++ ) {
+		.@r = rand(1,100);
+		if ( .@r < 20 ) {
+			getunitdata 'GID,.@por_arr;
+			makeitem 501,1,strnpcinfo(4),.@por_arr[6]+rand(3)-1,.@por_arr[7]+rand(3)-1;
+		}
+	}
+
+	if ('Checkpoint ==  getarraysize($@ZJDC_mobknum)-1){
+		announce "恭喜队伍 "+getpartyname(getcharid(1))+" 挑战 中级道场 成功",0;
+		sleep2 2000;
+		set 'win,1;
+		announce "中级道场裁判 : 请在15秒内领取奖励，过时不候！",17;
+		initnpctimer instance_npcname("中级道场奖励员#ZJDC1");
+		enablenpc instance_npcname("中级道场奖励员#ZJDC1");
+		end;
+	}
+	if ('Checkpoint ==  getarraysize($@ZJDC_mobknum)-2 ){
+		announce "中级道场裁判 : 恭喜第 ["+'Checkpoint+"] 关挑战成功，最后一关挑战将开始，请继续努力！",17;
+	}else{
+		announce "中级道场裁判 : 恭喜第 ["+'Checkpoint+"] 关挑战成功！",17;
+	}
+	for(.@n=1;.@n<getarraysize($@ZJDC_round);.@n++){
+		if ('Checkpoint ==  $@ZJDC_round[.@n]){
+			enablenpc instance_npcname("中级道场裁判#ZJDC1"); end;
+		}
+	}
+	sleep2 $@ZJDC_Sleep;
+	doevent instance_npcname("#ZJDCMob1")+"::OnMobstart";
+	end;
+}
+
+1@zjdc,46,49,4	script	中级道场奖励员#ZJDC1	935,{
+	if('win==0) {
+OnInstanceInit:
+		disablenpc instance_npcname(strnpcinfo(0));
+		end;
+	}
+	if ( .talk == 1 ) {
+		npctalk "中级道场奖励员: "+.talkname$+" 正在和我对话，请稍等一下";
+		end;
+	}
+	.talk = 1;
+	.talkname$ = strcharinfo(0);
+	/*
+	mes "[中级道场奖励员]";
+	mes "您好厉害！竟然能击倒MVP怪物，";
+	mes "并且挑战成功，给您一些奖励吧！";
+	next;
+	if (select("领取奖励","取消")==2) {
+		close;
+	}
+	close2;
+	*/
+	if ( .gameover ) {	
+		.talk = 0;
+		.talkname$ = "";
+		if ( $@ZJDC_CD > 0 ) set ZJDC_timer,gettimetick(2)+$@ZJDC_CD;
+		warp "SavePoint",0,0;
+		end;
+	}
+	DoJoPoints += $@ZJDC_JiFen;
+	getitem $@ZJDC_Item,$@ZJDC_Num;
+	getmapxy(.mapname$, .mapx, .mapy, BL_NPC);
+	getsameipinfo getcharip();
+	.amount = @sameip_amount;
+	copyarray .sameip_aid[0],@sameip_aid,@sameip_amount;
+	for ( .@i = 0; .@i < .amount; .@i++ ) {
+		if (attachrid(.sameip_aid[.@i])) {
+			if ( strcharinfo(3) == .mapname$ ) {
+				if ( $@ZJDC_CD > 0 ) set ZJDC_timer,gettimetick(2)+$@ZJDC_CD;
+				warp "SavePoint",0,0;
+			}
+		}
+	}
+	deletearray .sameip_aid,.amount;
+	.talk = 0;
+	.talkname$ = "";
+	end;
+
+OnTimer15000:
+	.gameover = 1;
+	end;
+}

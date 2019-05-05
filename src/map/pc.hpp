@@ -255,6 +255,7 @@ struct map_session_data {
 		unsigned int abra_flag : 2; // Abracadabra bugfix by Aru
 		unsigned int autocast : 1; // Autospell flag [Inkfish]
 		unsigned int autotrade : 3;	//By Fantik. &2 Requested by vending autotrade; &4 Requested by buyingstore autotrade
+		unsigned int offline : 3;	//By Fantik. &2 Requested by vending autotrade; &4 Requested by buyingstore autotrade
 		unsigned int showdelay :1;
 		unsigned int showexp :1;
 		unsigned int showzeny :1;

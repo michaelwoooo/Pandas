@@ -8,10 +8,11 @@ morocc,169,100,5	script	精炼宗师	648,{
 	set .@baodiid1,18116;	//武器保底符ID
 	set .@jia7id,6234;	//+7道具ID
 	set .@jia9id,6233;	//+9道具ID
+	set .@8budaotui,501;	//8以上精炼不倒退道具ID
 //-----------------快速精炼安全值(无视安全值前面精炼的成功率)---------------
 	set @anquan,4;	//比如把0改为5，那精炼1-5是快速安全精炼，精炼+6开始按照下面的成功率
 //--------------------------不同类型装备的精炼成功率------------------------
-	setarray @jinglian0[0],100,100,100,100, 90, 70, 60, 20, 5, 5;	//防具精炼1-10的成功率
+	setarray @jinglian0[0],100,100,100,100, 90, 70, 60, 15, 5, 5;	//防具精炼1-10的成功率
 	setarray @jinglian1[0],100,100,100,100,100,100,100, 80, 60, 10;	//1级武器精炼1-10的成功率
 	setarray @jinglian2[0],100,100,100,100,100,100, 80, 60, 30, 10;	//2级武器精炼1-10的成功率
 	setarray @jinglian3[0],100,100,100,100,100, 90, 60, 40, 20, 10;	//3级武器精炼1-10的成功率
@@ -51,7 +52,7 @@ morocc,169,100,5	script	精炼宗师	648,{
 		close;
 					}
 	if (getequiprefinerycnt(@part)>=10) goto Levent4;
-	switch(select("使用精炼保护券:直接精炼:精炼能力+7券:精炼能力+8券")) {
+	switch(select("使用精炼保护券:直接精炼:8以上精炼不倒退:精炼能力+7券:精炼能力+8券")) {
 	case 2:
 		break;
 	case 1:
@@ -74,8 +75,21 @@ morocc,169,100,5	script	精炼宗师	648,{
 			delitem .@baodiid1,1;
 			break;
 		}
-		
 	case 3:
+		if ( getequiprefinerycnt(@part) < 8 ) {
+			mes "[精炼宗师]";
+			mes "这件装备要+8以上才可以";
+			close;
+		}
+		if ( countitem(.@8budaotui) < 1 ) {
+			mes "[精炼宗师]";
+			mes "你没有"+getitemname(.@8budaotui);
+			close;
+		}
+		set .@8budti,1;
+		delitem .@8budaotui,1;
+		break;
+	case 4:
 		if ( countitem(.@jia7id) < 1 ) {
 			mes "[精炼宗师]";
 			mes "你没有精炼能力+7券";
@@ -91,7 +105,7 @@ morocc,169,100,5	script	精炼宗师	648,{
 		}
 		set .@jiadelid,.@jia7id;
 		goto Levent7;
-	case 4:
+	case 5:
 		if ( countitem(.@jia9id) < 1 ) {
 			mes "[精炼宗师]";
 			mes "你没有精炼能力+8券";
@@ -141,6 +155,10 @@ Levent4:
 Levent5:
 	mes "[精炼宗师]";
 	mes "真遗憾，精炼失败了，我技术还是不够，我还是回家练多几年！";
+	if ( .@8budti == 1 ) {
+		mes "还好还好，精炼值保住了";
+		close;
+	}
 	if ( .@baodi == 1 ) {
 		failedrefitem2 @part,1;
 	} else {
