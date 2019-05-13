@@ -57,6 +57,10 @@
 #include "unit.hpp"
 #include "vending.hpp"
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+#include "itemamulet.hpp"	// amulet_is
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 static inline uint32 client_tick( t_tick tick ){
 	return (uint32)tick;
 }
@@ -87,6 +91,13 @@ enum mail_type {
 static inline int itemtype(unsigned short nameid) {
 	struct item_data* id = itemdb_search(nameid); //Use itemdb_search, so non-existance item will use dummy data and won't crash the server. bugreport:8468
 	int type = id->type;
+
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	// 若是护身符道具, 在这里全部把它当做 IT_ETC 类型返回
+	if (type == IT_AMULET || amulet_is(nameid))
+		return IT_ETC;
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 	if( type == IT_SHADOWGEAR ) {
 		if( id->equip&EQP_SHADOW_WEAPON )
 			return IT_WEAPON;
@@ -6878,6 +6889,11 @@ void clif_cart_additem(struct map_session_data *sd,int n,int amount,int fail)
 	WBUFB(buf,10)=itemdb_type(sd->cart.u.items_cart[n].nameid);
 	offset += 1;
 #endif
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	// 若是护身符道具, 那么最终发送给客户端的道具类型直接切换成 IT_ETC 而不是 IT_AMULET
+	if (amulet_is(sd->cart.u.items_cart[n].nameid))
+		WBUFB(buf,10)=amulet_pandas_type(sd->cart.u.items_cart[n].nameid);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
 	WBUFB(buf,10+offset)=sd->cart.u.items_cart[n].identify;
 	WBUFB(buf,11+offset)=sd->cart.u.items_cart[n].attribute;
 	WBUFB(buf,12+offset)=sd->cart.u.items_cart[n].refine;
@@ -10009,6 +10025,23 @@ void clif_viewequip_ack(struct map_session_data* sd, struct map_session_data* ts
 #endif
 	nullpo_retv(sd);
 	nullpo_retv(tsd);
+
+#ifdef Pandas_NpcFilter_VIEW_EQUIP
+	if (sd && sd->bl.type == BL_PC && tsd && tsd->bl.type == BL_PC) {
+		pc_setregstr(sd, add_str("@vieweq_name$"), tsd->status.name);	// 为兼容脚本而添加
+		pc_setreg(sd, add_str("@vieweq_cid"), tsd->status.char_id);		// 为兼容脚本而添加
+		pc_setreg(sd, add_str("@vieweq_aid"), tsd->status.account_id);	// 为兼容脚本而添加
+		pc_setreg(sd, add_str("@eqview_cid"), tsd->status.char_id);		// 为兼容脚本而添加
+
+		pc_setregstr(sd, add_str("@view_equip_target_name$"), tsd->status.name);
+		pc_setreg(sd, add_str("@view_equip_target_cid"), tsd->status.char_id);
+		pc_setreg(sd, add_str("@view_equip_target_aid"), tsd->status.account_id);
+
+		if (npc_script_filter(sd, NPCF_VIEW_EQUIP))
+			return;
+	}
+#endif // Pandas_NpcFilter_VIEW_EQUIPx
+
 	fd = sd->fd;
 
 	WFIFOHEAD(fd, MAX_INVENTORY * s + 43 + 2);
@@ -10928,6 +10961,11 @@ void clif_progressbar_abort(struct map_session_data * sd)
 	WFIFOHEAD(fd,packet_len(0x2f2));
 	WFIFOW(fd,0) = 0x2f2;
 	WFIFOSET(fd,packet_len(0x2f2));
+
+#ifdef Pandas_NpcEvent_PROGRESS_ABORT
+	if ((getEventTrigger(sd, NPCE_PROGRESS_ABORT) & EVENT_TRIGGER_ONCE) == EVENT_TRIGGER_ONCE)
+		npc_script_event(sd, NPCE_PROGRESS_ABORT);
+#endif // Pandas_NpcEvent_PROGRESS_ABORT
 }
 
 
@@ -15155,17 +15193,11 @@ void clif_parse_HomMenu(int fd, struct map_session_data *sd)
 /// 0292
 void clif_parse_AutoRevive(int fd, struct map_session_data *sd)
 {
-	short item_position = pc_search_inventory(sd, ITEMID_TOKEN_OF_SIEGFRIED);
-	uint8 hp = 100, sp = 100;
+	if (sd->sc.data[SC_HELLPOWER]) // Cannot resurrect while under the effect of SC_HELLPOWER.
+		return;
 
-#ifdef Pandas_Fix_E_Token_Of_Siegfried
-	// 若背包中同时持有 ITEMID_E_TOKEN_OF_SIEGFRIED 和 ITEMID_TOKEN_OF_SIEGFRIED 两种道具的话
-	// 程序会优先使用 ITEMID_TOKEN_OF_SIEGFRIED 然后再使用 ITEMID_E_TOKEN_OF_SIEGFRIED
-	// 备注: 目前不清楚官方的消耗顺序, 若以后证明是反过来的话, 再另行调整 [Sola丶小克]
-	if (item_position < 0) {
-		item_position = pc_search_inventory(sd, ITEMID_E_TOKEN_OF_SIEGFRIED);
-	}
-#endif // Pandas_Fix_E_Token_Of_Siegfried
+	int16 item_position = itemdb_group_item_exists_pc(sd, IG_TOKEN_OF_SIEGFRIED);
+	uint8 hp = 100, sp = 100;
 
 #ifdef Pandas_MapFlag_NoToken
 	if (sd && sd->bl.m >= 0 && map_getmapflag(sd->bl.m, MF_NOTOKEN)) {
@@ -15176,16 +15208,11 @@ void clif_parse_AutoRevive(int fd, struct map_session_data *sd)
 
 	if (item_position < 0) {
 		if (sd->sc.data[SC_LIGHT_OF_REGENE]) {
-			// HP restored
 			hp = sd->sc.data[SC_LIGHT_OF_REGENE]->val2;
 			sp = 0;
-		}
-		else
+		} else
 			return;
 	}
-
-	if (sd->sc.data[SC_HELLPOWER]) //Cannot res while under the effect of SC_HELLPOWER.
-		return;
 
 	if (!status_revive(&sd->bl, hp, sp))
 		return;
@@ -19641,6 +19668,22 @@ void clif_roulette_open( struct map_session_data* sd ){
 /// 0A19 (CZ_REQ_OPEN_ROULETTE)
 void clif_parse_roulette_open( int fd, struct map_session_data* sd ){
 	nullpo_retv(sd);
+
+#ifdef Pandas_NpcFilter_ROULETTE_OPEN
+	// 禁止在于 NPC 对话的时候使用乐透大转盘
+	if (sd->npc_id || pc_hasprogress(sd, WIP_DISABLE_NPC)) {
+		clif_msg(sd, WORK_IN_PROGRESS);
+		return;
+	}
+
+	// 只有当前没有和 NPC 对话的时候, 才能触发 NPCE_OPEN_ROULETTE_FILTER 事件
+	// 否则 NPCE_OPEN_ROULETTE_FILTER 事件如果运行了 mes 等指令, 那么在不关闭 NPC 对话框的情况下
+	// 再次点击大乐透按钮, 会导致大乐透面板绕过 processhalt 的中断, 被直接打开
+	if (sd && sd->bl.type == BL_PC && !sd->npc_id) {
+		if (npc_script_filter(sd, NPCF_ROULETTE_OPEN))
+			return;
+	}
+#endif // Pandas_NpcFilter_ROULETTE_OPEN
 
 	if (!battle_config.feature_roulette) {
 		clif_messagecolor(&sd->bl,color_table[COLOR_RED],msg_txt(sd,1497),false,SELF); //Roulette is disabled

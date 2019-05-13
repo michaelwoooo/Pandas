@@ -36,6 +36,10 @@
 #include "pet.hpp"
 #include "script.hpp"
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+#include "itemamulet.hpp"
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 // Regen related flags.
 enum e_regen {
 	RGN_NONE = 0x00,
@@ -495,7 +499,7 @@ void initChangeTables(void)
 	set_sc( CG_LONGINGFREEDOM	, SC_LONGING		, EFST_LONGING		, SCB_SPEED|SCB_ASPD );
 	set_sc( CG_HERMODE		, SC_HERMODE	, EFST_HERMODE	, SCB_NONE		);
 	set_sc( CG_TAROTCARD		, SC_TAROTCARD	, EFST_TAROTCARD, SCB_NONE	);
-	set_sc( ITEM_ENCHANTARMS	, SC_ENCHANTARMS	, EFST_BLANK		, SCB_ATK_ELE );
+	set_sc( ITEM_ENCHANTARMS	, SC_ENCHANTARMS	, EFST_WEAPONPROPERTY, SCB_ATK_ELE );
 	set_sc( SL_HIGH			, SC_SPIRIT		, EFST_SOULLINK, SCB_ALL );
 	set_sc( KN_ONEHAND		, SC_ONEHAND		, EFST_ONEHANDQUICKEN, SCB_ASPD );
 	set_sc( GS_FLING		, SC_FLING		, EFST_BLANK		, SCB_DEF|SCB_DEF2 );
@@ -2512,7 +2516,7 @@ unsigned int status_weapon_atk(struct weapon_atk wa, struct map_session_data *sd
 	float str = sd->base_status.str;
 	int weapon_atk_bonus = 0;
 
-	if (wa.range > 3 && !pc_checkskill(sd, SU_SOULATTACK))
+	if ((wa.range > 3 || sd->status.weapon == W_MUSICAL || sd->status.weapon == W_WHIP) && !pc_checkskill(sd, SU_SOULATTACK))
 		str = sd->base_status.dex;
 	if (sd->bonus.weapon_atk_rate)
 		weapon_atk_bonus = wa.atk * sd->bonus.weapon_atk_rate / 100;
@@ -3857,6 +3861,10 @@ int status_calc_pc_sub(struct map_session_data* sd, enum e_status_calc_opt opt)
 		sd->right_weapon.atkmods[SZ_MEDIUM] = sd->right_weapon.atkmods[SZ_BIG];
 		sd->left_weapon.atkmods[SZ_MEDIUM] = sd->left_weapon.atkmods[SZ_BIG];
 	}
+
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	amulet_status_calc(sd, opt);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
 
 // ----- STATS CALCULATION -----
 
@@ -7372,7 +7380,7 @@ unsigned char status_calc_attack_element(struct block_list *bl, struct status_ch
 	if(!sc || !sc->count)
 		return cap_value(element, 0, UCHAR_MAX);
 	if(sc->data[SC_ENCHANTARMS])
-		return sc->data[SC_ENCHANTARMS]->val2;
+		return sc->data[SC_ENCHANTARMS]->val1;
 	if(sc->data[SC_WATERWEAPON]
 		|| (sc->data[SC_WATER_INSIGNIA] && sc->data[SC_WATER_INSIGNIA]->val1 == 2) )
 		return ELE_WATER;
@@ -8623,20 +8631,6 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 
 	sd = BL_CAST(BL_PC, bl);
 	vd = status_get_viewdata(bl);
-
-#ifdef Pandas_NpcFilter_SC_START
-	if (sd && sd->bl.type == BL_PC) {
-		pc_setreg(sd, add_str("@buff_sc_id"), (int)type);
-		pc_setreg(sd, add_str("@buff_sc_rate"), rate);
-		pc_setreg(sd, add_str("@buff_sc_tick"), tick);
-		pc_setreg(sd, add_str("@buff_sc_val1"), val1);
-		pc_setreg(sd, add_str("@buff_sc_val2"), val2);
-		pc_setreg(sd, add_str("@buff_sc_val3"), val3);
-		pc_setreg(sd, add_str("@buff_sc_val4"), val4);
-		if (npc_script_filter(sd, NPCF_SC_START))
-			return 0;
-	}
-#endif // Pandas_NpcFilter_SC_START
 
 	undead_flag = battle_check_undead(status->race,status->def_ele);
 	// Check for immunities / sc fails
@@ -10343,10 +10337,10 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 			// end previous enchants
 			skill_enchant_elemental_end(bl,type);
 			// Make sure the received element is valid.
-			if (val2 >= ELE_ALL)
-				val2 = val2%ELE_ALL;
-			else if (val2 < 0)
-				val2 = rnd()%ELE_ALL;
+			if (val1 >= ELE_ALL)
+				val1 = val1%ELE_ALL;
+			else if (val1 < 0)
+				val1 = rnd()%ELE_ALL;
 			break;
 		case SC_CRITICALWOUND:
 			val2 = 20*val1; // Heal effectiveness decrease
@@ -11361,6 +11355,7 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 	// Values that must be set regardless of flag&4 e.g. val_flag [Ind]
 	switch(type) {
 		// Start |1 val_flag setting
+		case SC_ENCHANTARMS:
 		case SC_ROLLINGCUTTER:
 		case SC_BANDING:
 		case SC_SPHERE_1:
@@ -11881,28 +11876,6 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 
 	if( opt_flag&2 && sd && !sd->npc_ontouch_.empty() )
 		npc_touchnext_areanpc(sd,false); // Run OnTouch_ on next char in range
-
-#ifdef Pandas_NpcEvent_SC_START
-	if (sd && sd->bl.type == BL_PC) {
-		pc_setreg(sd, add_str("@startedsc"), (int)type);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_id"), (int)type);	// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_rate"), rate);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_tick"), tick);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_val1"), val1);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_val2"), val2);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_val3"), val3);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@started_sc_val4"), val4);		// 为兼容脚本而添加
-
-		pc_setreg(sd, add_str("@buff_sc_id"), (int)type);
-		pc_setreg(sd, add_str("@buff_sc_rate"), rate);
-		pc_setreg(sd, add_str("@buff_sc_tick"), tick);
-		pc_setreg(sd, add_str("@buff_sc_val1"), val1);
-		pc_setreg(sd, add_str("@buff_sc_val2"), val2);
-		pc_setreg(sd, add_str("@buff_sc_val3"), val3);
-		pc_setreg(sd, add_str("@buff_sc_val4"), val4);
-		npc_script_event(sd, NPCE_SC_START);
-	}
-#endif // Pandas_NpcEvent_SC_START
 
 	return 1;
 }
@@ -12896,15 +12869,6 @@ int status_change_end_(struct block_list* bl, enum sc_type type, int tid, const 
 		npc_touch_areanpc(sd,bl->m,bl->x,bl->y); // Trigger on-touch event.
 
 	ers_free(sc_data_ers, sce);
-
-#ifdef Pandas_NpcEvent_SC_END
-	if (sd && sd->bl.type == BL_PC) {
-		pc_setreg(sd, add_str("@endedsc"), (int)type);			// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@ended_sc_id"), (int)type);		// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@buff_sc_id"), (int)type);
-		npc_script_event(sd, NPCE_SC_END);
-	}
-#endif // Pandas_NpcEvent_SC_END
 
 	return 1;
 }

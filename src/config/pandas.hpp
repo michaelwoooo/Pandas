@@ -16,10 +16,10 @@
 	#define Pandas_FuncIncrease
 	#define Pandas_CreativeWork
 	#define Pandas_Bugfix
+	#define Pandas_ScriptEngine
 	#define Pandas_NpcEvent
 	#define Pandas_Mapflags
 	#define Pandas_AtCommands
-	#define Pandas_ScriptEngine
 	#define Pandas_ScriptCommands
 	#define Pandas_ScriptResults
 	#define Pandas_ScriptParams
@@ -91,6 +91,14 @@
 		// 使 map_session_data 可记录事件中断请求 [Sola丶小克]
 		// 结构体修改定位 pc.hpp -> map_session_data.pandas.eventhalt
 		#define Pandas_Struct_Map_Session_Data_EventHalt
+
+		// 使 map_session_data 可记录事件触发请求 [Sola丶小克]
+		// 结构体修改定位 pc.hpp -> map_session_data.pandas.eventtrigger
+		#define Pandas_Struct_Map_Session_Data_EventTrigger
+
+		// 使 map_session_data 可记录当前是否正在进行护身符能力计算 [Sola丶小克]
+		// 结构体修改定位 pc.hpp -> map_session_data.pandas.amulet_calculating
+		#define Pandas_Struct_Map_Session_Data_AmuletCalculating
 	#endif // Pandas_Struct_Map_Session_Data_Pandas
 #endif // Pandas_StructIncrease
 
@@ -163,6 +171,17 @@
 	// & 1 = 避免物品被玩家主动使用而消耗
 	// & 2 = 避免物品被作为发动技能的必要道具而消耗
 	#define Pandas_Implement_Function_Of_Item_Properties
+
+	// 是否启用护身符系统 [Sola丶小克]
+	// 道具是否为护身符需要在 (item_properties.yml) 数据库中配置, 标记为：
+	// & 4 = 该道具为护身符道具
+	#ifdef Pandas_Struct_Item_Data_Properties
+		#define Pandas_Implement_Function_Of_Item_Amulet
+
+		#ifndef Pandas_Struct_Map_Session_Data_AmuletCalculating
+			#undef Pandas_Implement_Function_Of_Item_Amulet
+		#endif // Pandas_Struct_Map_Session_Data_AmuletCalculating
+	#endif // Pandas_Struct_Item_Data_Properties
 #endif // Pandas_CreativeWork
 
 // ============================================================================
@@ -170,6 +189,12 @@
 // ============================================================================
 
 #ifdef Pandas_Bugfix
+	// 修复 rAthena 部分空指针检测遗漏或者类似的崩溃错误 [Sola丶小克]
+	// 程序内部大量使用 nullpo.cpp 中的系列函数来判定空指针并采取一些措施,
+	// 但是这个方法只在 Debug 模式下可以成功拦截空指针并输出报错信息.
+	// 在 Release 模式下, 有一些检测不够严格的地方会导致程序直接崩溃, 这是我们不想见到的
+	#define Pandas_Fix_NullPtr_Protect
+
 	// 用 mysql_set_character_set 来设置 MySQL 的编码字符集 [Sola丶小克]
 	#define Pandas_Fix_Mysql_SetEncoding
 
@@ -183,12 +208,18 @@
 	// 修复 item_trade 中限制物品掉落后, 权限足够的 GM 也无法绕过限制的问题 [Sola丶小克]
 	#define Pandas_Fix_Item_Trade_FloorDropable
 
-	// 修复 "活动用原地复活之证" 的效果 (道具编号为 6316) [Sola丶小克]
-	#define Pandas_Fix_E_Token_Of_Siegfried
-
 	// 修复使用 sommon 脚本指令召唤不存在的魔物, 会导致地图服务器崩溃的问题 [Sola丶小克]
 	#define Pandas_Fix_ScriptCommand_Summon_Crash
 #endif // Pandas_Bugfix
+
+// ============================================================================
+// 脚本引擎修改组 - Pandas_ScriptEngine
+// ============================================================================
+
+#ifdef Pandas_ScriptEngine
+	// 使脚本引擎能够支持穿越事件队列机制, 直接执行某些事件 [Sola丶小克]
+	#define Pandas_ScriptEngine_Express
+#endif // Pandas_ScriptEngine
 
 // ============================================================================
 // NPC事件组 - Pandas_NpcEvent
@@ -210,46 +241,6 @@
 		// 常量名称: NPCF_ENTERCHAT / 变量名称: enterchat_filter_name
 		#define Pandas_NpcFilter_ENTERCHAT
 
-		// 当玩家准备穿戴装备时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCEquipFilter
-		// 常量名称: NPCF_EQUIP / 变量名称: equip_filter_name
-		#define Pandas_NpcFilter_EQUIP
-
-		// 当玩家准备脱下装备时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCUnequipFilter
-		// 常量名称: NPCF_UNEQUIP / 变量名称: unequip_filter_name
-		#define Pandas_NpcFilter_UNEQUIP
-
-		// 当玩家准备创建队伍时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCPartyCreateFilter
-		// 常量名称: NPCF_CREATE_PARTY / 变量名称: create_party_filter_name
-		#define Pandas_NpcFilter_CREATE_PARTY
-
-		// 当玩家准备加入队伍时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCPartyJoinFilter
-		// 常量名称: NPCF_JOIN_PARTY / 变量名称: join_party_filter_name
-		#define Pandas_NpcFilter_JOIN_PARTY
-
-		// 当玩家准备离开队伍时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCPartyLeaveFilter
-		// 常量名称: NPCF_LEAVE_PARTY / 变量名称: leave_party_filter_name
-		#define Pandas_NpcFilter_LEAVE_PARTY
-
-		// 当玩家准备创建公会时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCGuildCreateFilter
-		// 常量名称: NPCF_CREATE_GUILD / 变量名称: create_guild_filter_name
-		#define Pandas_NpcFilter_CREATE_GUILD
-
-		// 当玩家准备加入公会时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCGuildJoinFilter
-		// 常量名称: NPCF_JOIN_GUILD / 变量名称: join_guild_filter_name
-		#define Pandas_NpcFilter_JOIN_GUILD
-
-		// 当玩家准备离开公会时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCGuildLeaveFilter
-		// 常量名称: NPCF_LEAVE_GUILD / 变量名称: leave_guild_filter_name
-		#define Pandas_NpcFilter_LEAVE_GUILD
-
 		// 当玩家准备插入卡片时触发过滤器 [Sola丶小克]
 		// 事件类型: Filter / 事件名称: OnPCInsertCardFilter
 		// 常量名称: NPCF_INSERT_CARD / 变量名称: insert_card_filter_name
@@ -265,10 +256,15 @@
 		// 常量名称: NPCF_USE_SKILL / 变量名称: use_skill_filter_name
 		#define Pandas_NpcFilter_USE_SKILL
 
-		// 当玩家准备应用一个状态时触发过滤器 [Sola丶小克]
-		// 事件类型: Filter / 事件名称: OnPCBuffStartFilter
-		// 常量名称: NPCF_SC_START / 变量名称: sc_start_filter_name
-		#define Pandas_NpcFilter_SC_START
+		// 当玩家准备打开乐透大转盘的时候触发过滤器 [Sola丶小克]
+		// 事件类型: Filter / 事件名称: OnPCOpenRouletteFilter
+		// 常量名称: NPCF_ROULETTE_OPEN / 变量名称: roulette_open_filter_name
+		#define Pandas_NpcFilter_ROULETTE_OPEN
+
+		// 当玩家准备查看某个角色的装备时触发过滤器 [Sola丶小克]
+		// 事件类型: Filter / 事件名称: OnPCViewEquipFilter
+		// 常量名称: NPCF_VIEW_EQUIP / 变量名称: view_equip_filter_name
+		#define Pandas_NpcFilter_VIEW_EQUIP
 		// PYHELP - NPCEVENT - INSERT POINT - <Section 1>
 	#endif // Pandas_Struct_Map_Session_Data_EventHalt
 
@@ -276,7 +272,7 @@
 	/* Event  类型的标准事件，这些事件不能被 processhalt 打断                    */
 	/************************************************************************/
 
-	// 当玩家杀死 MVP 魔物时触发事件 [Sola丶小克]
+	// 当玩家杀死 MVP 魔物后触发事件 [Sola丶小克]
 	// 事件类型: Event / 事件名称: OnPCKillMvpEvent
 	// 常量名称: NPCE_KILLMVP / 变量名称: killmvp_event_name
 	#define Pandas_NpcEvent_KILLMVP
@@ -285,71 +281,6 @@
 	// 事件类型: Event / 事件名称: OnPCIdentifyEvent
 	// 常量名称: NPCE_IDENTIFY / 变量名称: identify_event_name
 	#define Pandas_NpcEvent_IDENTIFY
-
-	// 当玩家成功穿戴一件装备时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCEquipEvent
-	// 常量名称: NPCE_EQUIP / 变量名称: equip_event_name
-	#define Pandas_NpcEvent_EQUIP
-
-	// 当玩家成功脱下一件装备时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCUnequipEvent
-	// 常量名称: NPCE_UNEQUIP / 变量名称: unequip_event_name
-	#define Pandas_NpcEvent_UNEQUIP
-
-	// 当玩家成功创建队伍后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCPartyCreateEvent
-	// 常量名称: NPCE_CREATE_PARTY / 变量名称: create_party_event_name
-	#define Pandas_NpcEvent_CREATE_PARTY
-
-	// 当玩家成功加入队伍后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCPartyJoinEvent
-	// 常量名称: NPCE_JOIN_PARTY / 变量名称: join_party_event_name
-	#define Pandas_NpcEvent_JOIN_PARTY
-
-	// 当玩家成功离开队伍后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCPartyLeaveEvent
-	// 常量名称: NPCE_LEAVE_PARTY / 变量名称: leave_party_event_name
-	#define Pandas_NpcEvent_LEAVE_PARTY
-
-	// 当人工生命体升级时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCHomLvUpEvent
-	// 常量名称: NPCE_HOM_LEVELUP / 变量名称: hom_levelup_event_name
-	#define Pandas_NpcEvent_HOM_LEVELUP
-
-	// 当召唤人工生命体时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCHomCallEvent
-	// 常量名称: NPCE_HOM_CALL / 变量名称: hom_call_event_name
-	#define Pandas_NpcEvent_HOM_CALL
-
-	// 当人工生命体安息时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCHomRestEvent
-	// 常量名称: NPCE_HOM_REST / 变量名称: hom_rest_event_name
-	#define Pandas_NpcEvent_HOM_REST
-
-	// 当人工生命体死亡时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCHomDeadEvent
-	// 常量名称: NPCE_HOM_DEAD / 变量名称: hom_dead_event_name
-	#define Pandas_NpcEvent_HOM_DEAD
-
-	// 当人工生命体复活时触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCHomAliveEvent
-	// 常量名称: NPCE_HOM_WAKE / 变量名称: hom_wake_event_name
-	#define Pandas_NpcEvent_HOM_WAKE
-
-	// 当玩家成功创建公会后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCGuildCreateEvent
-	// 常量名称: NPCE_CREATE_GUILD / 变量名称: create_guild_event_name
-	#define Pandas_NpcEvent_CREATE_GUILD
-
-	// 当玩家成功加入公会后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCGuildJoinEvent
-	// 常量名称: NPCE_JOIN_GUILD / 变量名称: join_guild_event_name
-	#define Pandas_NpcEvent_JOIN_GUILD
-
-	// 当玩家成功离开公会后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCGuildLeaveEvent
-	// 常量名称: NPCE_LEAVE_GUILD / 变量名称: leave_guild_event_name
-	#define Pandas_NpcEvent_LEAVE_GUILD
 
 	// 当玩家成功插入卡片后触发事件 [Sola丶小克]
 	// 事件类型: Event / 事件名称: OnPCInsertCardEvent
@@ -366,16 +297,20 @@
 	// 常量名称: NPCE_USE_SKILL / 变量名称: use_skill_event_name
 	#define Pandas_NpcEvent_USE_SKILL
 
-	// 当玩家已成功获得了一个状态后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCBuffStartEvent
-	// 常量名称: NPCE_SC_START / 变量名称: sc_start_event_name
-	#define Pandas_NpcEvent_SC_START
+	// 当玩家的进度条被打断后触发事件 [Sola丶小克]
+	// 事件类型: Event / 事件名称: OnPCProgressAbortEvent
+	// 常量名称: NPCE_PROGRESS_ABORT / 变量名称: progressbar_abort_event_name
+	#define Pandas_NpcEvent_PROGRESS_ABORT
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 7>
 
-	// 当玩家已成功解除了一个状态后触发事件 [Sola丶小克]
-	// 事件类型: Event / 事件名称: OnPCBuffEndEvent
-	// 常量名称: NPCE_SC_END / 变量名称: sc_end_event_name
-	#define Pandas_NpcEvent_SC_END
-	// PYHELP - NPCEVENT - INSERT POINT - <Section 2>
+	/************************************************************************/
+	/* Express 类型的快速事件，这些事件将会被立刻执行, 不进事件队列                */
+	/************************************************************************/
+
+	#ifdef Pandas_ScriptEngine_Express
+		// PYHELP - NPCEVENT - INSERT POINT - <Section 13>
+	#endif // Pandas_ScriptEngine_Express
+	
 #endif // Pandas_NpcEvent
 
 // ============================================================================
@@ -445,15 +380,6 @@
 	// 召唤当前(或指定)地图的玩家来到身边 (处于离线挂店模式的角色不会被召唤)
 	#define Pandas_AtCommand_RecallMap
 #endif // Pandas_AtCommands
-
-// ============================================================================
-// 脚本引擎修改组 - Pandas_ScriptEngine
-// ============================================================================
-
-#ifdef Pandas_ScriptEngine
-	// 使脚本引擎能够支持穿越事件队列机制, 直接执行某些事件 [Sola丶小克]
-	#define Pandas_ScriptEngine_Express
-#endif // Pandas_ScriptEngine
 
 // ============================================================================
 // 脚本指令组 - Pandas_ScriptCommands
@@ -594,6 +520,17 @@
 	#ifdef Pandas_Struct_Map_Session_Data_EventHalt
 		#define Pandas_ScriptCommand_ProcessHalt
 	#endif // Pandas_Struct_Map_Session_Data_EventHalt
+
+	// 是否启用 settrigger 脚本指令 [Sola丶小克]
+	// 使用该指令可以设置某个事件或过滤器的触发行为 (是否触发、下次触发、永久触发)
+	// 此选项开关需要依赖 Pandas_Struct_Map_Session_Data_EventTrigger 的拓展
+	#ifdef Pandas_Struct_Map_Session_Data_EventTrigger
+		#define Pandas_ScriptCommand_SetEventTrigger
+	#endif // Pandas_Struct_Map_Session_Data_EventTrigger
+
+	// 是否启用 messagecolor 脚本指令 [Sola丶小克]
+	// 使用该指令可以发送指定颜色的消息文本到聊天窗口中
+	#define Pandas_ScriptCommand_MessageColor
 	// PYHELP - SCRIPTCMD - INSERT POINT - <Section 1>
 #endif // Pandas_ScriptCommands
 
@@ -604,6 +541,9 @@
 #ifdef Pandas_ScriptResults
 	// 是否拓展 getinventorylist 脚本指令的返回数组 [Sola丶小克]
 	#define Pandas_ScriptResults_GetInventoryList
+
+	// 使 OnSellItem 标签可以返回被出售道具的背包序号 [Sola丶小克]
+	#define Pandas_ScriptResults_OnSellItem
 #endif // Pandas_ScriptResults
 
 // ============================================================================

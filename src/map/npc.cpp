@@ -1054,7 +1054,7 @@ int npc_touch_areanpc(struct map_session_data* sd, int16 m, int16 x, int16 y)
 		struct npc_data *nd = map_id2nd(sd->areanpc[i]);
 
 		if (!nd || nd->subtype != NPCTYPE_SCRIPT ||
-			!(x >= nd->bl.x - nd->u.scr.xs && x <= nd->bl.x + nd->u.scr.xs && y >= nd->bl.y - nd->u.scr.ys && y <= nd->bl.y + nd->u.scr.ys))
+			!(nd->bl.m == m && x >= nd->bl.x - nd->u.scr.xs && x <= nd->bl.x + nd->u.scr.xs && y >= nd->bl.y - nd->u.scr.ys && y <= nd->bl.y + nd->u.scr.ys))
 			sd->areanpc.erase(sd->areanpc.begin() + i);
 	}
 
@@ -2019,6 +2019,9 @@ static int npc_selllist_sub(struct map_session_data* sd, int n, unsigned short* 
 	char card_slot[NAME_LENGTH];
 	char option_id[NAME_LENGTH], option_val[NAME_LENGTH], option_param[NAME_LENGTH];
 	int i, j;
+#ifdef Pandas_ScriptResults_OnSellItem
+	int key_idx = 0;
+#endif // Pandas_ScriptResults_OnSellItem
 	int key_nameid = 0;
 	int key_amount = 0;
 	int key_refine = 0;
@@ -2028,6 +2031,9 @@ static int npc_selllist_sub(struct map_session_data* sd, int n, unsigned short* 
 	int key_option_id[MAX_ITEM_RDM_OPT], key_option_val[MAX_ITEM_RDM_OPT], key_option_param[MAX_ITEM_RDM_OPT];
 
 	// discard old contents
+#ifdef Pandas_ScriptResults_OnSellItem
+	script_cleararray_pc(sd, "@sold_idx", (void*)0);
+#endif // Pandas_ScriptResults_OnSellItem
 	script_cleararray_pc(sd, "@sold_nameid", (void*)0);
 	script_cleararray_pc(sd, "@sold_quantity", (void*)0);
 	script_cleararray_pc(sd, "@sold_refine", (void*)0);
@@ -2057,6 +2063,9 @@ static int npc_selllist_sub(struct map_session_data* sd, int n, unsigned short* 
 	{
 		int idx = item_list[i * 2] - 2;
 
+#ifdef Pandas_ScriptResults_OnSellItem
+		script_setarray_pc(sd, "@sold_idx", i, (void*)(intptr_t)idx, &key_idx);
+#endif // Pandas_ScriptResults_OnSellItem
 		script_setarray_pc(sd, "@sold_nameid", i, (void*)(intptr_t)sd->inventory.u.items_inventory[idx].nameid, &key_nameid);
 		script_setarray_pc(sd, "@sold_quantity", i, (void*)(intptr_t)item_list[i*2+1], &key_amount);
 
@@ -4538,7 +4547,8 @@ int npc_parsesrcfile(const char* filepath, bool runOnInit)
 #ifdef Pandas_ScriptEngine_Express
 bool npc_event_is_express_type(enum npce_event eventtype) {
 	static std::vector<enum npce_event> express_npce = {
-		NPCE_STATCALC
+		NPCE_STATCALC,
+		// PYHELP - NPCEVENT - INSERT POINT - <Section 19>
 	};
 
 	std::vector<enum npce_event>::iterator iter;
@@ -4569,6 +4579,11 @@ int npc_script_event(struct map_session_data* sd, enum npce_event type){
 		ShowError("npc_script_event: NULL sd. Event Type %d\n", type);
 		return 0;
 	}
+
+#ifdef Pandas_Struct_Map_Session_Data_EventTrigger
+	if ((getEventTrigger(sd, type) & EVENT_TRIGGER_DISABLED) == EVENT_TRIGGER_DISABLED)
+		return 0;
+#endif // Pandas_Struct_Map_Session_Data_EventTrigger
 
 	std::vector<struct script_event_s>& vector = script_event[type];
 
@@ -4621,46 +4636,6 @@ const char *npc_get_script_event_name(int npce_index)
 		return script_config.enterchat_filter_name;	// OnPCInChatroomFilter		// 当玩家进入 NPC 开启的聊天室时触发过滤器
 #endif // Pandas_NpcFilter_ENTERCHAT
 
-#ifdef Pandas_NpcFilter_EQUIP
-	case NPCF_EQUIP:
-		return script_config.equip_filter_name;	// OnPCEquipFilter		// 当玩家准备穿戴装备时触发过滤器
-#endif // Pandas_NpcFilter_EQUIP
-
-#ifdef Pandas_NpcFilter_UNEQUIP
-	case NPCF_UNEQUIP:
-		return script_config.unequip_filter_name;	// OnPCUnequipFilter		// 当玩家准备脱下装备时触发过滤器
-#endif // Pandas_NpcFilter_UNEQUIP
-
-#ifdef Pandas_NpcFilter_CREATE_PARTY
-	case NPCF_CREATE_PARTY:
-		return script_config.create_party_filter_name;	// OnPCPartyCreateFilter		// 当玩家准备创建队伍时触发过滤器
-#endif // Pandas_NpcFilter_CREATE_PARTY
-
-#ifdef Pandas_NpcFilter_JOIN_PARTY
-	case NPCF_JOIN_PARTY:
-		return script_config.join_party_filter_name;	// OnPCPartyJoinFilter		// 当玩家准备加入队伍时触发过滤器
-#endif // Pandas_NpcFilter_JOIN_PARTY
-
-#ifdef Pandas_NpcFilter_LEAVE_PARTY
-	case NPCF_LEAVE_PARTY:
-		return script_config.leave_party_filter_name;	// OnPCPartyLeaveFilter		// 当玩家准备离开队伍时触发过滤器
-#endif // Pandas_NpcFilter_LEAVE_PARTY
-
-#ifdef Pandas_NpcFilter_CREATE_GUILD
-	case NPCF_CREATE_GUILD:
-		return script_config.create_guild_filter_name;	// OnPCGuildCreateFilter		// 当玩家准备创建公会时触发过滤器
-#endif // Pandas_NpcFilter_CREATE_GUILD
-
-#ifdef Pandas_NpcFilter_JOIN_GUILD
-	case NPCF_JOIN_GUILD:
-		return script_config.join_guild_filter_name;	// OnPCGuildJoinFilter		// 当玩家准备加入公会时触发过滤器
-#endif // Pandas_NpcFilter_JOIN_GUILD
-
-#ifdef Pandas_NpcFilter_LEAVE_GUILD
-	case NPCF_LEAVE_GUILD:
-		return script_config.leave_guild_filter_name;	// OnPCGuildLeaveFilter		// 当玩家准备离开公会时触发过滤器
-#endif // Pandas_NpcFilter_LEAVE_GUILD
-
 #ifdef Pandas_NpcFilter_INSERT_CARD
 	case NPCF_INSERT_CARD:
 		return script_config.insert_card_filter_name;	// OnPCInsertCardFilter		// 当玩家准备插入卡片时触发过滤器
@@ -4676,11 +4651,16 @@ const char *npc_get_script_event_name(int npce_index)
 		return script_config.use_skill_filter_name;	// OnPCUseSkillFilter		// 当玩家准备使用技能时触发过滤器
 #endif // Pandas_NpcFilter_USE_SKILL
 
-#ifdef Pandas_NpcFilter_SC_START
-	case NPCF_SC_START:
-		return script_config.sc_start_filter_name;	// OnPCBuffStartFilter		// 当玩家准备应用一个状态时触发过滤器
-#endif // Pandas_NpcFilter_SC_START
-	// PYHELP - NPCEVENT - INSERT POINT - <Section 5>
+#ifdef Pandas_NpcFilter_ROULETTE_OPEN
+	case NPCF_ROULETTE_OPEN:
+		return script_config.roulette_open_filter_name;	// OnPCOpenRouletteFilter		// 当玩家准备打开乐透大转盘的时候触发过滤器
+#endif // Pandas_NpcFilter_ROULETTE_OPEN
+
+#ifdef Pandas_NpcFilter_VIEW_EQUIP
+	case NPCF_VIEW_EQUIP:
+		return script_config.view_equip_filter_name;	// OnPCViewEquipFilter		// 当玩家准备查看某个角色的装备时触发过滤器
+#endif // Pandas_NpcFilter_VIEW_EQUIP
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 3>
 
 	/************************************************************************/
 	/* Event  类型的标准事件，这些事件不能被 processhalt 打断                    */
@@ -4688,78 +4668,13 @@ const char *npc_get_script_event_name(int npce_index)
 
 #ifdef Pandas_NpcEvent_KILLMVP
 	case NPCE_KILLMVP:
-		return script_config.killmvp_event_name;	// OnPCKillMvpEvent		// 当玩家杀死 MVP 魔物时触发事件
+		return script_config.killmvp_event_name;	// OnPCKillMvpEvent		// 当玩家杀死 MVP 魔物后触发事件
 #endif // Pandas_NpcEvent_KILLMVP
 
 #ifdef Pandas_NpcEvent_IDENTIFY
 	case NPCE_IDENTIFY:
 		return script_config.identify_event_name;	// OnPCIdentifyEvent		// 当玩家成功鉴定了装备时触发事件
 #endif // Pandas_NpcEvent_IDENTIFY
-
-#ifdef Pandas_NpcEvent_EQUIP
-	case NPCE_EQUIP:
-		return script_config.equip_event_name;	// OnPCEquipEvent		// 当玩家成功穿戴一件装备时触发事件
-#endif // Pandas_NpcEvent_EQUIP
-
-#ifdef Pandas_NpcEvent_UNEQUIP
-	case NPCE_UNEQUIP:
-		return script_config.unequip_event_name;	// OnPCUnequipEvent		// 当玩家成功脱下一件装备时触发事件
-#endif // Pandas_NpcEvent_UNEQUIP
-
-#ifdef Pandas_NpcEvent_CREATE_PARTY
-	case NPCE_CREATE_PARTY:
-		return script_config.create_party_event_name;	// OnPCPartyCreateEvent		// 当玩家成功创建队伍后触发事件
-#endif // Pandas_NpcEvent_CREATE_PARTY
-
-#ifdef Pandas_NpcEvent_JOIN_PARTY
-	case NPCE_JOIN_PARTY:
-		return script_config.join_party_event_name;	// OnPCPartyJoinEvent		// 当玩家成功加入队伍后触发事件
-#endif // Pandas_NpcEvent_JOIN_PARTY
-
-#ifdef Pandas_NpcEvent_LEAVE_PARTY
-	case NPCE_LEAVE_PARTY:
-		return script_config.leave_party_event_name;	// OnPCPartyLeaveEvent		// 当玩家成功离开队伍后触发事件
-#endif // Pandas_NpcEvent_LEAVE_PARTY
-
-#ifdef Pandas_NpcEvent_HOM_LEVELUP
-	case NPCE_HOM_LEVELUP:
-		return script_config.hom_levelup_event_name;	// OnPCHomLvUpEvent		// 当人工生命体升级时触发事件
-#endif // Pandas_NpcEvent_HOM_LEVELUP
-
-#ifdef Pandas_NpcEvent_HOM_CALL
-	case NPCE_HOM_CALL:
-		return script_config.hom_call_event_name;	// OnPCHomCallEvent		// 当召唤人工生命体时触发事件
-#endif // Pandas_NpcEvent_HOM_CALL
-
-#ifdef Pandas_NpcEvent_HOM_REST
-	case NPCE_HOM_REST:
-		return script_config.hom_rest_event_name;	// OnPCHomRestEvent		// 当人工生命体安息时触发事件
-#endif // Pandas_NpcEvent_HOM_REST
-
-#ifdef Pandas_NpcEvent_HOM_DEAD
-	case NPCE_HOM_DEAD:
-		return script_config.hom_dead_event_name;	// OnPCHomDeadEvent		// 当人工生命体死亡时触发事件
-#endif // Pandas_NpcEvent_HOM_DEAD
-
-#ifdef Pandas_NpcEvent_HOM_WAKE
-	case NPCE_HOM_WAKE:
-		return script_config.hom_wake_event_name;	// OnPCHomAliveEvent		// 当人工生命体复活时触发事件
-#endif // Pandas_NpcEvent_HOM_WAKE
-
-#ifdef Pandas_NpcEvent_CREATE_GUILD
-	case NPCE_CREATE_GUILD:
-		return script_config.create_guild_event_name;	// OnPCGuildCreateEvent		// 当玩家成功创建公会后触发事件
-#endif // Pandas_NpcEvent_CREATE_GUILD
-
-#ifdef Pandas_NpcEvent_JOIN_GUILD
-	case NPCE_JOIN_GUILD:
-		return script_config.join_guild_event_name;	// OnPCGuildJoinEvent		// 当玩家成功加入公会后触发事件
-#endif // Pandas_NpcEvent_JOIN_GUILD
-
-#ifdef Pandas_NpcEvent_LEAVE_GUILD
-	case NPCE_LEAVE_GUILD:
-		return script_config.leave_guild_event_name;	// OnPCGuildLeaveEvent		// 当玩家成功离开公会后触发事件
-#endif // Pandas_NpcEvent_LEAVE_GUILD
 
 #ifdef Pandas_NpcEvent_INSERT_CARD
 	case NPCE_INSERT_CARD:
@@ -4776,16 +4691,16 @@ const char *npc_get_script_event_name(int npce_index)
 		return script_config.use_skill_event_name;	// OnPCUseSkillEvent		// 当玩家成功使用技能后触发事件
 #endif // Pandas_NpcEvent_USE_SKILL
 
-#ifdef Pandas_NpcEvent_SC_START
-	case NPCE_SC_START:
-		return script_config.sc_start_event_name;	// OnPCBuffStartEvent		// 当玩家已成功获得了一个状态后触发事件
-#endif // Pandas_NpcEvent_SC_START
+#ifdef Pandas_NpcEvent_PROGRESS_ABORT
+	case NPCE_PROGRESS_ABORT:
+		return script_config.progressbar_abort_event_name;	// OnPCProgressAbortEvent		// 当玩家的进度条被打断后触发事件
+#endif // Pandas_NpcEvent_PROGRESS_ABORT
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 9>
 
-#ifdef Pandas_NpcEvent_SC_END
-	case NPCE_SC_END:
-		return script_config.sc_end_event_name;	// OnPCBuffEndEvent		// 当玩家已成功解除了一个状态后触发事件
-#endif // Pandas_NpcEvent_SC_END
-	// PYHELP - NPCEVENT - INSERT POINT - <Section 6>
+	/************************************************************************/
+	/* Express 类型的快速事件，这些事件将会被立刻执行, 不进事件队列                */
+	/************************************************************************/
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 15>
 
 	default:
 		ShowError("npc_get_script_event_name: npce_index is outside the array limits: %d (max: %d).\n", npce_index, NPCE_MAX);
@@ -5193,3 +5108,48 @@ enum npce_event npc_get_script_event_type(const char* eventname) {
 	return NPCE_MAX;
 }
 #endif // Pandas_Struct_Map_Session_Data_WorkInEvent
+
+#ifdef Pandas_Struct_Map_Session_Data_EventTrigger
+//************************************
+// Method:		setEventTrigger
+// Description:	设置一个事件的触发行为
+// Parameter:	struct map_session_data * sd
+// Parameter:	enum npce_event event
+// Parameter:	uint16 next_trigger_flag
+// Returns:		bool 设置成功与否
+//************************************
+bool setEventTrigger(struct map_session_data *sd, enum npce_event event, enum npce_trigger trigger_flag) {
+	nullpo_retr(false, sd);
+	try
+	{
+		sd->pandas.eventtrigger[event] = trigger_flag;
+		return true;
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
+}
+
+//************************************
+// Method:		getEventTrigger
+// Description:	获取一个事件的触发行为
+// Parameter:	struct map_session_data * sd
+// Parameter:	enum npce_event event
+// Returns:		uint16 当前的触发行为
+//************************************
+npce_trigger getEventTrigger(struct map_session_data *sd, enum npce_event event) {
+	nullpo_retr(EVENT_TRIGGER_NONE, sd);
+	try
+	{
+		npce_trigger current_val = (npce_trigger)sd->pandas.eventtrigger[event];
+		if ((current_val & EVENT_TRIGGER_ONCE) == EVENT_TRIGGER_ONCE)
+			sd->pandas.eventtrigger[event] &= ~EVENT_TRIGGER_ONCE;
+		return current_val;
+	}
+	catch (const std::exception&)
+	{
+		return EVENT_TRIGGER_NONE;
+	}
+}
+#endif // Pandas_Struct_Map_Session_Data_EventTrigger

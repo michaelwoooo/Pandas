@@ -59,6 +59,10 @@
 #include "unit.hpp" // unit_stop_attack(), unit_stop_walking()
 #include "vending.hpp" // struct s_vending
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+#include "itemamulet.hpp"
+#endif // Pandas_Implement_Function_Of_Item_Amulets
+
 using namespace rathena;
 
 int pc_split_atoui(char* str, unsigned int* val, char sep, int max);
@@ -4856,6 +4860,10 @@ char pc_additem(struct map_session_data *sd,struct item *item,int amount,e_log_p
 	if (id->flag.guid && !item->unique_id)
 		item->unique_id = pc_generate_unique_id(sd);
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	bool is_first_amulet = amulet_is_firstone(sd, item, amount);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 	// Stackable | Non Rental
 	if( itemdb_isstackable2(id) && item->expire_time == 0 ) {
 		for( i = 0; i < MAX_INVENTORY; i++ ) {
@@ -4905,6 +4913,10 @@ char pc_additem(struct map_session_data *sd,struct item *item,int amount,e_log_p
 	if(id->flag.autoequip)
 		pc_equipitem(sd, i, id->equip);
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	amulet_apply_additem(sd, i, is_first_amulet);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 	/* rental item check */
 	if( item->expire_time ) {
 		if( time(NULL) > item->expire_time ) {
@@ -4947,14 +4959,29 @@ char pc_delitem(struct map_session_data *sd,int n,int amount,int type, short rea
 
 	log_pick_pc(sd, log_type, -amount, &sd->inventory.u.items_inventory[n]);
 
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	bool is_last_amulet = amulet_is_lastone(sd, n, amount);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 	sd->inventory.u.items_inventory[n].amount -= amount;
 	sd->weight -= sd->inventory_data[n]->weight*amount ;
 	if( sd->inventory.u.items_inventory[n].amount <= 0 ){
 		if(sd->inventory.u.items_inventory[n].equip)
 			pc_unequipitem(sd,n,2|(!(type&4) ? 1 : 0));
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+		// 在这里必须触发一下"卸装脚本", 再往下的话物品数据会被清零
+		amulet_apply_delitem(sd, n, is_last_amulet);
+#endif // Pandas_Implement_Function_Of_Item_Amulet
 		memset(&sd->inventory.u.items_inventory[n],0,sizeof(sd->inventory.u.items_inventory[0]));
 		sd->inventory_data[n] = NULL;
 	}
+#ifdef Pandas_Implement_Function_Of_Item_Amulet
+	else {
+		// 在这里同类护身符还没被全部清理干净, 需要触发一下"使用脚本"
+		amulet_apply_delitem(sd, n, is_last_amulet);
+	}
+#endif // Pandas_Implement_Function_Of_Item_Amulet
+
 	if(!(type&1))
 		clif_delitem(sd,n,amount,reason);
 	if(!(type&2))
@@ -5531,7 +5558,7 @@ void pc_putitemtocart(struct map_session_data *sd,int idx,int amount)
 
 	item_data = &sd->inventory.u.items_inventory[idx];
 
-	if( item_data->nameid == 0 || amount < 1 || item_data->amount < amount || sd->state.vending )
+	if( item_data->nameid == 0 || amount < 1 || item_data->amount < amount || sd->state.vending || sd->state.prevend )
 		return;
 
 	if( item_data->equipSwitch ){
@@ -5571,21 +5598,25 @@ int pc_cartitem_amount(struct map_session_data* sd, int idx, int amount)
  *------------------------------------------*/
 void pc_getitemfromcart(struct map_session_data *sd,int idx,int amount)
 {
-	struct item *item_data;
-	unsigned char flag = 0;
-
 	nullpo_retv(sd);
 
 	if (idx < 0 || idx >= MAX_CART) //Invalid index check [Skotlex]
 		return;
 
-	item_data=&sd->cart.u.items_cart[idx];
+	item* item_data=&sd->cart.u.items_cart[idx];
 
-	if(item_data->nameid == 0 || amount < 1 || item_data->amount < amount || sd->state.vending )
+	if (item_data->nameid == 0 || amount < 1 || item_data->amount < amount || sd->state.vending || sd->state.prevend)
 		return;
-	if((flag = pc_additem(sd,item_data,amount,LOG_TYPE_NONE)) == 0)
-		pc_cart_delitem(sd,idx,amount,0,LOG_TYPE_NONE);
-	else {
+
+	if (pc_checkadditem(sd, item_data->nameid, amount) == CHKADDITEM_OVERAMOUNT) {
+		return;
+	}
+
+	item item_copy = *item_data;
+
+	pc_cart_delitem(sd, idx, amount, 0, LOG_TYPE_NONE);
+	char flag = pc_additem(sd, &item_copy, amount, LOG_TYPE_NONE);
+	if(flag != ADDITEM_SUCCESS) {
 		clif_dropitem(sd,idx,0);
 		clif_additem(sd,0,0,flag);
 	}
@@ -10262,19 +10293,6 @@ bool pc_equipitem(struct map_session_data *sd,short n,int req_pos,bool equipswit
 			flag = id->range != sd->inventory_data[i]->range;
 	}
 
-#ifdef Pandas_NpcFilter_EQUIP
-	if (!equipswitch) {
-		pc_setreg(sd, add_str("@equip_idx"), (int)n);
-		pc_setreg(sd, add_str("@equip_pos"), (int)n);	// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@equip_swapping"), (swapping ? 1 : 0));
-
-		if (npc_script_filter(sd, NPCF_EQUIP) && !swapping)
-			return false;
-		if (sd->inventory.u.items_inventory[n].nameid == 0 || sd->inventory_data[n] == NULL)
-			return false;
-	}
-#endif // Pandas_NpcFilter_EQUIP
-
 #ifdef Pandas_FuncLogic_PC_EQUIPITEM_BOUND_OPPORTUNITY
 	if ( !equipswitch && id->flag.bindOnEquip && !sd->inventory.u.items_inventory[n].bound) {
 		sd->inventory.u.items_inventory[n].bound = (char)battle_config.default_bind_on_equip;
@@ -10423,16 +10441,6 @@ bool pc_equipitem(struct map_session_data *sd,short n,int req_pos,bool equipswit
 	}
 	sd->npc_item_flag = iflag;
 
-#ifdef Pandas_NpcEvent_EQUIP
-	if (!equipswitch) {
-		pc_setreg(sd, add_str("@equip_idx"), (int)n);
-		pc_setreg(sd, add_str("@equip_pos"), (int)n);	// 为兼容脚本而添加
-		pc_setreg(sd, add_str("@equip_swapping"), (swapping ? 1 : 0));
-
-		npc_script_event(sd, NPCE_EQUIP);
-	}
-#endif // Pandas_NpcEvent_EQUIP
-
 	return true;
 }
 
@@ -10549,18 +10557,6 @@ bool pc_unequipitem(struct map_session_data *sd, int n, int flag) {
 
 	if (battle_config.battle_log)
 		ShowInfo("unequip %d %x:%x\n",n,pc_equippoint(sd,n),pos);
-
-#ifdef Pandas_NpcFilter_UNEQUIP
-	pc_setreg(sd, add_str("@unequip_idx"), (int)n);
-	pc_setreg(sd, add_str("@unequip_pos"), (int)n);	// 为兼容脚本而添加
-	pc_setreg(sd, add_str("@unequip_swapping"), (flag & 16 ? 1 : 0));	// flag & 16 是一个自定义标记, 表示本次脱下装备是由装备切换机制引发的
-	pc_setreg(sd, add_str("@unequip_force"), (flag & 2 ? 1 : 0));
-
-	if (npc_script_filter(sd, NPCF_UNEQUIP) && !(flag & 16))
-		return false;
-	if (sd->inventory.u.items_inventory[n].nameid == 0 || sd->inventory_data[n] == NULL)
-		return false;
-#endif // Pandas_NpcFilter_UNEQUIP
 
 	for(i = 0; i < EQI_MAX; i++) {
 		if (pos & equip_bitmask[i])
@@ -10690,12 +10686,7 @@ int pc_equipswitch( struct map_session_data* sd, int index ){
 				unequipped_position |= unequip_item->equip;
 
 				// Unequip the item
-#ifndef Pandas_NpcFilter_UNEQUIP
 				pc_unequipitem( sd, unequip_index, 0 );
-#else
-				// flag & 16 是一个自定义标记, 表示本次脱下装备是由装备切换机制引发的
-				pc_unequipitem( sd, unequip_index, 16);
-#endif // Pandas_NpcFilter_UNEQUIP
 			}
 		}
 

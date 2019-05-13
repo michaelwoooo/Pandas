@@ -174,38 +174,6 @@ struct Script_Config {
 	const char* enterchat_filter_name;	// NPCF_ENTERCHAT	// OnPCInChatroomFilter	// 当玩家进入 NPC 开启的聊天室时触发过滤器
 #endif // Pandas_NpcFilter_ENTERCHAT
 
-#ifdef Pandas_NpcFilter_EQUIP
-	const char* equip_filter_name;	// NPCF_EQUIP	// OnPCEquipFilter	// 当玩家准备穿戴装备时触发过滤器
-#endif // Pandas_NpcFilter_EQUIP
-
-#ifdef Pandas_NpcFilter_UNEQUIP
-	const char* unequip_filter_name;	// NPCF_UNEQUIP	// OnPCUnequipFilter	// 当玩家准备脱下装备时触发过滤器
-#endif // Pandas_NpcFilter_UNEQUIP
-
-#ifdef Pandas_NpcFilter_CREATE_PARTY
-	const char* create_party_filter_name;	// NPCF_CREATE_PARTY	// OnPCPartyCreateFilter	// 当玩家准备创建队伍时触发过滤器
-#endif // Pandas_NpcFilter_CREATE_PARTY
-
-#ifdef Pandas_NpcFilter_JOIN_PARTY
-	const char* join_party_filter_name;	// NPCF_JOIN_PARTY	// OnPCPartyJoinFilter	// 当玩家准备加入队伍时触发过滤器
-#endif // Pandas_NpcFilter_JOIN_PARTY
-
-#ifdef Pandas_NpcFilter_LEAVE_PARTY
-	const char* leave_party_filter_name;	// NPCF_LEAVE_PARTY	// OnPCPartyLeaveFilter	// 当玩家准备离开队伍时触发过滤器
-#endif // Pandas_NpcFilter_LEAVE_PARTY
-
-#ifdef Pandas_NpcFilter_CREATE_GUILD
-	const char* create_guild_filter_name;	// NPCF_CREATE_GUILD	// OnPCGuildCreateFilter	// 当玩家准备创建公会时触发过滤器
-#endif // Pandas_NpcFilter_CREATE_GUILD
-
-#ifdef Pandas_NpcFilter_JOIN_GUILD
-	const char* join_guild_filter_name;	// NPCF_JOIN_GUILD	// OnPCGuildJoinFilter	// 当玩家准备加入公会时触发过滤器
-#endif // Pandas_NpcFilter_JOIN_GUILD
-
-#ifdef Pandas_NpcFilter_LEAVE_GUILD
-	const char* leave_guild_filter_name;	// NPCF_LEAVE_GUILD	// OnPCGuildLeaveFilter	// 当玩家准备离开公会时触发过滤器
-#endif // Pandas_NpcFilter_LEAVE_GUILD
-
 #ifdef Pandas_NpcFilter_INSERT_CARD
 	const char* insert_card_filter_name;	// NPCF_INSERT_CARD	// OnPCInsertCardFilter	// 当玩家准备插入卡片时触发过滤器
 #endif // Pandas_NpcFilter_INSERT_CARD
@@ -218,74 +186,26 @@ struct Script_Config {
 	const char* use_skill_filter_name;	// NPCF_USE_SKILL	// OnPCUseSkillFilter	// 当玩家准备使用技能时触发过滤器
 #endif // Pandas_NpcFilter_USE_SKILL
 
-#ifdef Pandas_NpcFilter_SC_START
-	const char* sc_start_filter_name;	// NPCF_SC_START	// OnPCBuffStartFilter	// 当玩家准备应用一个状态时触发过滤器
-#endif // Pandas_NpcFilter_SC_START
-	// PYHELP - NPCEVENT - INSERT POINT - <Section 7>
+#ifdef Pandas_NpcFilter_ROULETTE_OPEN
+	const char* roulette_open_filter_name;	// NPCF_ROULETTE_OPEN	// OnPCOpenRouletteFilter	// 当玩家准备打开乐透大转盘的时候触发过滤器
+#endif // Pandas_NpcFilter_ROULETTE_OPEN
+
+#ifdef Pandas_NpcFilter_VIEW_EQUIP
+	const char* view_equip_filter_name;	// NPCF_VIEW_EQUIP	// OnPCViewEquipFilter	// 当玩家准备查看某个角色的装备时触发过滤器
+#endif // Pandas_NpcFilter_VIEW_EQUIP
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 4>
 
 	/************************************************************************/
 	/* Event  类型的标准事件，这些事件不能被 processhalt 打断                    */
 	/************************************************************************/
 
 #ifdef Pandas_NpcEvent_KILLMVP
-	const char* killmvp_event_name;	// NPCE_KILLMVP		// OnPCKillMvpEvent		// 当玩家杀死 MVP 魔物时触发事件
+	const char* killmvp_event_name;	// NPCE_KILLMVP		// OnPCKillMvpEvent		// 当玩家杀死 MVP 魔物后触发事件
 #endif // Pandas_NpcEvent_KILLMVP
 
 #ifdef Pandas_NpcEvent_IDENTIFY
 	const char* identify_event_name;	// NPCE_IDENTIFY	// OnPCIdentifyEvent	// 当玩家成功鉴定了装备时触发事件
 #endif // Pandas_NpcEvent_IDENTIFY
-
-#ifdef Pandas_NpcEvent_EQUIP
-	const char* equip_event_name;	// NPCE_EQUIP	// OnPCEquipEvent	// 当玩家成功穿戴一件装备时触发事件
-#endif // Pandas_NpcEvent_EQUIP
-
-#ifdef Pandas_NpcEvent_UNEQUIP
-	const char* unequip_event_name;	// NPCE_UNEQUIP	// OnPCUnequipEvent	// 当玩家成功脱下一件装备时触发事件
-#endif // Pandas_NpcEvent_UNEQUIP
-
-#ifdef Pandas_NpcEvent_CREATE_PARTY
-	const char* create_party_event_name;	// NPCE_CREATE_PARTY	// OnPCPartyCreateEvent	// 当玩家成功创建队伍后触发事件
-#endif // Pandas_NpcEvent_CREATE_PARTY
-
-#ifdef Pandas_NpcEvent_JOIN_PARTY
-	const char* join_party_event_name;	// NPCE_JOIN_PARTY	// OnPCPartyJoinEvent	// 当玩家成功加入队伍后触发事件
-#endif // Pandas_NpcEvent_JOIN_PARTY
-
-#ifdef Pandas_NpcEvent_LEAVE_PARTY
-	const char* leave_party_event_name;	// NPCE_LEAVE_PARTY	// OnPCPartyLeaveEvent	// 当玩家成功离开队伍后触发事件
-#endif // Pandas_NpcEvent_LEAVE_PARTY
-
-#ifdef Pandas_NpcEvent_HOM_LEVELUP
-	const char* hom_levelup_event_name;	// NPCE_HOM_LEVELUP	// OnPCHomLvUpEvent	// 当人工生命体升级时触发事件
-#endif // Pandas_NpcEvent_HOM_LEVELUP
-
-#ifdef Pandas_NpcEvent_HOM_CALL
-	const char* hom_call_event_name;	// NPCE_HOM_CALL	// OnPCHomCallEvent	// 当召唤人工生命体时触发事件
-#endif // Pandas_NpcEvent_HOM_CALL
-
-#ifdef Pandas_NpcEvent_HOM_REST
-	const char* hom_rest_event_name;	// NPCE_HOM_REST	// OnPCHomRestEvent	// 当人工生命体安息时触发事件
-#endif // Pandas_NpcEvent_HOM_REST
-
-#ifdef Pandas_NpcEvent_HOM_DEAD
-	const char* hom_dead_event_name;	// NPCE_HOM_DEAD	// OnPCHomDeadEvent	// 当人工生命体死亡时触发事件
-#endif // Pandas_NpcEvent_HOM_DEAD
-
-#ifdef Pandas_NpcEvent_HOM_WAKE
-	const char* hom_wake_event_name;	// NPCE_HOM_WAKE	// OnPCHomAliveEvent	// 当人工生命体复活时触发事件
-#endif // Pandas_NpcEvent_HOM_WAKE
-
-#ifdef Pandas_NpcEvent_CREATE_GUILD
-	const char* create_guild_event_name;	// NPCE_CREATE_GUILD	// OnPCGuildCreateEvent	// 当玩家成功创建公会后触发事件
-#endif // Pandas_NpcEvent_CREATE_GUILD
-
-#ifdef Pandas_NpcEvent_JOIN_GUILD
-	const char* join_guild_event_name;	// NPCE_JOIN_GUILD	// OnPCGuildJoinEvent	// 当玩家成功加入公会后触发事件
-#endif // Pandas_NpcEvent_JOIN_GUILD
-
-#ifdef Pandas_NpcEvent_LEAVE_GUILD
-	const char* leave_guild_event_name;	// NPCE_LEAVE_GUILD	// OnPCGuildLeaveEvent	// 当玩家成功离开公会后触发事件
-#endif // Pandas_NpcEvent_LEAVE_GUILD
 
 #ifdef Pandas_NpcEvent_INSERT_CARD
 	const char* insert_card_event_name;	// NPCE_INSERT_CARD	// OnPCInsertCardEvent	// 当玩家成功插入卡片后触发事件
@@ -299,14 +219,15 @@ struct Script_Config {
 	const char* use_skill_event_name;	// NPCE_USE_SKILL	// OnPCUseSkillEvent	// 当玩家成功使用技能后触发事件
 #endif // Pandas_NpcEvent_USE_SKILL
 
-#ifdef Pandas_NpcEvent_SC_START
-	const char* sc_start_event_name;	// NPCE_SC_START	// OnPCBuffStartEvent	// 当玩家已成功获得了一个状态后触发事件
-#endif // Pandas_NpcEvent_SC_START
+#ifdef Pandas_NpcEvent_PROGRESS_ABORT
+	const char* progressbar_abort_event_name;	// NPCE_PROGRESS_ABORT	// OnPCProgressAbortEvent	// 当玩家的进度条被打断后触发事件
+#endif // Pandas_NpcEvent_PROGRESS_ABORT
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 10>
 
-#ifdef Pandas_NpcEvent_SC_END
-	const char* sc_end_event_name;	// NPCE_SC_END	// OnPCBuffEndEvent	// 当玩家已成功解除了一个状态后触发事件
-#endif // Pandas_NpcEvent_SC_END
-	// PYHELP - NPCEVENT - INSERT POINT - <Section 8>
+	/************************************************************************/
+	/* Express 类型的快速事件，这些事件将会被立刻执行, 不进事件队列                */
+	/************************************************************************/
+	// PYHELP - NPCEVENT - INSERT POINT - <Section 16>
 
 	// NPC related
 	const char* ontouch_event_name;
@@ -2042,6 +1963,44 @@ enum e_hat_effects {
 	HAT_EF_SUBJECT_AURA_WHITE,
 	HAT_EF_SUBJECT_AURA_RED,
 	HAT_EF_C_SHINING_ANGEL_WING,
+	HAT_EF_MAGIC_STAR_TW,
+	HAT_EF_DIGITAL_SPACE,
+	HAT_EF_SLEIPNIR,
+	HAT_EF_C_MAPLE_WHICH_FALLS_RD,
+	HAT_EF_MAGICCIRCLERAINBOW,
+	HAT_EF_SNOWFLAKE_TIARA,
+	HAT_EF_MIDGARTS_GLORY,
+	HAT_EF_LEVEL99_TIGER,
+	HAT_EF_LEVEL160_TIGER,
+	HAT_EF_FLUFFYWING,
+	HAT_EF_C_GHOST_EFFECT,
+	HAT_EF_C_POPPING_PORING_AURA,
+	HAT_EF_RESONATETAEGO,
+	HAT_EF_99LV_RUNE_RED,
+	HAT_EF_99LV_ROYAL_GUARD_BLUE,
+	HAT_EF_99LV_WARLOCK_VIOLET,
+	HAT_EF_99LV_SORCERER_LBLUE,
+	HAT_EF_99LV_RANGER_GREEN,
+	HAT_EF_99LV_MINSTREL_PINK,
+	HAT_EF_99LV_ARCHBISHOP_WHITE,
+	HAT_EF_99LV_GUILL_SILVER,
+	HAT_EF_99LV_SHADOWC_BLACK,
+	HAT_EF_99LV_MECHANIC_GOLD,
+	HAT_EF_99LV_GENETIC_YGREEN,
+	HAT_EF_160LV_RUNE_RED,
+	HAT_EF_160LV_ROYAL_G_BLUE,
+	HAT_EF_160LV_WARLOCK_VIOLET,
+	HAT_EF_160LV_SORCERER_LBLUE,
+	HAT_EF_160LV_RANGER_GREEN,
+	HAT_EF_160LV_MINSTREL_PINK,
+	HAT_EF_160LV_ARCHB_WHITE,
+	HAT_EF_160LV_GUILL_SILVER,
+	HAT_EF_160LV_SHADOWC_BLACK,
+	HAT_EF_160LV_MECHANIC_GOLD,
+	HAT_EF_160LV_GENETIC_YGREEN,
+	HAT_EF_WATER_BELOW3,
+	HAT_EF_WATER_BELOW4,
+	HAT_EF_C_VALKYRIE_WING,
 	HAT_EF_MAX
 };
 
