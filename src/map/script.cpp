@@ -26152,8 +26152,8 @@ BUILDIN_FUNC(messagecolor) {
 		color = script_getstr(st, 3);
 	}
 
-	struct map_session_data *sd = nullptr;
-	if (!script_mapid2sd(5, sd)) {
+	struct block_list *bl = nullptr;
+	if (!script_rid2bl(5, bl)) {
 		return SCRIPT_CMD_FAILURE;
 	}
 
@@ -26168,7 +26168,7 @@ BUILDIN_FUNC(messagecolor) {
 		}
 	}
 
-	clif_messagecolor(&sd->bl, strtol(color, (char**)NULL, 16), text, true, target);
+	clif_messagecolor(bl, strtol(color, (char**)NULL, 16), text, true, target);
 	return SCRIPT_CMD_SUCCESS;
 }
 #endif // Pandas_ScriptCommand_MessageColor
