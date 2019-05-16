@@ -12,22 +12,12 @@
 //= 1.0 初步完成腳本	2018-09-25
 //============================================================
 
-prontera,155,94,4	script	初级道场CD清除	72,{
-	messagecolor strnpcinfo(1)+" : 测试一下","00FF00",bc_all,getnpcid(0);
-	end;
-
-OnInit:
-	bindatcmd "mc",strnpcinfo(3) + "::OnAtcommand";
-	end;
-
-OnAtcommand:
-	if ( !.@atcmd_numparameters ) {
-		showscript "请输入内容";
-		end;
+prontera,155,94,4	script	测试NPC	72,{
+	
+	switch(getiteminfo(5169,5)) {
+		case 768:
+			mes "没错，就是768";
+			close;
 	}
-	for ( .@i=0; .@i < .@atcmd_numparameters; .@i++ ) {
-		.@t$ += .@atcmd_parameters$[.@i]+" ";
-	}
-	messagecolor strcharinfo(0)+": "+.@t$,"0000FF",bc_all;
-	end;
+	close;
 }
