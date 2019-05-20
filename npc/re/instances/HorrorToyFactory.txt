@@ -18,7 +18,7 @@ xmas,237,303,3	script	Catherine Jet Johnson	4_F_SKULL06GIRL,{
 		close;
 	}
 
-	if (BaseLevel < 140) {
+	if (BaseLevel < 97) {
 		mes "[Catherine Jet Johnson]";
 		mes "Ah, wait! Please wait. This is not a good place for a promising young "+ ( Sex ? "man" : "woman" ) +" like you!";
 		next;
@@ -177,7 +177,7 @@ xmas,233,305,4	script	Factory Dimension Telep	PORTAL,{
 		mes "There are some work study programs as monster workers during the Horror Toy Factory tour. Therefore, ^ff0000you are unable to enter when you are transformed.^000000";
 		close;
 	}
-	if (BaseLevel < 140) {
+	if (BaseLevel < 97) {
 		mes "[Factory Dimension Teleporter]";
 		mes "You are not eligible for dimensional shifting. You should be at least Lv.140.";
 		close;
@@ -217,6 +217,9 @@ xmas,233,305,4	script	Factory Dimension Telep	PORTAL,{
 }
 
 1@xm_d,112,20,6	script	Catherine Jet Johnson#0	4_F_SKULL06GIRL,{
+	mes "instance_mapname¼ì²â";
+	mes instance_mapname("1@xm_d");
+	next;
 	if (getstatus(SC_MONSTER_TRANSFORM,1) > 0) {
 		mes "[Catherine Jet Johnson]";
 		mes "You cannot come here if you are under the effect of a monster transformation.";
