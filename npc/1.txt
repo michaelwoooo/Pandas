@@ -1,23 +1,20 @@
-//===== Athena Script =======================================
-//= 道场
-//===== By: ==================================================
-//= 程序：聽風
-//===== 當前版本: ============================================
-//= 1.0
-//===== 這合: ================================================
-//= rAthenaCN & 99Max
-//===== 描述: ================================================
-//= 泡沫奶瓶定制 道场腳本
-//===== 備註: ================================================
-//= 1.0 初步完成腳本	2018-09-25
-//============================================================
-
-prontera,155,94,4	script	测试NPC	72,{
+1@tower,267,277,4	script	测试卡怪NPC	72,{
+	mes "刷怪？";
+	next;
+	select("刷");
+	mes "哦";
+	close2;
+	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
+	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
+	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
+	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
+	end;
 	
-	switch(getiteminfo(5169,5)) {
-		case 768:
-			mes "没错，就是768";
-			close;
-	}
-	close;
+OnKillMob:
+	set .@mob_dead_num,mobcount("1@tower",strnpcinfo(0)+"::OnKillMob");
+	if (.@mob_dead_num < 1) {
+		mapannounce "1@tower", "全清了",bc_map,"0x00ff99";
+	} else
+		mapannounce "1@tower", "第 1 层内剩余魔物数量为 - "+.@mob_dead_num,bc_map,"0x00ff99";
+	end;
 }
