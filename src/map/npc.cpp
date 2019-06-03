@@ -1575,11 +1575,23 @@ static enum e_CASHSHOP_ACK npc_cashshop_process_payment(struct npc_data *nd, int
 
 				if (cost[1] < points || cost[0] < (price - points)) {
 					sprintf(output, msg_txt(sd, 713), nd->u.shop.pointshop_str); // You do not have enough '%s'.
+#ifdef Pandas_Support_Pointshop_Variable_DisplayName
+					// 如果 pointshop 变量有别名的话，优先显示别名
+					if (nd->u.shop.pointshop_str_nick[0] != 0) {
+						sprintf(output, msg_txt(sd, 713), nd->u.shop.pointshop_str_nick); // You do not have enough '%s'.
+					}
+#endif // Pandas_Support_Pointshop_Variable_DisplayNames
 					clif_messagecolor(&sd->bl, color_table[COLOR_RED], output, false, SELF);
 					return ERROR_TYPE_PURCHASE_FAIL;
 				}
 				pc_setreg2(sd, nd->u.shop.pointshop_str, cost[0] - (price - points));
 				sprintf(output, msg_txt(sd, 716), nd->u.shop.pointshop_str, cost[0] - (price - points)); // Your '%s' is now: %d
+#ifdef Pandas_Support_Pointshop_Variable_DisplayName
+				// 如果 pointshop 变量有别名的话，优先显示别名
+				if (nd->u.shop.pointshop_str_nick[0] != 0) {
+					sprintf(output, msg_txt(sd, 716), nd->u.shop.pointshop_str_nick, cost[0] - (price - points)); // Your '%s' is now: %d
+				}
+#endif // Pandas_Support_Pointshop_Variable_DisplayName
 				clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], output, false, SELF);
 			}
 			break;
@@ -1731,6 +1743,12 @@ void npc_shop_currency_type(struct map_session_data *sd, struct npc_data *nd, in
 				memset(output, '\0', sizeof(output));
 
 				sprintf(output, msg_txt(sd, 715), nd->u.shop.pointshop_str); // Point Shop List: '%s'
+#ifdef Pandas_Support_Pointshop_Variable_DisplayName
+				// 如果 pointshop 变量有别名的话，优先显示别名
+				if (nd->u.shop.pointshop_str_nick[0] != 0) {
+					sprintf(output, msg_txt(sd, 715), nd->u.shop.pointshop_str_nick); // Point Shop List: '%s'
+				}
+#endif // Pandas_Support_Pointshop_Variable_DisplayName
 				clif_broadcast(&sd->bl, output, strlen(output) + 1, BC_BLUE,SELF);
 			}
 			
@@ -2797,6 +2815,9 @@ static const char* npc_parse_shop(char* w1, char* w2, char* w3, char* w4, const 
 	unsigned short nameid = 0;
 	struct npc_data *nd;
 	enum npc_subtype type;
+#ifdef Pandas_Support_Pointshop_Variable_DisplayName
+	char point_str_nick[64] = { 0 };
+#endif // Pandas_Support_Pointshop_Variable_DisplayName
 
 	if( strcmp(w1,"-") == 0 )
 	{// 'floating' shop?
@@ -2850,10 +2871,21 @@ static const char* npc_parse_shop(char* w1, char* w2, char* w3, char* w4, const 
 			break;
 		}
 		case NPCTYPE_POINTSHOP: {
+#ifndef Pandas_Support_Pointshop_Variable_DisplayName
 			if (sscanf(p, ",%32[^,:]:%11d,",point_str,&is_discount) < 1) {
 				ShowError("npc_parse_shop: Invalid item cost definition in file '%s', line '%d'. Ignoring the rest of the line...\n * w1=%s\n * w2=%s\n * w3=%s\n * w4=%s\n", filepath, strline(buffer,start-buffer), w1, w2, w3, w4);
 				return strchr(start,'\n'); // skip and continue
 			}
+#else
+			if (sscanf(p, ",%31[^|]|%63[^,:]:%11d,", point_str, point_str_nick, &is_discount) < 3) {
+				if (sscanf(p, ",%31[^|]|%63[^,:],", point_str, point_str_nick) < 2) {
+					if (sscanf(p, ",%31[^,:]:%11d,", point_str, &is_discount) < 1) {
+						ShowError("npc_parse_shop: Invalid item cost definition in file '%s', line '%d'. Ignoring the rest of the line...\n * w1=%s\n * w2=%s\n * w3=%s\n * w4=%s\n", filepath, strline(buffer, start - buffer), w1, w2, w3, w4);
+						return strchr(start, '\n'); // skip and continue
+					}
+				}
+			}
+#endif // Pandas_Support_Pointshop_Variable_DisplayName
 			switch(point_str[0]) {
 				case '$':
 				case '.':
@@ -2974,6 +3006,11 @@ static const char* npc_parse_shop(char* w1, char* w2, char* w3, char* w4, const 
 		if (type == NPCTYPE_ITEMSHOP) nd->u.shop.itemshop_nameid = nameid; // Item shop currency
 		else if (type == NPCTYPE_POINTSHOP) safestrncpy(nd->u.shop.pointshop_str,point_str,strlen(point_str)+1); // Point shop currency
 		nd->u.shop.discount = is_discount > 0;
+#ifdef Pandas_Support_Pointshop_Variable_DisplayName
+		if (type == NPCTYPE_POINTSHOP) {
+			safestrncpy(nd->u.shop.pointshop_str_nick, point_str_nick, strlen(point_str_nick) + 1);
+		}
+#endif // Pandas_Support_Pointshop_Variable_DisplayName
 	}
 
 	npc_parsename(nd, w3, start, buffer, filepath);
@@ -4314,28 +4351,26 @@ static const char* npc_parse_mapflag(char* w1, char* w2, char* w3, char* w4, con
 
 #ifdef Pandas_MapFlag_MobDroprate
 		case MF_MOBDROPRATE: {
-			// 若脚本中 mapflag 指定的第一个数值参数无效,
-			// 那么将此参数的值设为 0, 但不会阻断此地图标记的开启或关闭操作
+			// 若脚本中 mapflag 指定的数值无效或为默认值: 100, 则立刻关闭这个地图标记
 			union u_mapflag_args args = {};
 
-			if (sscanf(w4, "%11d", &args.flag_val) < 1)
-				args.flag_val = 0;
-
-			map_setmapflag_sub(m, mapflag, state, &args);
+			if (sscanf(w4, "%11d", &args.flag_val) < 1 || args.flag_val == 100 || !state)
+				map_setmapflag(m, mapflag, false);
+			else
+				map_setmapflag_sub(m, mapflag, true, &args);
 			break;
 		}
 #endif // Pandas_MapFlag_MobDroprate
 
 #ifdef Pandas_MapFlag_MvpDroprate
 		case MF_MVPDROPRATE: {
-			// 若脚本中 mapflag 指定的第一个数值参数无效,
-			// 那么将此参数的值设为 0, 但不会阻断此地图标记的开启或关闭操作
+			// 若脚本中 mapflag 指定的数值无效或为默认值: 100, 则立刻关闭这个地图标记
 			union u_mapflag_args args = {};
 
-			if (sscanf(w4, "%11d", &args.flag_val) < 1)
-				args.flag_val = 0;
-
-			map_setmapflag_sub(m, mapflag, state, &args);
+			if (sscanf(w4, "%11d", &args.flag_val) < 1 || args.flag_val == 100 || !state)
+				map_setmapflag(m, mapflag, false);
+			else
+				map_setmapflag_sub(m, mapflag, true, &args);
 			break;
 		}
 #endif // Pandas_MapFlag_MvpDroprate
