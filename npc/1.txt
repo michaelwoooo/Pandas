@@ -1,20 +1,198 @@
-1@tower,267,277,4	script	测试卡怪NPC	72,{
-	mes "刷怪？";
+//===== rAthena Script =======================================
+//= 统计系统
+//===== By: ==================================================
+//= 程序：聽風
+//===== 當前版本: ============================================
+//= 1.0
+//===== 這合: ================================================
+//= Athena
+//===== 描述: ================================================
+//= 龙雅定制脚本
+//===== 備註: ================================================
+//= 1.0 初步完成腳本	2019-05-01
+//============================================================
+
+/*
+ClearanceCJDC += 1;	//初级道场通关次数
+ClearanceZJDC += 1;	//中级道场通关次数
+ClearanceGJDC += 1;	//高级道场通关次数
+ClearanceWXT += 1;	//无限塔通关次数
+ClearanceDLL += 1;	//代理龙通关次数
+
+*/
+
+function	script	ClearanceListX	{
+	if ( MyClearance != $ClearanceList ) {
+		MyClearance = $ClearanceList;
+		ClearanceCJDC = 0;
+		ClearanceZJDC = 0;
+		ClearanceGJDC = 0;
+		ClearanceWXT = 0;
+		ClearanceDLL = 0;
+		MyCCJDC = 0;
+		MyCZJDC = 0;
+		MyCGJDC = 0;
+		MyCWXT = 0;
+		MyCDLL = 0;
+		return 1;
+	}
+	return 0;
+}
+
+
+prontera,175,115,4	script	公告牌排行榜#Clearance	10035,{
+	mes "[公告牌排行榜]";
+	mes "你要看哪个排行榜？";
 	next;
-	select("刷");
-	mes "哦";
-	close2;
-	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
-	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
-	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
-	areamonster "1@tower",267,267,277,303,"波利",1002,50,strnpcinfo(0)+"::OnKillMob";
+	switch(select("初级道场:中级道场:高级道场:无限塔:代理龙:清空")) {
+		case 1:
+			.@N$ = "CJDC";
+			.@T$ = "初级道场";
+			break;
+		case 2:
+			.@N$ = "ZJDC";
+			.@T$ = "中级道场";
+			break;
+		case 3:
+			.@N$ = "GJDC";
+			.@T$ = "高级道场";
+			break;
+		case 4:
+			.@N$ = "WXT";
+			.@T$ = "无限塔";
+			break;
+		case 5:
+			.@N$ = "DLL";
+			.@T$ = "代理龙";
+			break;
+		case 6:
+			.@N$ = "CJDC";
+			.@T$ = "初级道场";
+			deletearray $CCJDCListName$[0],128;
+			mes "ok";
+			close;
+	}
+	mes "["+.@T$+" 排行榜]";
+	for( .@i=0; .@i < getarraysize(getd("$C"+.@N$+"ListName$")); .@i++) {
+		mes "No."+(.@i+1)+" "+getd("$C"+.@N$+"ListName$["+.@i+"]");
+	}
+	close;
+}
+
+prontera,183,120,4	script	增加次数	10035,{
+	mes "点一下加一下";
+	ClearanceCJDC += 1;
+	close;
+}
+
+prontera,180,115,4	script	公告牌#Clearance	10035,{
+	if ( callfunc("ClearanceListX") ) {
+		mes "副本通关次数已清空";
+		mes "请于本周日晚23:59分前";
+		mes "完成通关次数及领取奖励";
+		close;
+	}
+	mes "[公告牌]";
+	mes "初级道场通关次数 "+(ClearanceCJDC>=.CCJDC?"已完成":"("+ClearanceCJDC+"/"+.CCJDC+")");
+	mes "中级道场通关次数 "+(ClearanceZJDC>=.CZJDC?"已完成":"("+ClearanceZJDC+"/"+.CZJDC+")");
+	mes "高级道场通关次数 "+(ClearanceGJDC>=.CGJDC?"已完成":"("+ClearanceGJDC+"/"+.CGJDC+")");
+	mes "  无限塔通关次数 "+(ClearanceWXT>=.CWXT?"已完成":"("+ClearanceWXT+"/"+.CWXT+")");
+	mes "  代理龙通关次数 "+(ClearanceDLL>=.CDLL?"已完成":"("+ClearanceDLL+"/"+.CDLL+")");
+	next;
+	switch(select(
+	(ClearanceCJDC>=75&&!MyCCJDC)?"领取初级道场奖励":"",
+	(ClearanceZJDC>=36&&!MyCZJDC)?"领取中级道场奖励":"",
+	(ClearanceGJDC>=10&&!MyCGJDC)?"领取高级道场奖励":"",
+	(ClearanceWXT>=10&&!MyCWXT)?"领取无限塔奖励":"",
+	(ClearanceDLL>=10&&!MyCDLL)?"领取代理龙奖励":"")) {
+		case 1:
+			.@N$ = "CJDC";
+			.@T$ = "初级道场";
+			break;
+		case 2:
+			.@N$ = "ZJDC";
+			.@T$ = "中级道场";
+			break;
+		case 3:
+			.@N$ = "GJDC";
+			.@T$ = "高级道场";
+			break;
+		case 4:
+			.@N$ = "WXT";
+			.@T$ = "无限塔";
+			break;
+		case 5:
+			.@N$ = "DLL";
+			.@T$ = "代理龙";
+			break;
+	}
+	for ( .@i = 1; .@i <= 3; .@i++ ) {
+		setd ".@Item"+.@i,getd(".C"+.@N$+"Item"+.@i);
+		setd ".@Num"+.@i,getd(".C"+.@N$+"Num"+.@i);
+	}
+	//if ( .@Item1 ) getitem .@Item1,.@Num1;
+	//if ( .@Item2 ) getitem .@Item2,.@Num2;
+	//if ( .@Item3 ) getitem .@Item3,.@Num3;
+	if ( .@Item1 ) rentitem .@Item1,604800,.@Num1;
+	if ( .@Item2 ) rentitem .@Item2,604800,.@Num2;
+	if ( .@Item3 ) rentitem .@Item3,604800,.@Num3;
+	setd "MyC"+.@N$,1;
+	.@List = getarraysize(getd("$C"+.@N$+"ListName$"));
+	if ( .@List >= .List ) close;
+	setd "$C"+.@N$+"ListName$["+.@List+"]",strcharinfo(0);
+	announce strcharinfo(0)+" 完成了 "+.@T$+" 的通关次数，载入排行榜！",0;
+	close;
+
+OnClock2252:
+	if ( gettime(4) == 3 ) {
+		announce "到点清空的公告！",0;
+		$ClearanceList += 1;
+		end;
+	}
 	end;
 	
-OnKillMob:
-	set .@mob_dead_num,mobcount("1@tower",strnpcinfo(0)+"::OnKillMob");
-	if (.@mob_dead_num < 1) {
-		mapannounce "1@tower", "全清了",bc_map,"0x00ff99";
-	} else
-		mapannounce "1@tower", "第 1 层内剩余魔物数量为 - "+.@mob_dead_num,bc_map,"0x00ff99";
+OnInit:
+	.List = 50;	//排行榜的位数
+
+	.CCJDC = 100;	//通关初级道场多少次可获得奖励
+	.CCJDCItem1 = 501;	//初级道场奖励ID1
+	.CCJDCNum1 = 1;		//初级道场奖励数量1
+	.CCJDCItem2 = 502;	//初级道场奖励ID2
+	.CCJDCNum2 = 2;		//初级道场奖励数量2
+	.CCJDCItem3 = 503;	//初级道场奖励ID3
+	.CCJDCNum3 = 3;		//初级道场奖励数量3
+	
+	.CZJDC = 100;	//通关中级道场多少次可获得奖励
+	.CZJDCItem1 = 501;	//中级道场奖励ID1
+	.CZJDCNum1 = 1;		//中级道场奖励数量1
+	.CZJDCItem2 = 501;	//中级道场奖励ID2
+	.CZJDCNum2 = 1;		//中级道场奖励数量2
+	.CZJDCItem3 = 501;	//中级道场奖励ID3
+	.CZJDCNum3 = 1;		//中级道场奖励数量3
+	
+	.CGJDC = 100;	//通关高级道场多少次可获得奖励
+	.CGJDCItem1 = 501;	//高级道场奖励ID1
+	.CGJDCNum1 = 1;		//高级道场奖励数量1
+	.CGJDCItem2 = 501;	//高级道场奖励ID2
+	.CGJDCNum2 = 1;		//高级道场奖励数量2
+	.CGJDCItem3 = 501;	//高级道场奖励ID3
+	.CGJDCNum3 = 1;		//高级道场奖励数量3
+	
+	.CWXT = 100;	//通关无限塔多少次可获得奖励
+	.CWXTItem1 = 501;	//无限塔奖励ID1
+	.CWXTNum1 = 1;		//无限塔奖励数量1
+	.CWXTItem2 = 501;	//无限塔奖励ID2
+	.CWXTNum2 = 1;		//无限塔奖励数量2
+	.CWXTItem3 = 501;	//无限塔奖励ID3
+	.CWXTNum3 = 1;		//无限塔奖励数量3
+	
+	.CDLL = 100;	//通关代理龙多少次可获得奖励
+	.CDLLItem1 = 501;	//代理龙奖励ID1
+	.CDLLNum1 = 1;		//代理龙奖励数量1
+	.CDLLItem2 = 0;	//代理龙奖励ID2
+	.CDLLNum2 = 0;		//代理龙奖励数量2
+	.CDLLItem3 = 0;	//代理龙奖励ID3
+	.CDLLNum3 = 0;		//代理龙奖励数量3
+	
 	end;
 }
