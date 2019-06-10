@@ -3690,18 +3690,18 @@ void map_flags_init(void){
 		map_free_questinfo(mapdata);
 
 #ifdef Pandas_MapFlag_MobDroprate
-		mapdata->mob_droprate = 100;
+		map_setmapflag_param(i, MF_MOBDROPRATE, 100);
 #endif // Pandas_MapFlag_MobDroprate
 
 #ifdef Pandas_MapFlag_MvpDroprate
-		mapdata->mvp_droprate = 100;
+		map_setmapflag_param(i, MF_MVPDROPRATE, 100);
 #endif // Pandas_MapFlag_MvpDroprate
 
 		if (instance_start && i >= instance_start)
 			continue;
 
 		// adjustments
-		if( battle_config.pk_mode && !mapdata->flag[MF_PVP] )
+		if( battle_config.pk_mode && !mapdata_flag_vs2(mapdata) )
 			mapdata->flag[MF_PVP] = true; // make all maps pvp for pk_mode [Valaris]
 	}
 }
@@ -4733,6 +4733,134 @@ bool map_getmapflag_name( enum e_mapflag mapflag, char* output ){
 	return true;
 }
 
+#ifdef Pandas_Mapflags
+//************************************
+// Method:		map_getmapflag_param
+// Description:	获取某个地图标记的附加参数 (通过 args 的 flag_val 控制要获取的参数是哪个)
+// Parameter:	int16 m
+// Parameter:	enum e_mapflag mapflag
+// Parameter:	union u_mapflag_args * args
+// Parameter:	int default_val
+// Returns:		int
+//************************************
+int map_getmapflag_param(int16 m, enum e_mapflag mapflag, union u_mapflag_args *args, int default_val) {
+	if (m < 0 || m >= MAX_MAP_PER_SERVER) {
+		ShowWarning("map_getmapflag_param: Invalid map ID %d.\n", m);
+		return default_val;
+	}
+
+	struct map_data *mapdata = &map[m];
+
+	if (mapflag < MF_MIN || mapflag >= MF_MAX) {
+		ShowWarning("map_getmapflag_param: Invalid mapflag %d on map %s.\n", mapflag, mapdata->name);
+		return default_val;
+	}
+
+	struct s_mapflag_params *params = util::umap_find(mapdata->flag_params, static_cast<int16>(mapflag));
+
+	if (!args) {
+		return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), default_val);
+	}
+
+	switch (args->flag_val)
+	{
+	case MP_PARAM_FIRST:
+		return (params ? params->param_first : default_val);
+	case MP_PARAM_SECOND:
+		return (params ? params->param_second : default_val);
+	default:
+		return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), default_val);
+	}
+}
+
+//************************************
+// Method:		map_getmapflag_param
+// Description:	获取某个地图标记的附加参数 (直接指定要获取的参数是哪个)
+// Parameter:	int16 m
+// Parameter:	enum e_mapflag mapflag
+// Parameter:	enum e_mapflag_params param
+// Parameter:	int default_val
+// Returns:		int
+//************************************
+int map_getmapflag_param(int16 m, enum e_mapflag mapflag, enum e_mapflag_params param, int default_val) {
+	union u_mapflag_args args = {};
+	args.flag_val = param;
+	return map_getmapflag_param(m, mapflag, &args, default_val);
+}
+
+//************************************
+// Method:		map_getmapflag_param
+// Description:	获取某个地图标记的附加参数 (直接获取第一个参数的值)
+// Parameter:	int16 m
+// Parameter:	enum e_mapflag mapflag
+// Parameter:	int default_val
+// Returns:		int
+//************************************
+int map_getmapflag_param(int16 m, enum e_mapflag mapflag, int default_val) {
+	return map_getmapflag_param(m, mapflag, MP_PARAM_FIRST, default_val);
+}
+
+//************************************
+// Method:		map_setmapflag_param
+// Description:	设置某个地图标记的附加参数 (直接指定要设置的参数是哪个)
+// Parameter:	int16 m
+// Parameter:	enum e_mapflag mapflag
+// Parameter:	enum e_mapflag_params param
+// Parameter:	int value
+// Returns:		void
+//************************************
+void map_setmapflag_param(int16 m, enum e_mapflag mapflag, enum e_mapflag_params param, int value) {
+	if (m < 0 || m >= MAX_MAP_PER_SERVER) {
+		ShowWarning("map_setmapflag_param: Invalid map ID %d.\n", m);
+		return;
+	}
+
+	struct map_data *mapdata = &map[m];
+
+	if (mapflag < MF_MIN || mapflag >= MF_MAX) {
+		ShowWarning("map_setmapflag_param: Invalid mapflag %d on map %s.\n", mapflag, mapdata->name);
+		return;
+	}
+
+	struct s_mapflag_params *params = util::umap_find(mapdata->flag_params, static_cast<int16>(mapflag));
+	bool exists = params != nullptr;
+	struct s_mapflag_params new_params = {};
+
+	if (!exists) {
+		params = &new_params;
+	}
+
+	switch (param)
+	{
+	case MP_PARAM_FIRST:
+		params->param_first = value;
+		break;
+	case MP_PARAM_SECOND:
+		params->param_second = value;
+		break;
+	default:
+		ShowWarning("map_setmapflag_param: Invalid params %d.\n", param);
+		break;
+	}
+
+	if (!exists) {
+		mapdata->flag_params.insert({ static_cast<int16>(mapflag), *params });
+	}
+}
+
+//************************************
+// Method:		map_setmapflag_param
+// Description:	设置某个地图标记的附加参数 (直接设置第一个参数的值)
+// Parameter:	int16 m
+// Parameter:	enum e_mapflag mapflag
+// Parameter:	int value
+// Returns:		void
+//************************************
+void map_setmapflag_param(int16 m, enum e_mapflag mapflag, int value) {
+	return map_setmapflag_param(m, mapflag, MP_PARAM_FIRST, value);
+}
+#endif // Pandas_Mapflags
+
 /**
  * Get a mapflag value
  * @param m: Map ID
@@ -4778,26 +4906,30 @@ int map_getmapflag_sub(int16 m, enum e_mapflag mapflag, union u_mapflag_args *ar
 					return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), 0);
 			}
 #ifdef Pandas_MapFlag_Mobinfo
-		case MF_MOBINFO: {
-			if (args && args->flag_val == 1)
-				return mapdata->show_mob_info;
-			return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), 0);
-		}
+		case MF_MOBINFO:
+			return map_getmapflag_param(m, mapflag, args, 0);
 #endif // Pandas_MapFlag_Mobinfo
 #ifdef Pandas_MapFlag_MobDroprate
-		case MF_MOBDROPRATE: {
-			if (args && args->flag_val == 1)
-				return mapdata->mob_droprate;
-			return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), 0);
-		}
+		case MF_MOBDROPRATE:
+			return map_getmapflag_param(m, mapflag, args, 0);
 #endif // Pandas_MapFlag_MobDroprate
 #ifdef Pandas_MapFlag_MvpDroprate
-		case MF_MVPDROPRATE: {
-			if (args && args->flag_val == 1)
-				return mapdata->mvp_droprate;
-			return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), 0);
-		}
+		case MF_MVPDROPRATE:
+			return map_getmapflag_param(m, mapflag, args, 0);
 #endif // Pandas_MapFlag_MvpDroprate
+#ifdef Pandas_MapFlag_MaxHeal
+		case MF_MAXHEAL:
+			return map_getmapflag_param(m, mapflag, args, 0);
+#endif // Pandas_MapFlag_MaxHeal
+#ifdef Pandas_MapFlag_MaxDmg_Skill
+		case MF_MAXDMG_SKILL:
+			return map_getmapflag_param(m, mapflag, args, 0);
+#endif // Pandas_MapFlag_MaxDmg_Skill
+#ifdef Pandas_MapFlag_MaxDmg_Normal
+		case MF_MAXDMG_NORMAL:
+			return map_getmapflag_param(m, mapflag, args, 0);
+#endif // Pandas_MapFlag_MaxDmg_Normal
+
 		// PYHELP - MAPFLAG - INSERT POINT - <Section 5>
 		default:
 			return util::umap_get(mapdata->flag, static_cast<int16>(mapflag), 0);
@@ -4957,9 +5089,9 @@ bool map_setmapflag_sub(int16 m, enum e_mapflag mapflag, bool status, union u_ma
 
 			mapdata->flag[mapflag] = status;
 			if (!status)
-				mapdata->zone ^= 1 << (args->flag_val + 1);
+				mapdata->zone ^= (1 << (args->flag_val + 1)) << 3;
 			else
-				mapdata->zone |= 1 << (args->flag_val + 1);
+				mapdata->zone |= (1 << (args->flag_val + 1)) << 3;
 			break;
 		case MF_NOCOMMAND:
 			if (status) {
@@ -5055,11 +5187,11 @@ bool map_setmapflag_sub(int16 m, enum e_mapflag mapflag, bool status, union u_ma
 #ifdef Pandas_MapFlag_Mobinfo
 		case MF_MOBINFO:
 			if (!status)
-				mapdata->show_mob_info = 0;
+				map_setmapflag_param(m, mapflag, 0);
 			else {
 				nullpo_retr(false, args);
 				if (args)
-					mapdata->show_mob_info = args->flag_val;
+					map_setmapflag_param(m, mapflag, args->flag_val);
 			}
 			mapdata->flag[mapflag] = status;
 			break;
@@ -5067,11 +5199,11 @@ bool map_setmapflag_sub(int16 m, enum e_mapflag mapflag, bool status, union u_ma
 #ifdef Pandas_MapFlag_MobDroprate
 		case MF_MOBDROPRATE:
 			if (!status)
-				mapdata->mob_droprate = 100;
+				map_setmapflag_param(m, mapflag, 100);
 			else {
 				nullpo_retr(false, args);
 				if (args) {
-					mapdata->mob_droprate = args->flag_val;
+					map_setmapflag_param(m, mapflag, args->flag_val);
 					status = !(args->flag_val == 100);
 				}
 			}
@@ -5081,17 +5213,59 @@ bool map_setmapflag_sub(int16 m, enum e_mapflag mapflag, bool status, union u_ma
 #ifdef Pandas_MapFlag_MvpDroprate
 		case MF_MVPDROPRATE:
 			if (!status)
-				mapdata->mvp_droprate = 100;
+				map_setmapflag_param(m, mapflag, 100);
 			else {
 				nullpo_retr(false, args);
 				if (args) {
-					mapdata->mvp_droprate = args->flag_val;
+					map_setmapflag_param(m, mapflag, args->flag_val);
 					status = !(args->flag_val == 100);
 				}
 			}
 			mapdata->flag[mapflag] = status;
 			break;
 #endif // Pandas_MapFlag_MvpDroprate
+#ifdef Pandas_MapFlag_MaxHeal
+		case MF_MAXHEAL:
+			if (!status)
+				map_setmapflag_param(m, mapflag, 0);
+			else {
+				nullpo_retr(false, args);
+				if (args) {
+					map_setmapflag_param(m, mapflag, args->flag_val);
+					status = !(args->flag_val == 0);
+				}
+			}
+			mapdata->flag[mapflag] = status;
+			break;
+#endif // Pandas_MapFlag_MaxHeal
+#ifdef Pandas_MapFlag_MaxDmg_Skill
+		case MF_MAXDMG_SKILL:
+			if (!status)
+				map_setmapflag_param(m, mapflag, 0);
+			else {
+				nullpo_retr(false, args);
+				if (args) {
+					map_setmapflag_param(m, mapflag, args->flag_val);
+					status = !(args->flag_val == 0);
+				}
+			}
+			mapdata->flag[mapflag] = status;
+			break;
+#endif // Pandas_MapFlag_MaxDmg_Skill
+#ifdef Pandas_MapFlag_MaxDmg_Normal
+		case MF_MAXDMG_NORMAL:
+			if (!status)
+				map_setmapflag_param(m, mapflag, 0);
+			else {
+				nullpo_retr(false, args);
+				if (args) {
+					map_setmapflag_param(m, mapflag, args->flag_val);
+					status = !(args->flag_val == 0);
+				}
+			}
+			mapdata->flag[mapflag] = status;
+			break;
+#endif // Pandas_MapFlag_MaxDmg_Normal
 		// PYHELP - MAPFLAG - INSERT POINT - <Section 6>
 		default:
 			mapdata->flag[mapflag] = status;

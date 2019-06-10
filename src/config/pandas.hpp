@@ -214,6 +214,22 @@
 
 	// 修复使用 sommon 脚本指令召唤不存在的魔物, 会导致地图服务器崩溃的问题 [Sola丶小克]
 	#define Pandas_Fix_ScriptCommand_Summon_Crash
+
+	// 修正使用 duplicate 或 copynpc 复制商店类型的 NPC 时, 由于没有完整的复制出售的商品列表, 
+	// 导致使用 npcshop* 系列指令调整复制后的商店内容时, 原商店的内容也会同步受到影响的问题. 
+	// 目前根据各位脚本大神的反馈, 更希望各个商店 NPC 的商品列表内容是各自独立的 [Sola丶小克]
+	#define Pandas_Fix_Duplicate_Shop_With_FullyShopItemList
+
+	// 修正复制商店类型的 NPC 时, 打折设置及货币变量等参数没有一起复制的问题 [Sola丶小克]
+	#define Pandas_Fix_Duplicate_Shop_Parameters_Missing
+
+	// 修正使用 pointshop 类型的商店操作 #CASHPOINTS 或 #KAFRAPOINTS 变量完成最终的货币结算后
+	// 小地图旁边的"道具商城"按钮中的金额不被更新, 最终导致双花的问题 [Sola丶小克]
+	#define Pandas_Fix_PointShop_Double_Spend_Attack
+
+	// 修正 npc_unloadfile 和 npc_parsesrcfile 的行为会被空格影响的问题 [Sola丶小克]
+	// 如果 @reloadnpc 时给定的路径带空格, 系统将无法正确的 unloadnpc, 导致 npc 重复出现
+	#define Pandas_Fix_NPC_Filepath_WhiteSpace_Effects
 #endif // Pandas_Bugfix
 
 // ============================================================================
@@ -372,6 +388,18 @@
 	// 是否启用 mvpdroprate 地图标记 [Sola丶小克]
 	// 该标记用于额外调整此地图上 MVP 魔物的物品掉落倍率
 	#define Pandas_MapFlag_MvpDroprate
+
+	// 是否启用 maxheal 地图标记 [Sola丶小克]
+	// 该标记用于限制此地图上单位的治愈系技能最大的 HP 治愈量
+	#define Pandas_MapFlag_MaxHeal
+
+	// 是否启用 maxdmg_skill 地图标记 [Sola丶小克]
+	// 该标记用于限制此地图上单位的最大技能伤害 (不含治愈系技能)
+	#define Pandas_MapFlag_MaxDmg_Skill
+
+	// 是否启用 maxdmg_normal 地图标记 [Sola丶小克]
+	// 该标记用于限制此地图上单位的最大平砍伤害 (包括二刀连击和刺客拳刃平砍)
+	#define Pandas_MapFlag_MaxDmg_Normal
 	// PYHELP - MAPFLAG - INSERT POINT - <Section 1>
 #endif // Pandas_Mapflags
 
@@ -535,6 +563,14 @@
 	// 是否启用 messagecolor 脚本指令 [Sola丶小克]
 	// 使用该指令可以发送指定颜色的消息文本到聊天窗口中
 	#define Pandas_ScriptCommand_MessageColor
+
+	// 是否启用 copynpc 脚本指令 [Sola丶小克]
+	// 使用该指令可以复制指定的 NPC 到一个新的位置 (坐标等相对可以灵活设置)
+	#define Pandas_ScriptCommand_Copynpc
+
+	// 是否启用 gettimefmt 脚本指令 [Sola丶小克]
+	// 将当前时间格式化输出成字符串, 是 gettimestr 的改进版
+	#define Pandas_ScriptCommand_GetTimeFmt
 	// PYHELP - SCRIPTCMD - INSERT POINT - <Section 1>
 #endif // Pandas_ScriptCommands
 

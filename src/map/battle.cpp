@@ -2190,7 +2190,7 @@ static int battle_skill_damage_skill(struct block_list *src, struct block_list *
 		(damage->map&4 && mapdata_flag_gvg2(mapdata)) ||
 		(damage->map&8 && mapdata->flag[MF_BATTLEGROUND]) ||
 		(damage->map&16 && mapdata->flag[MF_SKILL_DAMAGE]) ||
-		(damage->map&(8*mapdata->zone) && mapdata->flag[MF_RESTRICTED]))
+		(damage->map&(mapdata->zone) && mapdata->flag[MF_RESTRICTED]))
 	{
 		return damage->rate[battle_skill_damage_type(target)];
 	}
@@ -6865,6 +6865,44 @@ struct Damage battle_calc_attack(int attack_type,struct block_list *bl,struct bl
 		d.dmg_lv = ATK_DEF;
 
 	struct map_session_data *sd = BL_CAST(BL_PC, bl);
+
+#ifdef Pandas_MapFlag_MaxDmg_Skill
+	if (skill_id && bl && map_getmapflag(bl->m, MF_MAXDMG_SKILL)) {
+		int val = map_getmapflag_param(bl->m, MF_MAXDMG_SKILL, 0);
+		if (!val && d.damage + d.damage2 > val) {
+			int64 overval = (d.damage + d.damage2) - val;	// 超了多少
+			if (d.damage2 >= overval) {
+				// 如果 damage2 足够被扣减, 那么优先扣减 damage2
+				d.damage2 -= overval;
+			}
+			else {
+				// 如果 damage2 不足以被扣减, 那么先把 damage2 调为 0
+				overval -= d.damage2;	// 更新超出的伤害数
+				d.damage2 = 0;
+				d.damage = cap_value(d.damage - overval, 0, val);	// 最后再扣减 damage 中的伤害
+			}
+		}
+	}
+#endif // Pandas_MapFlag_MaxDmg_Skill
+
+#ifdef Pandas_MapFlag_MaxDmg_Normal
+	if (!skill_id && bl && map_getmapflag(bl->m, MF_MAXDMG_NORMAL)) {
+		int val = map_getmapflag_param(bl->m, MF_MAXDMG_NORMAL, 0);
+		if (!val && d.damage + d.damage2 > val) {
+			int64 overval = (d.damage + d.damage2) - val;	// 超了多少
+			if (d.damage2 >= overval) {
+				// 如果 damage2 足够被扣减, 那么优先扣减 damage2
+				d.damage2 -= overval;
+			}
+			else {
+				// 如果 damage2 不足以被扣减, 那么先把 damage2 调为 0
+				overval -= d.damage2;	// 更新超出的伤害数
+				d.damage2 = 0;
+				d.damage = cap_value(d.damage - overval, 0, val);	// 最后再扣减 damage 中的伤害
+			}
+		}
+	}
+#endif // Pandas_MapFlag_MaxDmg_Normal
 
 	if (sd && d.damage + d.damage2 > 1)
 		battle_vanish_damage(sd, target, d.flag);

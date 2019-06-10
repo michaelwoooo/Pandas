@@ -597,6 +597,18 @@
 	export_constant(MF_MVPDROPRATE);
 #endif // Pandas_MapFlag_MvpDroprate
 
+#ifdef Pandas_MapFlag_MaxHeal
+	export_constant(MF_MAXHEAL);
+#endif // Pandas_MapFlag_MaxHeal
+
+#ifdef Pandas_MapFlag_MaxDmg_Skill
+	export_constant(MF_MAXDMG_SKILL);
+#endif // Pandas_MapFlag_MaxDmg_Skill
+
+#ifdef Pandas_MapFlag_MaxDmg_Normal
+	export_constant(MF_MAXDMG_NORMAL);
+#endif // Pandas_MapFlag_MaxDmg_Normal
+
 	// PYHELP - MAPFLAG - INSERT POINT - <Section 3>
 
 	/* setcell types */
