@@ -13,6 +13,7 @@
 	#define Pandas_Basic
 	#define Pandas_DatabaseIncrease
 	#define Pandas_StructIncrease
+	#define Pandas_BattleConfigure
 	#define Pandas_FuncIncrease
 	#define Pandas_CreativeWork
 	#define Pandas_Bugfix
@@ -30,7 +31,9 @@
 // ============================================================================
 
 #ifdef Pandas_Basic
-	// 定义 Pandas 的版本号
+	// 定义 Pandas 的默认版本号
+	// 在 Windows 环境下 Pandas 版本号默认以资源中的"文件版本号"为准, 获取失败时才会使用默认版本号
+	// 在 Linux 环境下 Pandas 版本号将直接使用此处定义的默认版本号
 	#define Pandas_Version "v2.0.0"
 
 	// 在启动时显示 Pandas 的 LOGO
@@ -44,6 +47,9 @@
 
 	// 是否启用 npc.cpp 中的自定义辅助函数
 	#define Pandas_NpcHelper_CommonFunc
+
+	// 是否启用 LGTM 建议的一些处理措施, 避免潜在风险
+	#define Pandas_LGTM_Optimization
 #endif // Pandas_Basic
 
 // ============================================================================
@@ -107,6 +113,16 @@
 #endif // Pandas_StructIncrease
 
 // ============================================================================
+// 战斗配置组 - Pandas_BattleConfigure
+// ============================================================================
+
+#ifdef Pandas_BattleConfigure
+	// 是否支持对战斗配置选项进行完整性检查 [╰づ记忆•斑驳〤 实现] [Sola丶小克 改进]
+	#define Pandas_BattleConfig_Verification
+	// PYHELP - BATTLECONFIG - INSERT POINT - <Section 1>
+#endif // Pandas_BattleConfigure
+
+// ============================================================================
 // 函数修改组 - Pandas_FuncIncrease
 // ============================================================================
 
@@ -157,9 +173,6 @@
 	#if PACKETVER >= 20151001
 		#define Pandas_Reject_Create_Doram_Character
 	#endif // PACKETVER >= 20151001
-
-	// 是否支持对战斗配置选项进行完整性检查 [╰づ记忆•斑驳〤 实现] [Sola丶小克 改进]
-	#define Pandas_Battle_Config_Verification
 
 	// 是否扩展魔物名称能展现的信息, 比如体型、种族、属性 [Sola丶小克 改进]
 	#define Pandas_MobInfomation_Extend

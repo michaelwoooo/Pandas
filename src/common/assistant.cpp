@@ -37,14 +37,77 @@ std::string & std_string_format(std::string & _str, const char * _Format, ...) {
 	return _str;
 }
 
-// 为指定的 sql_handle 设定合适的编码
+//************************************
+// Method:		safety_localtime
+// Description:	能够兼容 Windows 和 Linux 的线程安全 localtime 函数
+// Parameter:	const time_t * time
+// Parameter:	struct tm * result
+// Returns:		struct tm *
+//************************************
+struct tm *safety_localtime(const time_t *time, struct tm *result) {
+#ifdef WIN32
+	return (localtime_s(result, time) == S_OK ? result : nullptr);
+#else
+	return localtime_r(time, result);
+#endif // WIN32
+}
+
+//************************************
+// Method:		safety_gmtime
+// Description:	能够兼容 Windows 和 Linux 的线程安全 gmtime 函数
+// Parameter:	const time_t * time
+// Parameter:	struct tm * result
+// Returns:		struct tm *
+//************************************
+struct tm *safety_gmtime(const time_t *time, struct tm *result) {
+#ifdef WIN32
+	return (gmtime_s(result, time) == S_OK ? result : nullptr);
+#else
+	return gmtime_r(time, result);
+#endif // WIN32
+}
+
+//************************************
+// Method:		safty_localtime_define
+// Description:	用于覆盖 localtime 的的替换函数, 用于修正 LGTM 警告
+// Parameter:	const time_t * time
+// Returns:		std::shared_ptr<struct tm>
+//************************************
+std::shared_ptr<struct tm> safty_localtime_define(const time_t *time) {
+	struct tm *_ttm_result = new struct tm();
+	return std::shared_ptr<struct tm>(safety_localtime(time, _ttm_result));
+}
+
+//************************************
+// Method:		GetPandasVersion
+// Description:	获取 Pandas 的主程序版本号
+// Returns:		std::string
+//************************************
+std::string GetPandasVersion() {
+#ifdef _WIN32
+	std::string pandasVersion;
+	return std_string_format(pandasVersion, "v%s", GetFileVersion("", true).c_str());
+#else
+	return std::string(Pandas_Version);
+#endif // _WIN32
+}
+
+#ifndef MINICORE
+//************************************
+// Method:		smart_codepage
+// Description:	为指定的 sql_handle 设定合适的编码
+// Parameter:	Sql * sql_handle
+// Parameter:	const char * connect_name
+// Parameter:	const char * codepage
+// Returns:		void
+//************************************
 void smart_codepage(Sql* sql_handle, const char* connect_name, const char* codepage) {
 	char* buf = NULL;
 	char finally_codepage[32] = { 0 };
 	bool bShowInfomation = (connect_name != NULL);
 
 	if (!sql_handle || !codepage || strlen(codepage) <= 0) return;
-	
+
 	if (strcmpi(codepage, "auto") != 0) {
 		if (SQL_ERROR == Sql_SetEncoding(sql_handle, codepage))
 			Sql_ShowDebug(sql_handle);
@@ -121,3 +184,60 @@ void smart_codepage(Sql* sql_handle, const char* connect_name, const char* codep
 			Sql_ShowDebug(sql_handle);
 	}
 }
+#endif // MINICORE
+
+#ifdef _WIN32
+//************************************
+// Method:		GetFileVersion
+// Description:	获取指定文件的文件版本号
+// Parameter:	std::string filename
+// Parameter:	bool bWithoutBuildNum
+// Returns:		std::string
+//************************************
+std::string GetFileVersion(std::string filename, bool bWithoutBuildNum) {
+	char szModulePath[MAX_PATH] = { 0 };
+
+	if (filename.empty()) {
+		if (GetModuleFileName(NULL, szModulePath, MAX_PATH) == 0) {
+			ShowWarning("GetProductVersion: Could not get module file name, defaulting to '%s'\n", Pandas_Version);
+			return std::string(Pandas_Version);
+		}
+		filename = std::string(szModulePath);
+	}
+
+	DWORD dwInfoSize = 0, dwHandle = 0;
+
+	dwInfoSize = GetFileVersionInfoSize(filename.c_str(), &dwHandle);
+	if (dwInfoSize == 0) {
+		ShowWarning("GetProductVersion: Could not get version info size, defaulting to '%s'\n", Pandas_Version);
+		return std::string(Pandas_Version);
+	}
+
+	void* pVersionInfo = new char[dwInfoSize];
+	if (GetFileVersionInfo(filename.c_str(), dwHandle, dwInfoSize, pVersionInfo)) {
+		void* lpBuffer = NULL;
+		UINT nItemLength = 0;
+		if (VerQueryValue(pVersionInfo, "\\", &lpBuffer, &nItemLength)) {
+			VS_FIXEDFILEINFO *pFileInfo = (VS_FIXEDFILEINFO*)lpBuffer;
+			std::string sFileVersion;
+			std_string_format(sFileVersion, "%d.%d.%d",
+				pFileInfo->dwFileVersionMS >> 16,
+				pFileInfo->dwProductVersionMS & 0xFFFF,
+				pFileInfo->dwProductVersionLS >> 16
+			);
+
+			if (!bWithoutBuildNum) {
+				std_string_format(sFileVersion, "%s.%d",
+					sFileVersion.c_str(), pFileInfo->dwProductVersionLS & 0xFFFF
+				);
+			}
+			delete[] pVersionInfo;
+			return sFileVersion;
+		}
+	}
+
+	delete[] pVersionInfo;
+	ShowWarning("GetProductVersion: Could not get file version, defaulting to '%s'\n", Pandas_Version);
+	return std::string(Pandas_Version);
+}
+#endif // _WIN32

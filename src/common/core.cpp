@@ -314,7 +314,7 @@ static void display_title(void) {
 #else
 	ShowMessage("\n");
 	ShowMessage("" CL_BG_RED "     " CL_BOLD "                                                                      " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
-	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "                       Pandas Dev Team presents                   " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
+	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "                       Pandas Dev Team Presents                   " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "                ____                    _                         " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "               |  _ \\  __ _  _ __    __| |  __ _  ___            " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "               | |_) |/ _` || '_ \\  / _` | / _` |/ __|           " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
@@ -325,7 +325,7 @@ static void display_title(void) {
 	ShowMessage("" CL_BG_RED "     " CL_BOLD "                                                                      " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 #ifdef Pandas_Disclaimer
 	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "          Pandas is only for learning and research purposes.      " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
-	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "             Please don't use it for commercial purposes.         " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
+	ShowMessage("" CL_BG_RED "     " CL_BT_WHITE "                 Please don't use it for commercial.              " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 	ShowMessage("" CL_BG_RED "     " CL_BOLD "                                                                      " CL_BT_WHITE "" CL_CLL "" CL_NORMAL "\n");
 #endif // Pandas_Disclaimer
 	ShowMessage("\n");
@@ -338,7 +338,7 @@ static void display_title(void) {
 		ShowInfo("Git Hash: '" CL_WHITE "%s" CL_RESET "'\n", git);
 #else
 	// 显示 Pandas 的版本号 [Sola丶小克]
-	ShowInfo("Pandas Version: " CL_WHITE "%s" CL_RESET "\n", Pandas_Version);
+	ShowInfo("Pandas Version: " CL_WHITE "%s" CL_RESET "\n", GetPandasVersion().c_str());
 #endif // Pandas_Show_Version
 
 #ifdef Pandas_Disclaimer
@@ -378,6 +378,12 @@ int main (int argc, char **argv)
 			int n=0;
 			SERVER_NAME = ++p1;
 			n = p1-argv[0]; //calc dir name len
+
+#ifdef Pandas_LGTM_Optimization
+			// 对通过参数传入的工作路径进行长度限制判断 (暂定为 1kb 的长度)
+			n = (n > 1024 ? 1024 : n);
+#endif // Pandas_LGTM_Optimization
+
 			pwd = safestrncpy((char*)malloc(n + 1), argv[0], n);
 			if(chdir(pwd) != 0)
 				ShowError("Couldn't change working directory to %s for %s, runtime will probably fail",pwd,SERVER_NAME);
